@@ -20,6 +20,8 @@ import {ReleasePage, ReleaseHero, ReleaseGrid, ReleaseCard, ReleaseClip, RnLink 
 <div><strong>Show, then let them try</strong>Short clips for anything that moves, and live HTML previews readers can use in the page.</div>
 </div>
 
+<p className="pg-own"><strong>My part in this issue:</strong> I wrote and edited the release notes in this issue and owned how the page is laid out: highlights first, filters, and entries that open on demand.</p>
+
 <ReleasePage title="Release Notes Q3 2026">
 
 <div className="rn-date">September 26</div>
@@ -29,64 +31,12 @@ import {ReleasePage, ReleaseHero, ReleaseGrid, ReleaseCard, ReleaseClip, RnLink 
   subtitle="Loaded, sealed, and on its way. Tap one open."
   items={[
     {title: 'Build and deploy Applications with Development and Production', target: 'rn-dev-prod'},
-    {title: 'Note Actions and Controls: Stop Running the Whole Thing Every Time', target: 'rn-note-actions'},
     {title: 'Meet Inspect: The Pre-Flight Check for Your Sequence and Data', target: 'rn-inspect'},
     {title: 'Optimize Network - Version 4.3.0', target: 'rn-optimize-network'},
   ]}
 />
 
 <ReleaseGrid intro="Everything below just came off the dock. Expand a card for the full story.">
-
-<ReleaseCard id="rn-note-actions" category="General" tag="New Feature" title="Note Actions and Controls: Run It Your Way, Pause It When It Matters" teaser="One Note can now offer several named ways to run it, hold for a person when a decision matters, and show each audience only the runs meant for them.">
-
-Most Notes only know one trick: same steps, same order, every time. Need a quick data check before the real run? Full run. Want to stop before the solver rather than after it? Full run. And if someone needed to weigh in halfway through, there was nowhere for them to do it.
-
-Now a single Note can be broken into **Stages**, combined into several named **Note Actions** so it runs different ways for different situations, and given a **Control** on any Stage that pauses the run for a person, like an approval gate. Build it once on the Note, and everyone downstream just picks the path and responds to the checkpoints.
-
-**Build It, Bundle It, Run It**
-
-<Stepper>
-<Step>
-
-**Note Developer**
-
-* Turn on Note Actions from the **Run Configuration** tab, add <L>Stages</L> in order, attach <L>Controls</L> where they matter, then combine Stages into <L>named Note Actions</L>. A Note Action always runs its Stages in order from the first one; it can't skip a Stage in the middle. This is a one-time setup on the Note.
-* Or skip the clicking entirely and define stages, controls, and note actions in a single <L>JSON file</L> and upload it at once.
-* For Meridian-built Notes such as Optimize Network and Plan Supply, Meridian does this configuration instead.
-
-<img src="/img/release/note-actions-config.png" alt="Run Configuration tab on a Note, showing the Note Actions panel, the stage canvas from Load Data through Report, and the Controls panel" loading="lazy" />
-
-</Step>
-<Step>
-
-**App Builder**
-
-* Bundle Notes into a <L>Tailored Action</L>: name the bundle, pick each Note's action, and set parameter values scoped to it.
-* **You can step into a run now**. Pick which Note Action to run, then trigger Controls while the Note is still executing. Earlier, once a run started, there was no way to interact with an execution until it finished.
-* In <L>Application Settings &gt; Actions tab</L>, choose exactly which Note Actions and Controls reach the app.
-
-<ReleaseClip size="m" src="/img/release/tailored-actions.mp4" alt="A run pausing at a Control so the user can pick a resolution and approve it" />
-
-</Step>
-<Step>
-
-**App User**
-
-* From the Production Application, the **Run Actions** panel shows only the Note Actions and Controls the App Builder enabled, not every path the Note is capable of.
-* Watches stage progress as the run proceeds, and responds to a Control the moment the run pauses for it.
-
-</Step>
-</Stepper>
-
-<Admonition title="Good to Know">
-
-* **Simple Notes carry on exactly as before**. Single step Notes like <L>Geocode</L> need no changes at all; <L>Parameters</L> are still the simpler choice. Reach for Actions and Controls when a Note has multiple stages, multiple run paths, or mid-run interactions.
-* **A Control only exists while the run does.** End the run and a pending Control disappears with it.
-* **Two Note Actions can't cover the exact same Stages.** Try it and the **Note Actions** panel nudges you to change one or delete it before you move on.
-
-</Admonition>
-
-</ReleaseCard>
 
 <ReleaseCard id="rn-inspect" category="General" tag="New Feature" title="Meet Inspect: The Pre-Flight Check for Your Sequence and Data" teaser="Check your Sequence and Data for configuration issues before you run or deploy, with every finding graded by severity.">
 
@@ -132,7 +82,7 @@ Until now, every change a Creator saved to an Application went live instantly, i
 
 **What happens to your existing Applications**
 
-Every existing Application automatically becomes its **Development** version. Its URL, Scenarios, data, and user access remain unchanged, so your team can continue using it as it does today.
+Every existing Application in Next-Gen mode automatically becomes its **Development** version. Its URL, Scenarios, data, and user access remain unchanged, so your team can continue using it as it does today.
 
 An Application is not automatically deployed to Production. You decide which Applications to deploy and when, and there is no need to move everything at once.
 
@@ -151,8 +101,8 @@ When deciding which Applications to deploy to Production, we recommend starting 
 
 <Admonition title="Two Things to Know Before You Deploy">
 
-* **Next-Gen only.** This change applies to Next-Gen Applications. Classic Applications are not affected.
-* **One-way switch.** Deploying an Application to Production permanently converts it to a Next-Gen Application. You cannot switch it back to Classic mode.
+* **Next-Gen only.** Development and Production apply to Applications in Next-Gen mode. Applications in Classic mode are not affected.
+* **One-way switch.** Deploying an Application to Production locks it to Next-Gen mode permanently. You can no longer switch it back to Classic mode.
 
 </Admonition>
 
@@ -312,7 +262,7 @@ This release changes how you run the Note. Four Note Actions replace the single 
 
 </ReleasePage>
 
-<p className="pg-note">The published release, with the product and company names masked and 12 of its 25 entries kept. Links to the full guides are shown but not followed, because the docs site is private.</p>
+<p className="pg-note">The published release, with the product and company names masked and 11 of its 25 entries kept. Links to the full guides are shown but not followed, because the docs site is private.</p>
 
 <section className="pg-section">
 <div className="pg-sectionhead">

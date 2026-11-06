@@ -10,7 +10,7 @@ export default function Videos(): ReactNode {
       <main className="pg">
         <span className="pg-eyebrow">Videos & podcasts</span>
         <h1 className="pg-title">Videos & podcasts</h1>
-        <p className="pg-lede">Release walkthroughs, product explainers and a release podcast, all published to customers on the documentation site. Each opens on the company's public video host.</p>
+        <p className="pg-lede">Release walkthroughs, product explainers and a release podcast, all published to customers on the documentation site. Each card opens the video on Wistia, the company's public video host, in a new tab.</p>
 
         <section className="pg-section">
           <div className="pg-split">
@@ -27,9 +27,11 @@ export default function Videos(): ReactNode {
               <span className="pg-tag pg-tag--accent">Featured · {featured.length}</span>
               <h2 style={{marginTop: '0.4rem', fontSize: '1.6rem'}}>{featured.title}</h2>
               <p style={{color: 'var(--vp-ink-2)', lineHeight: 1.6}}>{featured.text}</p>
-              <a className="pg-link" href={url(featured.id)} target="_blank" rel="noreferrer">
-                Open on the video host
-              </a>
+              {featured.role && <p className="pg-role"><strong>My role:</strong> {featured.role}</p>}
+              <p>
+                <a className="pg-link" href="/samples/release-comms/video-brief-release-walkthrough">Read the video brief (re-created)</a>
+                <a className="pg-link" href={url(featured.id)} target="_blank" rel="noreferrer">Open on Wistia ↗</a>
+              </p>
             </div>
           </div>
         </section>
@@ -45,11 +47,12 @@ export default function Videos(): ReactNode {
                 <a key={m.id + g.title} className="pg-video" href={url(m.id)} target="_blank" rel="noreferrer">
                   <div className="pg-video__thumb">
                     {m.thumb ? <img src={m.thumb} alt="" loading="lazy" /> : <span className="pg-video__ph">{m.title}</span>}
-                    <span className="pg-video__play">Play · {m.length}</span>
+                    <span className="pg-video__play">Watch on Wistia ↗ · {m.length}</span>
                   </div>
                   <div className="pg-video__body">
                     <h3>{m.title}</h3>
                     <p>{m.text}</p>
+                    {m.role && <p className="pg-role"><strong>My role:</strong> {m.role}</p>}
                   </div>
                 </a>
               ))}

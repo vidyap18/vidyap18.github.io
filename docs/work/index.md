@@ -14,50 +14,50 @@ hide_table_of_contents: true
 ## Featured work
 
 <div className="wk-case">
-<a className="wk-case__img" href="./docs-as-code"><img src="/img/prototypes/role-based-ia.png" alt="Role-based navigation prototype for the new docs site" loading="lazy" /></a>
+<a className="wk-case__img" href="/work/docs-as-code"><img src="/img/prototypes/role-based-ia.png" alt="Role-based navigation prototype for the new docs site" loading="lazy" /></a>
 <div className="wk-case__body">
 
-### A docs platform we could evolve
+### <a href="/work/docs-as-code">A docs platform we could evolve</a>
 
 Moving four documentation spaces from GitBook to Docusaurus gave us control over how readers find content and how we build and publish it. I led the audit of 321 pages and the new information architecture, prototyped navigation around user roles, which product leadership adopted, and set up a pull-request workflow with preview links. In the first five months, 14 people outside the writing team merged documentation changes. I also added search analytics to see where readers came up empty, and proposed versioning docs for individual analytics components, so readers can find instructions for the version they actually run.
 
-<p className="wk-links"><a className="pg-link" href="./docs-as-code">Read the case study</a><a className="pg-link" href="./prototypes">See the prototypes</a></p>
+<p className="wk-links"><a className="pg-link" href="/work/docs-as-code">Read the case study</a><a className="pg-link" href="/work/prototypes">See the prototypes</a></p>
 </div>
 </div>
 
 <div className="wk-case">
-<a className="wk-case__img" href="/ai"><img src="/img/work/note-popup.png" alt="In-product help pop-up for a pre-built analytics note" loading="lazy" /></a>
+<a className="wk-case__img" href="/work/roadmap"><img src="/img/work/roadmap-dashboard.png" alt="Roadmap dashboard, shown with fictional epics" loading="lazy" /></a>
 <div className="wk-case__body">
 
-### Using AI to ship better docs
-
-AI now sits on both sides of our docs: it helps us write them, and customers ask an AI assistant that answers from them. On the writing side, I set up a workflow where Claude drafts documentation from the engineer’s pull request and Jira ticket, and writers verify the behavior in the product before anything goes out. I also built a Claude skill that lets people across the company ask the docs a question. On the reading side, I designed a two-round evaluation of our documentation assistant and wrote seven checks that tell us whether a wrong answer is a docs problem or a retrieval problem.
-
-<p className="wk-links"><a className="pg-link" href="./ask-ai">Read the case study</a><a className="pg-link" href="/ai">See it live</a></p>
-</div>
-</div>
-
-<div className="wk-case">
-<a className="wk-case__img" href="./release-hub"><img src="/img/work/release-hub.png" alt="Release Hub board, shown with fictional release data" loading="lazy" /></a>
-<div className="wk-case__body">
-
-### Preparing customers for releases
-
-A feature list tells Customer Success what’s shipping. They also need to know which customers will have to change how they work, what to tell them, and when. I built the Release Hub around those questions, with a tool that drafts each entry from the Jira ticket so a writer can decide what customers need to know or do. Customer Success now sees it about a week before each release, and product managers walk them through it in a pre-release briefing. When we introduced separate development and production environments, I coordinated communications for two rollout cohorts, from the internal briefing through the customer email, release note, and walkthrough.
-
-<p className="wk-links"><a className="pg-link" href="./release-hub">The Release Hub</a><a className="pg-link" href="./release-notes">The rollout</a></p>
-</div>
-</div>
-
-<div className="wk-case">
-<a className="wk-case__img" href="./roadmap"><img src="/img/work/roadmap-dashboard.png" alt="Roadmap dashboard, shown with fictional epics" loading="lazy" /></a>
-<div className="wk-case__body">
-
-### One roadmap for two audiences
+### <a href="/work/roadmap">One roadmap for two audiences</a>
 
 Product needed to track what each team was building. Customers needed to see what was coming for the decisions they make about demand, supply, inventory, and transportation. I rebuilt the roadmap from scratch as two views from the same Jira-fed data: an internal roadmap organized by team and a customer-facing version organized by supply chain decision, with internal updates and ticket IDs removed. Leadership uses the internal view in its weekly update, and Sales has used the customer view in a roadmap presentation.
 
-<p className="wk-links"><a className="pg-link" href="./roadmap">Read the case study</a><a className="pg-link" href="/program-management">How the roadmap runs</a></p>
+<p className="wk-links"><a className="pg-link" href="/work/roadmap">Read the case study</a><a className="pg-link" href="/program-management">How the roadmap runs</a></p>
+</div>
+</div>
+
+<div className="wk-case">
+<a className="wk-case__img" href="/work/ask-ai"><img src="/img/work/note-popup.png" alt="In-product help pop-up for a pre-built analytics note" loading="lazy" /></a>
+<div className="wk-case__body">
+
+### <a href="/work/ask-ai">Using AI to ship better docs</a>
+
+AI now sits on both sides of our docs: it helps us write them, and customers ask an AI assistant that answers from them. On the writing side, I set up a workflow where Claude drafts documentation from the engineer’s pull request and Jira ticket, and writers verify the behavior in the product before anything goes out. I also built a Claude skill that lets people across the company ask the docs a question. On the reading side, I designed a two-round evaluation of our documentation assistant and wrote seven docs checks that help decide when to escalate a failed answer to Engineering.
+
+<p className="wk-links"><a className="pg-link" href="/work/ask-ai">Read the case study</a><a className="pg-link" href="/ai">Explore AI workflows and demos</a></p>
+</div>
+</div>
+
+<div className="wk-case">
+<a className="wk-case__img" href="/work/release-hub"><img src="/img/work/release-hub.png" alt="Release Hub board, shown with fictional release data" loading="lazy" /></a>
+<div className="wk-case__body">
+
+### <a href="/work/release-hub">Preparing customers for releases</a>
+
+A feature list tells Customer Success what’s shipping. They also need to know which customers will have to change how they work, what to tell them, and when. I built the Release Hub around those questions, with a tool that drafts each entry from the Jira ticket so a writer can decide what customers need to know or do. Customer Success now sees it about a week before each release, and product managers walk them through it in a pre-release briefing. When we introduced separate development and production environments, I coordinated communications for two rollout cohorts, from the internal briefing through the customer email, release note, and walkthrough.
+
+<p className="wk-links"><a className="pg-link" href="/work/release-hub">The Release Hub</a><a className="pg-link" href="/work/release-notes">The rollout</a></p>
 </div>
 </div>
 

@@ -22,7 +22,7 @@ Technical writer and documentation leader with thirteen years in enterprise soft
 AI-native supply chain planning platform.
 
 - Moved four documentation spaces from GitBook to a Docusaurus site with pull-request review, previews and CI, live June 2026. 14 people outside the writing team merged documentation changes in the five months after go-live.
-- Set the requirements for the documentation assistant, live in every customer environment since August 2026, and ran a two-round evaluation with 22 reviewers. Fully correct answers rose from about four in ten to two in three.
+- Set the requirements for the documentation assistant, live in every customer environment since August 2026, and ran a two-round evaluation with 22 reviewers. Fully correct answers were 15 of 39 in the first round and 58 of 87 in the second; the questions and retrieval changed between rounds.
 - Built the Release Hub, a pre-release preview for customer success sorted by what customers must do, in use since July 2026.
 - Own release communication: more than 40 releases since February 2025, with release notes, company-wide announcements, walkthrough videos and a podcast format I introduced.
 - Shipped interactive documentation, including an access calculator and a sync-and-commit simulator, and in-product guidance with guided tours and beacons.

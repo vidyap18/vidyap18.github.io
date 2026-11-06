@@ -1,6 +1,6 @@
 ---
 title: "Using AI to ship better docs"
-description: AI on both sides of the docs. Drafting from pull requests and Jira tickets, Claude skills for the company, and an evaluation that tells a docs problem from a retrieval problem.
+description: AI on both sides of the docs. Drafting from pull requests and Jira tickets, Claude skills for the company, and an evaluation with a docs check that helps decide when to escalate a failed answer to Engineering.
 sidebar_position: 2
 sidebar_label: AI in the docs
 ---
@@ -21,7 +21,7 @@ AI now sits on both sides of our docs. It helps us write them, and customers ask
 - **docs-compass** helps writers draft: a commit-ready page with the site's components, suggested links from the real content tree, and a flag on pages the latest release may have made stale.
 - **Release notes to Slack** turns the customer release notes into the company-wide announcement and checks that every item made it in.
 
-**Changes to the product, not just the docs.** With Claude Code, my team raises pull requests in the product's code to add help where users get stuck: in-field help, tooltips, links to the docs and pop-ups. I also use it to build [prototypes](./prototypes.mdx) of my plans before I implement them.
+**Changes to the product, not just the docs.** With Claude Code, I raise pull requests in the product's code to add help where users get stuck: in-field help, tooltips, links to the docs and pop-ups. I also use it to build [prototypes](./prototypes.mdx) of my plans before I implement them.
 
 ## Docs an AI assistant can answer from
 
@@ -33,7 +33,7 @@ An assistant that answers from the docs is only as good as two things: the pages
 - **Turned it into seven checks.** Does the page name the thing the reader asked about? Does each section make sense on its own? Is a fact only inside a table? Are prerequisites inside the procedure? Does the page say what the product cannot do? Is each term used one way? Do two pages contradict each other? I built a Claude skill that runs them, and it is now the last check before any page ships.
 - **Built a way to watch it.** A review dashboard of usage and answer quality per customer account.
 
-**The rule that came out of it.** If the page behind a wrong answer passes all seven checks, the writer does not touch it. The question goes to engineering as a retrieval problem. Writers fix pages that need fixing, and engineering gets the cases that are really theirs.
+**The rule that came out of it.** The docs check helps decide when to escalate a failed answer to Engineering. If the page behind the answer fails a check, the writer fixes it. If it passes all seven, the writer leaves it alone and Engineering investigates. We call it a retrieval problem only once they confirm the cause.
 
 ## What changed
 

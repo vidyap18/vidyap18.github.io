@@ -5,15 +5,17 @@ sidebar_position: 5
 sidebar_label: Roadmap
 ---
 
+import RoadmapDemo from '@site/src/components/RoadmapDemo';
+
 # One roadmap for two audiences
 
 <span className="vp-eyebrow">Roadmap · in use since September 2026</span>
 
 Product needed to track what each team was building. Customers needed to see what was coming for the decisions they make about demand, supply, inventory and transportation. I rebuilt the platform roadmap from scratch as two views of the same Jira data, and set up the process that keeps it current.
 
-![Roadmap dashboard, shown with fictional epics](/img/work/roadmap-dashboard.png)
+<RoadmapDemo />
 
-*The internal view, shown with fictional epics.*
+*A recreation of both views on one fictional dataset. Switch the view and filter by quarter. [See a screenshot of the internal view](/img/work/roadmap-dashboard.png).*
 
 ## The problem
 

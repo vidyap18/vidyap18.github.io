@@ -13,7 +13,7 @@ A feature list tells Customer Success what's shipping. They also need to know wh
 
 ![Release Hub board, shown with fictional release data](/img/work/release-hub.png)
 
-*The Release Hub, shown with fictional release data.*
+*The Release Hub, shown with fictional release data. [Open full size](/img/work/release-hub.png).*
 
 ## The problem
 
@@ -41,15 +41,15 @@ Customer Success had no single place to see what was coming in a release, or whe
 
 | Ticket | Draft | The writer decides |
 | --- | --- | --- |
-| PLN-1042: require one approver before a plan goes live. Drafts still save as before. | Impact: heads up, the old way still works but the steps changed. Customers need to know: plans now need one approver. Customer action: choose an approver for each plan. | Heads up or immediate action? Drafts still save, so heads up. Add the date the approver must be set by, after checking it with the product manager. |
+| PLN-1042: require one approver before a plan goes live. Drafts still save as before. Publishing a plan without an approver is blocked. | Impact: heads up, the old way still works but the steps changed. Customers need to know: plans now need one approver. Customer action: choose an approver for each plan. | Heads up or immediate action? Drafts still save, but publishing without an approver is now blocked, so the old way of going live stops working: immediate action. Add the date the approver must be set by, after checking it with the product manager. |
 
 ## What changed
 
 - Customer Success sees what changes for customers about eight days before each release, sorted by whether a customer has to act.
 - In its first three months the Hub previewed 47 features across five releases, from six product managers.
 
-> "This is incredible. It addresses one of our top focus areas." Senior Director, Customer Success
+> "This is incredible. It addresses one of our top [Customer Success] focus areas." Senior Director, Customer Success
 
-> "The Release Hub is a life saver." Customer Success Business Partner
+> "The release hub is a life saver!" Customer Success Business Partner
 
 For how one release went from the Hub to customers, see [the development and production rollout](./release-notes.md).

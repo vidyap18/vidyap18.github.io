@@ -11,7 +11,36 @@ import SearchSplitDemo from '@site/src/components/SearchSplitDemo';
 
 <h1 className="pg-title">I build with AI, not just draft with it</h1>
 
-<p className="pg-lede">Claude is part of how my team drafts a page, ships it, and checks it. These are the things I built or set up, grouped by what each one does. Prototypes and the pop-up open live. The Release Hub is shown with fictional data, and the dashboard's numbers are blurred.</p>
+<p className="pg-lede">I use Claude to investigate product changes, draft documentation from pull requests and Jira tickets, and build tools I can test before shipping. Here are examples of what I’ve built, from in-product help to a workflow that turns Jira tickets into release previews I can review before sharing.</p>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>Help inside the product</h2>
+<p>We find the places where users get stuck and add help in the product ourselves, by raising pull requests in the product's code, instead of waiting for engineering time.</p>
+</div>
+
+<div className="pg-grid-2">
+<div className="pg-card">
+<span className="pg-tag pg-tag--accent">What I did</span>
+
+I decide where help goes and own each change that goes into the product: info tips with "Learn more" links into the docs, tooltips and doc links in the transform tool, a native pop-up for every pre-built analytics note, and removing coach marks and beacons that had outlived their use. For the pop-up, I set the brief: keep it short, and link each step to the docs pages users actually need, the inputs, outputs and parameters.
+</div>
+
+<div className="pg-card">
+<span className="pg-tag">Status, November 2026</span>
+
+**Shipped:** info tips with docs links, transform-tool tooltips, and the coach-mark removals.
+
+**In review:** the native pop-up for every pre-built analytics note, which replaces a third-party in-app help tool, and info hints on data connector tiles.
+</div>
+</div>
+
+<div className="pg-live" style={{marginTop: '1.6rem'}}>
+<div className="pg-live__bar"><span>Prototype of the pop-up · the product version is in review</span><a href="/prototypes/note-popup/" target="_blank" rel="noopener">Open full size ↗</a></div>
+<iframe src="/prototypes/note-popup/" title="Note pop-up prototype" loading="lazy" style={{height: 720}}></iframe>
+</div>
+<p className="pg-note">Try it: close the pop-up, then select ⓘ on any note.</p>
+</section>
 
 <section className="pg-section">
 <div className="pg-sectionhead">
@@ -101,7 +130,7 @@ Our AI assistant does not read a page the way a person does. It cuts the page in
 
 The skill reads a page the way the assistant will and checks seven things: unexplained abbreviations, sections that only make sense with the rest of the page, facts that live only in tables, prerequisites far from the steps that need them, limits that are only implied, a term used two ways, and two pages that contradict each other.
 
-When the assistant gives a wrong answer, the same check settles whose problem it is. If the page passes, the writer leaves it alone and the question goes to engineering as a retrieval problem. Nobody rewrites a page that was never the issue.
+When the assistant gives a wrong answer, the same check helps decide what to do next. If the page fails, the writer fixes it. If the page passes, the failed answer is escalated to Engineering to investigate, and we call it a retrieval problem only once they confirm the cause.
 </div>
 
 <div className="pg-card">
@@ -144,21 +173,6 @@ Readers typed whole questions into the keyword search, got poor matches, and dec
 </div>
 </div>
 
-<div style={{marginTop: '2.4rem', maxWidth: '62rem'}}>
-<span className="pg-tag pg-tag--accent">Built</span>
-
-<h3>Help inside the product</h3>
-
-We find the places where users get stuck and add help in the product ourselves, by raising pull requests in the product's code: in-field help, tooltips, links into the docs, walkthroughs and pop-ups. We also take out help that has outlived its use, such as old coach marks.
-
-The latest is a pop-up for every pre-built analytics note in the catalog: what the note does, when to use it, and four steps that each open the matching docs page. It replaces a third-party in-app help tool with one native design. Try it below: close the pop-up, then select ⓘ on any note.
-</div>
-
-<div className="pg-live" style={{marginTop: '1.2rem'}}>
-<div className="pg-live__bar"><span>Live prototype · note pop-up</span><a href="/prototypes/note-popup/" target="_blank" rel="noopener">Open full size ↗</a></div>
-<iframe src="/prototypes/note-popup/" title="Note pop-up prototype" loading="lazy" style={{height: 720}}></iframe>
-</div>
-
 <div className="pg-card" style={{marginTop: '2.4rem'}}>
 <span className="pg-tag pg-tag--accent">Built</span>
 
@@ -171,7 +185,7 @@ Search keywords added to 227 pages for the words readers actually type, a releas
 <section className="pg-section">
 <div className="pg-sectionhead">
 <h2>Prototype the plan before I build it</h2>
-<p>When I propose a change to the docs, I build a working version of it with Claude first, so stakeholders can see the plan, click through it and react, before I implement it. Both prototypes below open live.</p>
+<p>When I propose a change to the docs, I build a working version of it with Claude first, so stakeholders can see the plan, click through it and react, before I implement it. The prototype below opens live.</p>
 </div>
 
 <div className="pg-split">
@@ -193,24 +207,6 @@ Each analytics note in the product ships on its own version line, and site-wide 
 </div>
 </div>
 
-<div className="pg-split" style={{marginTop: '2.4rem'}}>
-<figure className="pg-figure">
-<a className="pg-figlink" href="/prototypes/role-navigation/" target="_blank" rel="noopener">
-<img src="/img/prototypes/role-based-ia.png" alt="Prototype of documentation navigation organised by role" loading="lazy" />
-</a>
-<figcaption>Prototype: navigation by role.</figcaption>
-</figure>
-
-<div>
-<span className="pg-tag">Prototype · adopted</span>
-
-<h3>Navigation by role</h3>
-
-Readers had to know the product's structure to find anything. The prototype lets each reader start from who they are: a business user, a data scientist or a supply chain engineer, each with a complete home for their own work. The docs site was reorganised around it.
-
-<p><a className="pg-link" href="/prototypes/role-navigation/" target="_blank" rel="noopener">Open the prototype</a></p>
-</div>
-</div>
 </section>
 
 <section className="pg-section">
@@ -223,7 +219,7 @@ Readers had to know the product's structure to find anything. The prototype lets
 <div>
 <figure className="pg-figure">
 <img src="/img/work/release-hub.png" alt="Release Hub board with changes grouped by what customers must do" loading="lazy" />
-<figcaption>The Release Hub, shown with fictional release data.</figcaption>
+<figcaption>The Release Hub, shown with fictional release data. <a href="/img/work/release-hub.png" target="_blank" rel="noopener">Open full size ↗</a></figcaption>
 </figure>
 
 <ul className="pg-list" style={{marginTop: '1.4rem'}}>
@@ -237,11 +233,11 @@ Readers had to know the product's structure to find anything. The prototype lets
 <span className="pg-eyebrow">What the drafter does, and what a writer decides</span>
 
 <div className="pg-flow">
-<div className="pg-panel"><span className="pg-panel__label">Ticket</span><p>PLN-1042 · Require one approver before a plan goes live</p><p>Drafts still save as before. Approver is set per plan.</p></div>
+<div className="pg-panel"><span className="pg-panel__label">Ticket</span><p>PLN-1042 · Require one approver before a plan goes live</p><p>Drafts still save as before. Publishing a plan without an approver is blocked.</p></div>
 <div className="pg-arrow">↓</div>
 <div className="pg-panel"><span className="pg-panel__label">Draft</span><p>Impact: Heads up. The old way still works, but the steps changed.</p><p>Customers need to know: plans now need one approver before they go live.</p><p>Customer action: choose an approver for each plan.</p></div>
 <div className="pg-arrow">↓</div>
-<div className="pg-panel pg-panel--accent"><span className="pg-panel__label">The writer decides</span><p>Heads up or immediate action? Drafts still save, so heads up.</p><p>Add the date the approver must be set by, after checking it with the product manager.</p></div>
+<div className="pg-panel pg-panel--accent"><span className="pg-panel__label">The writer decides</span><p>Heads up or immediate action? Drafts still save, but publishing without an approver is now blocked, so the old way of going live stops working: immediate action.</p><p>Add the date the approver must be set by, after checking it with the product manager.</p></div>
 </div>
 
 <p className="pg-note">Illustrative example with a fictional ticket.</p>
@@ -252,7 +248,7 @@ Readers had to know the product's structure to find anything. The prototype lets
 <section className="pg-section">
 <div className="pg-sectionhead">
 <h2>Test the assistant before customers rely on it</h2>
-<p>Our documentation assistant answers customer questions from the docs. I designed its evaluation and the rule for deciding whether a wrong answer is a docs problem or a system problem.</p>
+<p>Our documentation assistant answers customer questions from the docs. I designed its evaluation, and a docs check that helps decide when to escalate a failed answer to Engineering.</p>
 </div>
 
 <div className="pg-split">
@@ -276,10 +272,10 @@ Readers had to know the product's structure to find anything. The prototype lets
 <div>
 <figure className="pg-figure">
 <img src="/img/work/ask-ai-dashboard.png" alt="Ask AI review dashboard with numbers blurred" loading="lazy" />
-<figcaption>The review dashboard I built: usage and answer quality per account. Numbers blurred.</figcaption>
+<figcaption>The review dashboard I built: usage and answer quality per account. Numbers are blurred. <a href="/img/work/ask-ai-dashboard.png" target="_blank" rel="noopener">Open full size ↗</a></figcaption>
 </figure>
 
-<div className="pg-result">If a page behind a wrong answer passes the retrieval-readiness check, the writer does not edit it. The question goes to engineering as a retrieval problem.</div>
+<div className="pg-result">The docs check helps decide when to escalate a failed answer to Engineering: if the page behind it passes, the writer does not edit it, and Engineering investigates. It counts as a retrieval problem only once the cause is confirmed.</div>
 
 <p><a className="pg-link" href="/work/ask-ai">Read the full story</a><a className="pg-link" href="/samples/method/retrieval-ready-docs">Read the method</a></p>
 </div>

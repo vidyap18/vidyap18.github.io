@@ -77,6 +77,7 @@ const config: Config = {
             {label: 'Release notes', to: '/writing/release-notes'},
           ],
         },
+        {to: '/work', label: 'Case studies', position: 'left'},
         {to: '/ai', label: 'AI', position: 'left'},
         {to: '/program-management', label: 'Program management', position: 'left'},
         {to: '/videos', label: 'Videos & podcasts', position: 'left'},
