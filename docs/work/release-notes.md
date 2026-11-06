@@ -1,7 +1,7 @@
 ---
 title: "Release notes and release videos, every two weeks since February 2025"
 description: More than 40 releases with release notes, a company-wide announcement, walkthrough videos and a podcast format, plus a rollout package and a redesigned release-notes page.
-sidebar_position: 5
+sidebar_position: 6
 sidebar_label: Release notes
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "A roadmap leadership can read"
 description: A Jira-fed roadmap dashboard across three product areas, with a plain-English update per epic, used in the CEO's weekly update.
-sidebar_position: 7
+sidebar_position: 8
 sidebar_label: Roadmap dashboard
 ---
 

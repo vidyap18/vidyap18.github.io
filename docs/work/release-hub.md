@@ -1,7 +1,7 @@
 ---
 title: "The Release Hub: what changes for customers, a week ahead"
 description: A pre-release preview sorted by what customers must do, published about eight days before each release, with the taxonomy, tools and automation behind it.
-sidebar_position: 4
+sidebar_position: 5
 sidebar_label: Release Hub
 ---
 

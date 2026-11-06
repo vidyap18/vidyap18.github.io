@@ -1,7 +1,7 @@
 ---
 title: "Ask AI: making the docs answerable by an assistant"
 description: Requirements, build versus buy, a two-round evaluation and a readiness check for a documentation assistant live in every customer environment since August 2026.
-sidebar_position: 3
+sidebar_position: 4
 sidebar_label: Ask AI
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "Deciding what to document next from the data"
 description: A support-ticket analysis, search analytics, an assistant review dashboard and a screenshot audit, used to choose the next documentation work.
-sidebar_position: 6
+sidebar_position: 7
 sidebar_label: Measurement
 ---
 

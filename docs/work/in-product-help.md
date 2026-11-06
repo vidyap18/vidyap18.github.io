@@ -1,7 +1,7 @@
 ---
 title: "Help inside the product"
 description: Guided tours, beacons and tooltips published by the docs team, with limits on how often they appear.
-sidebar_position: 8
+sidebar_position: 9
 sidebar_label: In-product help
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "Docs readers can try"
 description: Interactive documentation with 21 try-it demos on 17 pages, so readers check their own case instead of reading a matrix.
-sidebar_position: 2
+sidebar_position: 3
 sidebar_label: Try-it docs
 ---
 

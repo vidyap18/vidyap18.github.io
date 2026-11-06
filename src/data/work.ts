@@ -11,7 +11,7 @@ export const hero = {
   name: 'Vidya Patil · Senior technical writer and documentation lead',
   headline: 'I write product docs and build the workflows that ship them.',
   text:
-    'Thirteen years in enterprise software. For the last two I have headed documentation at an AI supply chain planning platform while writing pages and merging pull requests myself.',
+    'Thirteen years in enterprise software. For the last two I have headed documentation at an AI supply chain planning platform. I prototype changes before anyone builds them, then write the pages and merge the pull requests myself.',
   facts: [
     'Prague',
     'Authorized to work in the Czech Republic',
@@ -31,6 +31,14 @@ export const work: WorkItem[] = [
     why: 'GitBook to a Docusaurus site with pull-request review, previews and CI. 14 people outside the writing team merged docs changes in the five months after go-live.',
     image: '/img/work/persona-led-ia-prototype.png',
     imageAlt: 'Role-based information architecture prototype for the docs site',
+  },
+  {
+    slug: 'prototypes',
+    kicker: 'Design prototypes · 2025 to 2026',
+    title: 'I prototype it before anyone builds it',
+    why: 'Clickable prototypes for navigation, versioning, landing pages and search, used to get a decision before engineering time is spent. Four of six shipped or were adopted; versioning is scheduled for build.',
+    image: '/img/prototypes/versioning.png',
+    imageAlt: 'Prototype of per-note documentation versioning with a version picker and new-in-version badges',
   },
   {
     slug: 'try-it-docs',
@@ -64,17 +72,10 @@ export const work: WorkItem[] = [
     image: '/img/work/release-notes-redesign.png',
     imageAlt: 'Redesigned release notes page with highlights panel and filters',
   },
-  {
-    slug: 'docs-analytics',
-    kicker: 'Measurement · 2026',
-    title: 'Deciding what to document next from the data',
-    why: 'About half of 222 support tickets in a five-week sample were knowledge gaps. That set the next plan. Also: search analytics and a screenshot audit.',
-    image: '/img/work/image-audit-brief.png',
-    imageAlt: 'Brief proposing a CSS rule for screenshot borders across the docs',
-  },
 ];
 
 export const moreWork = [
+  {slug: 'docs-analytics', title: 'Deciding what to document next from the data', text: 'About half of 222 support tickets in a five-week sample were knowledge gaps. Also: search analytics and a screenshot audit.'},
   {slug: 'roadmap', title: 'A roadmap leadership can read', text: 'A Jira-fed roadmap dashboard in plain English, used in the CEO\'s weekly update.'},
   {slug: 'in-product-help', title: 'Help inside the product', text: 'Guided tours, beacons and tooltips, with limits on how often they appear.'},
 ];
