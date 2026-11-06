@@ -1,0 +1,402 @@
+---
+title: "Waterfall"
+description: "Show how an initial value increases or decreases through intermediate steps to reach a final total, and configure every part of the chart."
+sidebar_position: 2
+keywords:
+  - waterfall chart
+  - bridge chart
+  - cumulative change
+  - stacked waterfall
+  - subtotal
+  - grand total
+  - scenario comparison
+  - chart widget
+---
+
+# Waterfall
+
+<span className="vp-label">Real page from a user guide I own. Product name, people and other identifying details are masked.</span>
+
+A waterfall chart shows how an initial value increases or decreases through a series of intermediate steps to reach a final total. Each bar is a positive or negative contribution, so you can read cumulative effects across a sequence such as revenue build-up, budget variance, or profit breakdown across regions.
+
+## When to use a waterfall
+
+<DecisionTree question="Are you showing gains and losses that build to a final total?">
+  <DecisionYes title="Use a Waterfall">{`
+- Each step adds or subtracts from a running total, building toward a final number
+- The order of steps matters: opening value, then changes, then closing value
+- Shows what's contributing to each increase or decrease, not just the total
+  `}</DecisionYes>
+  <DecisionNo title="Use one of these instead">
+    <DecisionLink label="Bar chart">for comparing independent categories with no running total</DecisionLink>
+    <DecisionLink label="Pie">or **stacked bar** for part-to-whole at one moment</DecisionLink>
+    <DecisionLink label="Line chart">for a continuous trend over time</DecisionLink>
+  </DecisionNo>
+</DecisionTree>
+
+***
+
+## What you need before starting
+
+A waterfall needs at least a category column and a value column. A third column is optional and unlocks stacking.
+
+| Column | Requirement | Description |
+| --- | --- | --- |
+| **Categories** | <span className="doc-required">Required</span> | The step labels along the x-axis (Example: Opening Balance, monthly changes, Closing) |
+| **Value** | <span className="doc-required">Required</span> | The numeric amount for each step (Example: Sales, Revenue, or Cost) |
+| **Stack by** | <span className="doc-optional">Optional</span> | A sub-category that breaks each bar into segments (Example: Product Type) |
+
+:::info
+**Delta or cumulative?** A step's **Value** can be a delta (a change) or a cumulative total. Confirm which your data uses before building, so the bridge reflects what you expect.
+:::
+
+:::tip
+**Quick build:** add a chart widget, choose **Waterfall**, pick your **Categories**, then pick your **Value** (and optionally add **Stack by**). Everything under [Configuring chart properties](#configuring-chart-properties) is refinement.
+:::
+
+***
+
+## How values are calculated
+
+The waterfall chart determines each step's role automatically based on the order of your data. 
+
+The first row becomes the **Start** value, the rows that follow become Deltas (increases or decreases), and the **Total** bar is added at the end with no extra setup. If you need a checkpoint partway through, insert a **Subtotal** from the **Styles** tab.
+
+***
+
+## Live example
+
+How total sales accumulate across regions (Atlantic through Pacific), broken down by product division, with a final Total bar.
+
+<div style={{marginBottom: '1rem', borderRadius: '4px', overflow: 'hidden', border: '1px solid #e5e5e5'}}>
+  <AutoHeightIframe
+    src="/demos/waterfall-region-sales.html"
+    title="Region-wise Sales by Division: interactive Waterfall chart demo"
+    messageType="docs-demo-height"
+    initialHeight={560}
+  />
+</div>
+
+Click **Try it** below the chart, or the filter, sort, and display icons (<img src="/img/samples/guides/widget-filter.svg" alt="Filter" className="widget-header-icon" /> / <img src="/img/samples/guides/widget-sort.svg" alt="Sort" className="widget-header-icon" /> / <img src="/img/samples/guides/widget-display.svg" alt="Display" className="widget-header-icon" />) in the widget header, to try filtering, sorting, and display options that customize how this chart looks.
+
+- Click <img src="/img/samples/guides/widget-filter.svg" alt="Filter" className="widget-header-icon" /> and uncheck any region. The Total recalculates on the fly from whatever's left checked.
+- Click <img src="/img/samples/guides/widget-display.svg" alt="Display" className="widget-header-icon" /> and enable **Show subtotals** to insert a checkpoint bar partway through the bridge.
+- Click <img src="/img/samples/guides/widget-sort.svg" alt="Sort" className="widget-header-icon" /> and sort by Value to reorder the steps. See the sorting note under Options > Sort by.
+
+In this chart: **Categories** = Region (x-axis) · **Value** = Sales (bar height) · **Stack by** = Division (the colored segments in the legend).
+
+:::tip
+New to the platform? See Meridian Studio terminology to understand terms like Widget, Semantic Model, and Scenario used throughout this page.
+:::
+
+***
+
+## Configuring chart properties
+
+When creating or editing a Waterfall chart, the right panel shows three tabs: **Data**, **Options**, and **Styles**. Each row below matches an accordion in that panel; click to expand.
+
+To control what data is displayed, see Filter Settings.
+
+<Tabs defaultValue="data">
+<TabsList>
+<TabsTrigger value="data">Data</TabsTrigger>
+<TabsTrigger value="options">Options</TabsTrigger>
+<TabsTrigger value="styles">Styles</TabsTrigger>
+</TabsList>
+<TabsContent value="data">
+
+Look for the hide icon next to a measure or attribute.
+
+* **Hidden measure:** remains in the query and continues to participate in tooltips, drilldown, and other calculations that depend on it. Hiding it changes only the display, not the underlying data.
+* **Hidden attribute:** removes it from the chart. It does not continue to participate in tooltips, drilldown, or other calculations.
+
+<details>
+<summary><strong>Categories</strong> <span className="text-muted-foreground">step labels along the x-axis</span></summary>
+
+Click **+ Add Attribute** and select the column representing your steps.
+
+**Example:** Opening Balance, Jan Sales, Closing.
+
+</details>
+
+<details>
+<summary><strong>Value</strong> <span className="text-muted-foreground">numeric measure that determines bar height</span></summary>
+
+Click **+ Add Measure** and select the column. Each step can be a delta (change) or a cumulative total; the first step is read as the Start value.
+
+**Example:** Sales, Revenue.
+
+</details>
+
+<details>
+<summary><strong>Stack by</strong> <span className="text-muted-foreground"><span className="doc-optional">Optional</span> · Break each bar into sub-segments</span></summary>
+
+Click **+ Add Attribute** and select the column. When assigned, the API returns flat rows with the fields `step`, `stackBy`, and `value`. Connectors are off by default while the chart is stacked.
+
+**Example:** Division, Product Type.
+
+</details>
+
+<details>
+<summary><strong>Split By</strong> <span className="text-muted-foreground"><span className="doc-optional">Optional</span> · Divide into side-by-side panels</span></summary>
+
+Click **+ Add Attribute** and select the column to split by. Each unique value generates a separate chart panel side by side. To arrange the panels, use **Styles > Split by**.
+
+**Example:** Region, Scenario.
+
+</details>
+
+<details>
+<summary><strong>Row Limit</strong> <span className="text-muted-foreground">Maximum rows displayed · default 1000</span></summary>
+
+Enter a number or use the arrows to set the limit. Lower it if the chart is slow with large datasets.
+
+</details>
+
+</TabsContent>
+<TabsContent value="options">
+
+<details>
+<summary><strong>Scenario comparison</strong> <span className="text-muted-foreground">compare the same steps across scenarios</span></summary>
+
+Use the **Enable Scenario Comparison** toggle (on by default) to display and compare multiple scenarios side by side across the same waterfall steps.
+
+**Example:** Plan vs. Actual.
+
+</details>
+
+<details>
+<summary><strong>Sort by</strong> <span className="text-muted-foreground">order steps by a measure</span></summary>
+
+1. Click the pencil icon next to **Sort by**.
+2. Select the column and choose the order. The order labels match the column type (for example, **A → Z** / **Z → A** for text and **1 → 9** / **9 → 1** for numbers).
+3. Click **+ Add sort option** for multiple rules.
+
+Rules apply as you change them. Drag the handle to reorder rules; use the delete icon to remove one.
+
+You can sort by **Categories**, which sets the step order, or by **Value**, which reorders steps by magnitude. **Stack by** is not sortable.
+
+</details>
+
+</TabsContent>
+<TabsContent value="styles">
+
+<details>
+<summary><strong>Title &amp; Subtitle</strong> <span className="text-muted-foreground">chart heading and optional second line</span></summary>
+
+The **Title & Subtitle** toggle is on by default and displays the chart title. Enable **Show Subtitle**, then enter the text in **Subtitle** to add a second line.
+
+</details>
+
+<details>
+<summary><strong>Bar Colors</strong> <span className="text-muted-foreground">one color per bar type</span></summary>
+
+| Field | Applies to |
+| --- | --- |
+| Start Bar | The first bar, representing the initial value |
+| Positive Delta | Bars that represent an increase in value |
+| Negative Delta | Bars that represent a decrease in value |
+| Subtotal Bar | Intermediate subtotal bars inserted across the chart |
+| Total Bar | The final bar, representing the grand total |
+
+:::info
+This accordion is hidden when a **Stack by** column is set; segments then use legend colors, which you set under **Customize Series**.
+:::
+
+</details>
+
+<details>
+<summary><strong>Display</strong> <span className="text-muted-foreground">data labels, subtotals, total, connectors, bar width</span></summary>
+
+| Field | Description |
+| --- | --- |
+| Data Labels | Enable to display numeric values directly on each bar. Off by default. When on, the label fields below appear |
+| Label Position | Where each label sits.<br /><strong>Options:</strong> Auto, Top, Inside Top, Inside (default), Inside Bottom, Bottom. <strong>Auto</strong> places each label where it best fits; a fixed position is used exactly, and the label is hidden if it doesn't fit there |
+| Label Orientation | Preferred text angle: Horizontal (default) or Vertical. If the label doesn't fit, the other angle is tried before the label is hidden |
+| Label Font Size (pt) | Size of the label text, from 2 to 100. Default is 12 |
+| Label Color | Text color for data labels |
+| Auto Contrast | When on, a label inside a bar switches to a lighter or darker shade if your color would be hard to read on that bar. Off by default |
+| Show subtotals | Enable to insert a subtotal bar at a specified step. Off by default |
+| Subtotal after step | Step number after which the subtotal appears, counting from 1 (minimum 1). Default is 3.<br /><strong>Example:</strong> For Opening (1), Atlantic (2), Gulf (3), enter <strong>2</strong> to insert Subtotal between Atlantic and Gulf. |
+| Subtotal label | Label on the subtotal bar. Default is "Subtotal" |
+| Show grand total | Enable to display a final bar for the cumulative total of all steps. On by default |
+| Grand total label | Label on the grand total bar. Default is "Total" |
+| Show connectors | Enable dashed lines between bars, showing flow from one step to the next. On by default for an unstacked chart and off by default when a **Stack by** column is set. On a stacked chart, connectors are approximate: on steps that mix increases and decreases they don't meet the running total, while tooltips still show exact values |
+| Connector Color | Color of the connector lines. Appears when **Show connectors** is on |
+| Bar Width (%) | Width of each bar as a percentage of available space, from 10 to 95 in steps of 5. Default is 55.<br /><strong>Example:</strong> Raise toward 80 for thicker bars; lower toward 30 for more gap between steps. |
+
+</details>
+
+<details>
+<summary><strong>Widget Legend</strong> <span className="text-muted-foreground">color key for stacked segments</span></summary>
+
+The **Widget Legend** toggle is on by default. These settings apply only when a **Stack by** column is set.
+
+| Field | Description |
+| --- | --- |
+| Orientation | How legend items are arranged.<br /><strong>Options:</strong> Horizontal (default), Vertical |
+| Position | Where the legend appears on the chart.<br /><strong>Options:</strong> Top (Center), Top Left, Top Right, Bottom (Center) (default), Bottom Left, Bottom Right, Center Left, Center Right |
+| Padding / Item Gap | Space around the legend and between items, in px, from 0 to 50. Defaults are 5 / 10 |
+| Font Size (px) | Font size of the legend labels, from 10 to 24. Default is 12 |
+
+</details>
+
+
+<details>
+<summary><strong>X-axis</strong> <span className="text-muted-foreground">step labels and horizontal axis</span></summary>
+
+The **X-axis** toggle is on by default and shows the axis.
+
+| Field | Description |
+| --- | --- |
+| Axis Title | Enable or disable the X-axis title. On by default. When enabled, the **Title** field appears |
+| Label Angle (degrees) | Rotate step labels when they overlap, from -90° to 90°. Default is 0°.<br /><strong>Example:</strong> Use <strong>45°</strong> or <strong>-45°</strong> for long names; <strong>90°</strong> stacks labels vertically. |
+| Axis Split Line | Enable vertical grid lines at each step. Off by default. When enabled, choose <strong>Split Line Type</strong> (Solid, Dashed, or Dotted; default Solid), <strong>Split Line Width (px)</strong> (default 0.25), and <strong>Split Line Color</strong> |
+
+Under **ADVANCED**:
+
+| Field | Description |
+| --- | --- |
+| Title font size (pt) / Title weight | Size (default 12) and weight (Normal or Bold; default Normal) of the axis title |
+| Max Label Characters | Truncates long step labels to this many characters and appends an ellipsis (…), from 0 to 200. Default is 20; 0 means no limit.<br /><strong>Example:</strong> Increase if names like "Opening Balance" are cut off. |
+| Axis Line Color / Tick Label Color | Set the axis line color and step label (tick) color |
+
+</details>
+
+<details>
+<summary><strong>Y-axis</strong> <span className="text-muted-foreground">value scale and vertical axis</span></summary>
+
+The **Y-axis** toggle is on by default and shows the axis. The Y-axis always uses a linear scale; log scale is not available for waterfalls.
+
+| Field | Description |
+| --- | --- |
+| Axis Title | Enable or disable the Y-axis title. Off by default. When enabled, the **Title** field appears |
+| Label Angle (degrees) | Rotate value labels, from -90° to 90°. Default is 0° |
+| Axis Split Line | Enable horizontal grid lines. On by default. When enabled, choose <strong>Split Line Type</strong> (Solid, Dashed, or Dotted; default Solid), <strong>Split Line Width (px)</strong> (default 0.25), and <strong>Split Line Color</strong> |
+| Abbreviate Numbers (K,M,B) | Enable to shorten large values for readability. On by default.<br /><strong>Example:</strong> 1,500 → 1.5K; 2,000,000 → 2M |
+
+Under **ADVANCED**:
+
+| Field | Description |
+| --- | --- |
+| Title font size (pt) / Title weight | Size (default 10) and weight (Normal or Bold; default Normal) of the axis title |
+| Custom Axis Values | Enable to set **Axis Min**, **Axis Max**, and **Number of Intervals** (1 to 40, default 5). Off by default, so the axis fits the data automatically.<br /><strong>Example:</strong> Set min to <strong>0</strong>, max to <strong>150000</strong>, and intervals to <strong>6</strong> so every chart uses the same scale. |
+| Max Label Characters | Truncates long value labels to this many characters and appends an ellipsis (…), from 0 to 200. Default is 20; 0 means no limit |
+| Axis Line Color / Tick Label Color | Set the axis line color and value label (tick) color |
+
+</details>
+
+
+<details>
+<summary><strong>Tooltip Settings</strong> <span className="text-muted-foreground">hover tooltip appearance</span></summary>
+
+The **Tooltip Settings** toggle is on by default and shows step details when you hover over a bar. Turn it off to disable tooltips.
+
+| Field | Description |
+| --- | --- |
+| Pointer Type | Select the visual style of the tooltip guide.<br /><strong>Options:</strong> <strong>Line</strong> (thin line at hover), <strong>Shadow</strong> (shaded step; default), <strong>Crosshair</strong> (cross lines at pointer), <strong>None</strong> (no guide) |
+| Show Pointer Label | Appears for <strong>Line</strong> and <strong>Crosshair</strong>. Shows the value label on the pointer. On by default. When on, set <strong>Label Bg Color</strong> and <strong>Label Text Color</strong> |
+| Font Size (px) | Set the tooltip text size. Default is 12. |
+| Font Color | Choose the tooltip text color. Use a color with good contrast against the background. |
+| Background Color | Select the tooltip container background color. |
+| Border Color | Choose the border color for the tooltip box. |
+
+</details>
+
+<details>
+<summary><strong>Zoom &amp; Animation</strong> <span className="text-muted-foreground">navigation and load animation</span></summary>
+
+Enable the **Zoom & Animation** toggle (off by default) to turn on zooming.
+
+| Field | Description |
+| --- | --- |
+| Type | Zoom interaction method.<br /><strong>Options:</strong> <strong>Mouse/Touch</strong> (scroll or pinch; default), <strong>Slider</strong> (drag a range control) |
+| Position | Appears for <strong>Slider</strong>. Where the zoom slider appears.<br /><strong>Options:</strong> <strong>Bottom</strong> (below the chart; default), <strong>Right</strong> (alongside the chart) |
+| Start / End (%) | Appears for <strong>Slider</strong>. Visible data range on load, from 0 to 100. Defaults are 0-100.<br /><strong>Example:</strong> Start <strong>20</strong> / End <strong>80</strong> focuses on the middle 60% of steps. |
+| Enable Animations | Enable to animate bars when the chart first loads or updates. On by default |
+| Duration (ms) | Animation length in milliseconds, from 0 to 30000. Default is 1000 (1 second). Increase for slower animation, decrease for faster |
+| Easing | How speed changes during the animation.<br /><table><thead><tr><th>Curve</th><th>Description</th></tr></thead><tbody><tr><td>Linear</td><td>Keeps a constant speed throughout</td></tr><tr><td>Quadratic</td><td>Changes speed gradually along a gentle curve</td></tr><tr><td>Cubic</td><td>Changes speed more aggressively along a steeper curve, so acceleration and deceleration feel sharper than Quadratic</td></tr></tbody></table>Within either family, <strong>In</strong> starts slow, then speeds up; <strong>Out</strong> starts fast, then slows down;<br /><strong>In Out</strong> is slow at both ends and faster through the middle.<br /><br /><strong>Options:</strong> Linear, Quadratic In Out, Quadratic Out, Quadratic In, Cubic In Out, Cubic Out (default), Cubic In |
+
+</details>
+
+<details>
+<summary><strong>Pattern Fill</strong> <span className="text-muted-foreground">textures for print &amp; color-blind readers</span></summary>
+
+Enable the **Pattern Fill** toggle (off by default) to add a texture overlay for print or color-blind readability.
+
+| Field | Description |
+| --- | --- |
+| Pattern Shape | Shape of the texture.<br /><strong>Options:</strong> Rectangle, Circle, Diamond, Triangle (default)<br /><strong>Example:</strong> Use <strong>Diamond</strong> so increases and decreases stay distinct in grayscale printouts. |
+| Pattern Size (px) | Pattern element size in pixels, from 0 to 20. Default is 1.<br /><strong>Example:</strong> Values such as 4-8 make the texture more obvious. |
+| Pattern Rotation (degrees) | Rotate the pattern, from 0° to 360°. Default is 0°.<br /><strong>Example:</strong> Try <strong>45°</strong> if the texture looks too uniform. |
+| Pattern Color | Color of the pattern texture |
+
+</details>
+
+<details>
+<summary><strong>Data Transform</strong> <span className="text-muted-foreground">date &amp; time formatting</span></summary>
+
+Useful when your **Categories** field contains date or time values. The **Data Transform** toggle is on by default.
+
+**Example:** months, weeks.
+
+| Field | Description |
+| --- | --- |
+| Timezone | Timezone used to interpret date/time values.<br /><strong>Options:</strong> Local time (default), UTC time<br /><strong>Example:</strong> Use <strong>UTC time</strong> when steps are shared across regions. |
+| Date Format | How dates appear on the axis.<br /><strong>Options:</strong> Locale Default, YYYY-MM-DD (default), MM-DD-YYYY, MM/DD/YYYY, DD-MM-YYYY, MMMM D, YYYY, MMM D, YYYY<br /><strong>Example:</strong> <strong>MMM D, YYYY</strong> shows "Jan 15, 2026". |
+| Show Time / Time Format | **Show Time** is on by default. When it is on, choose how the time is displayed.<br /><strong>Options:</strong> Locale Default, hh:mm a, hh:mm:ss a, HH:mm, HH:mm:ss (default) |
+
+</details>
+
+<details>
+<summary><strong>Split by</strong> <span className="text-muted-foreground">layout of side-by-side panels</span></summary>
+
+Appears only when a **Split By** column is set on the **Data** tab.
+
+| Field | Description |
+| --- | --- |
+| Grid Layout | How panels are arranged.<br /><strong>Options:</strong> 1 × 2 (2 charts; default), 2 × 2 (4 charts), 2 × 3 (6 charts), 3 × 3 (9 charts) |
+| Gap Between Charts | Space between panels: Compact or Relax |
+| Show Facet Titles | Shows each panel's split value as its title. On by default |
+| Facet Title Position | Where panel titles appear: Top or Bottom |
+
+</details>
+
+<details>
+<summary><strong>Customize Series</strong> <span className="text-muted-foreground">colors for stacked segments</span></summary>
+
+Applies only when a **Stack by** column is set. Click the swatch next to a legend item to assign a custom color, or the reset icon to revert. Use the search bar to find an item among many.
+
+**Example:** Chocolate, Other, Sugar.
+
+</details>
+
+</TabsContent>
+</Tabs>
+
+***
+
+## Best practices
+
+<BestPractices>
+  <BestPracticeCard title="Improve readability">{`
+- Use descriptive step names ("Jan Sales", not "Step 3").
+- Limit the number of steps; too many bars hide the flow.
+- Use distinct colors for increases, decreases, and totals, and enable connectors to show direction.
+  `}</BestPracticeCard>
+  <BestPracticeCard title="Compare scenarios and breakdowns">{`
+- Use a Subtotal bar as a mid-chart checkpoint before the grand total.
+- Enable **Scenario comparison** to overlay plan vs. actual across the same steps.
+- Use **Stack by** to show what is driving each delta.
+  `}</BestPracticeCard>
+</BestPractices>
+
+***
+
+**See more**
+
+- Building Widgets: set up your Semantic Model so a chart can pull fields from multiple tables
+- Add a Chart: add a chart widget to a page
+- Filters: set up filters for one chart or for the whole page, so the waterfall shows only the steps and rows you want
+- Faceting: split any chart into side-by-side panels with **Split by** to compare bridges across groups
+- Introduction to Next-Gen Applications: get oriented in the app-building environment where chart widgets live

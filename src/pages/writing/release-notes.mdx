@@ -1,0 +1,180 @@
+---
+title: "Release notes"
+description: "Customer-facing release notes from plain to playful, and how a release is compressed into an internal announcement."
+---
+
+<div className="pg">
+
+<span className="pg-eyebrow">Writing · Release notes</span>
+
+<h1 className="pg-title">Release notes</h1>
+
+<p className="pg-lede">Customer-facing release notes for a planning platform, every two weeks since February 2025. A breaking change gets a calm, plain explanation. A small convenience can carry some personality. These are real entries, with the product name masked.</p>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>Plain and structured</h2>
+<p>For changes people need to understand quickly or act on: the problem first, then exactly what is new, with a link to the full guide.</p>
+</div>
+
+<div className="pg-grid-3">
+<div className="pg-card">
+<span className="pg-tag">Plain</span>
+
+<h3>Sequence freshness</h3>
+
+<p className="pg-note">For solution builders running long chains of notes. Shows which steps are working from stale data.</p>
+
+<blockquote className="pg-quote">
+
+An upstream Note reruns with new data. Somewhere downstream, a few Notes are still working from the old run, and nothing on the canvas tells you which ones. Until now, the only way to find out was to open Notes one at a time.
+
+- **Four statuses**: **Current** means the Note reflects the latest upstream data. **Behind** means an upstream Note has newer data than this Note last ran with.
+
+</blockquote>
+</div>
+
+<div className="pg-card">
+<span className="pg-tag">Plain</span>
+
+<h3>Data type changes</h3>
+
+<p className="pg-note">For everyone with data in the platform. A breaking-looking change that needs no action, explained so nobody panics.</p>
+
+<blockquote className="pg-quote">
+
+We have cleaned up the data types available in Meridian to make sure the data you put in comes back exactly the way you expect. No surprises, no silent errors. Your existing data is perfectly safe.
+
+`Byte`, `Short`, and `Long` are consolidated into the `Integer` data type, while `Binary` is consolidated into `String`. The good news? You don't need to do a thing.
+
+</blockquote>
+</div>
+
+<div className="pg-card">
+<span className="pg-tag">Plain</span>
+
+<h3>Rolling filters</h3>
+
+<p className="pg-note">For data engineers loading from a warehouse. A small feature in a few lines.</p>
+
+<blockquote className="pg-quote">
+
+You can now pick a rolling window as the filter value in the Snowflake source Bridge, and it updates itself each time the Bridge runs.
+
+- *Preset windows:* Pick Last Day, Last 7 Days, or Last 30 Days. No math required.
+- *Smart anchoring:* `date` columns anchor to the sync's current date; `datetime` columns anchor to the current timestamp. You don't have to think about it.
+
+</blockquote>
+</div>
+</div>
+</section>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>With some personality</h2>
+<p>For features people will enjoy. A clear before-and-after, a reason up front, and a voice readers remember.</p>
+</div>
+
+<div className="pg-grid-3">
+<div className="pg-card">
+<span className="pg-tag">Light</span>
+
+<h3>Nested filters</h3>
+
+<p className="pg-note">For builders using the visual transform tool, who used to fall back to SQL.</p>
+
+<blockquote className="pg-quote">
+
+Your filters used to have one rule: everyone shares the same AND/OR, no exceptions. Need to mix logic? Your only option was SQL. Not anymore.
+
+Filter conditions now support nested groups, with independent AND/OR logic at every level. More power, less clutter.
+
+</blockquote>
+</div>
+
+<div className="pg-card">
+<span className="pg-tag">Light</span>
+
+<h3>Application-first</h3>
+
+<p className="pg-note">For every builder. A structural change, with the reason before the details.</p>
+
+<blockquote className="pg-quote">
+
+*Plot twist*: Sequences are moving under Applications. Why? Because you are not just building bits and pieces anymore. You are building *actual* solutions.
+
+Your existing Sequences are perfectly safe. They are not going anywhere. We just gave them a better home.
+
+</blockquote>
+</div>
+
+<div className="pg-card">
+<span className="pg-tag">Playful</span>
+
+<h3>Upsert load behavior</h3>
+
+<p className="pg-note">For data engineers choosing how new data lands in a table.</p>
+
+<blockquote className="pg-quote">
+
+Tired of choosing between *"nuke everything and start fresh"* or *"just pile it on top"*? We were too, guilty as charged! Say hello to **Upsert**, the Goldilocks of data loading that's just right.
+
+Unlike its siblings Overwrite (the bulldozer) and Append (the hoarder), Upsert is the diplomatic one that actually thinks before acting.
+
+</blockquote>
+</div>
+</div>
+</section>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>From release notes to Slack</h2>
+<p>The release notes are written for customers. For the rest of the company, I compress the same release into one Slack post: one line per change, grouped the same way, with a link back to the full notes.</p>
+</div>
+
+<div className="pg-grid-2">
+<div className="pg-card">
+<span className="pg-eyebrow">Customer release note</span>
+
+<h3>Meet your new data wingman: Upsert load behavior</h3>
+
+<blockquote className="pg-quote">
+
+Say hello to **Upsert**, the Goldilocks of data loading that's just right.
+
+When new data arrives, Upsert asks the important questions:
+
+- "Have I seen this record before?" Updates it.
+- "Is this completely new?" Adds it.
+- "Should I preserve that precious creation date?" You bet.
+
+Available now in Data Source, Science, and Transform Notes.
+
+</blockquote>
+</div>
+
+<div className="pg-slack">
+<div className="pg-slack__head">
+<span className="pg-slack__avatar">VP</span>
+<div><div className="pg-slack__name">Vidya Patil</div><div className="pg-slack__chan">#general · company-wide release announcement</div></div>
+</div>
+
+**New Release Deployed: Hot off the press!**
+
+**General**
+
+<ul>
+<li><strong>Upstream Schema Change Detection:</strong> No more surprise schema shenanigans! The transform tool now auto-detects upstream schema changes (new columns, deleted fields, datatype tweaks) and flags them with a yellow bell. You get the details + control in the Manage Columns panel.</li>
+<li className="is-hit"><strong>Upsert Load Behavior:</strong> Meet the Goldilocks of data loading: smarter than Overwrite, cleaner than Append. Upsert updates what's new and keeps the rest intact. (We got tired of "nuke it all" vs. "just pile it on" too… guilty as charged.) Available in Data Source, Science & Transform Notes.</li>
+<li><strong>SFTP Source Connector:</strong> Secure file transfers made easy: password-auth, multipart handling, Parquet + CSV support, retry safeguards, and dual file/folder modes. Manual downloads are so last season.</li>
+<li><strong>Notes & Versions, Neatly Tagged:</strong> Science Notes now wear tags (Stable, Beta, Legacy). Instantly see what's safe, what's experimental, and what's old news.</li>
+</ul>
+
+<p className="pg-note">…plus seven more items: speed improvements, four algorithm releases and a bug fix. It ends with the bottom line and a link to the full release notes.</p>
+</div>
+</div>
+</section>
+
+<p className="pg-note">Real entries from the published release notes and a real internal post, with the product name masked.</p>
+
+</div>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Waterfall — Meridian</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --blue:#2424F5;--text:#111;--t2:#555;--t3:#999;
+  --border:#e5e5e5;--bg:#f2f2f2;--white:#fff;
+  --shadow:0 2px 20px rgba(0,0,0,.10);
+  --choc:#8B2252;--other:#06B6D4;--sugar:#F97316;
+  --hover-blue:#eeeeff;--panel-hdr-bg:#fafafa;--hover-bg:#f5f5f5;--hover-bg2:#f7f7f7;
+  --danger-bg:#fff0f0;--danger:#d00;--cb-border:#aaa;--toggle-off:#ccc;
+  --grid-line:#eee;--axis-tick:#bbb;--baseline:#e0e0e0;--connector:#bbb;
+  --label-top:#444;--xlabel-normal:#777;--total-bar:#2b2b2e;
+}
+:root.theme-dark{
+  --blue:#5c6cff;--text:#f0f0f0;--t2:#c7c7c7;--t3:#8c8c8c;
+  --border:#333537;--bg:#161616;--white:#1e1f21;
+  --shadow:0 2px 24px rgba(0,0,0,.55);
+  --hover-blue:rgba(92,108,255,.20);--panel-hdr-bg:#252628;--hover-bg:#2a2b2d;--hover-bg2:#272829;
+  --danger-bg:rgba(255,90,90,.14);--danger:#ff7a7a;--cb-border:#6a6a6a;--toggle-off:#4a4a4c;
+  --grid-line:#2e2f33;--axis-tick:#6f7075;--baseline:#3a3a3f;--connector:#6f7075;
+  --label-top:#dcdcdc;--xlabel-normal:#9a9a9e;
+}
+html{background:var(--bg);}
+body{font-family:var(--font);background:var(--bg);padding:24px 24px 24px;display:flex;flex-direction:column;align-items:center;}
+
+.dash{background:var(--white);border-radius:3px;box-shadow:var(--shadow);width:100%;max-width:880px;overflow:visible;}
+
+/* topbar */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;border-bottom:1px solid var(--border);}
+.topbar-title{font-size:13px;font-weight:600;letter-spacing:-.01em;color:var(--text);}
+.clear-all{font-size:11px;font-weight:600;color:var(--blue);cursor:pointer;}
+.clear-all:hover{opacity:.7;}
+
+/* kpi */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border);}
+.kpi{padding:13px 18px;border-right:1px solid var(--border);}
+.kpi:last-child{border-right:none;}
+.kpi-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--t3);text-transform:uppercase;margin-bottom:4px;}
+.kpi-val{font-size:20px;font-weight:700;letter-spacing:-.02em;line-height:1;color:var(--text);}
+.kpi--a .kpi-lbl{color:var(--choc);}
+.kpi--a .kpi-val{color:var(--choc);}
+
+/* chart panel */
+.chart-panel{border:1px solid var(--border);border-radius:2px;margin:16px;position:relative;}
+
+/* widget header */
+.w-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);}
+.w-title{font-size:12px;font-weight:600;color:var(--text);}
+.w-actions{display:flex;align-items:center;gap:2px;}
+.wa{width:27px;height:27px;border:none;background:none;border-radius:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t3);position:relative;transition:background .15s,color .15s;}
+.wa:hover,.wa.active{background:var(--hover-blue);color:var(--blue);}
+.wa svg{width:13px;height:13px;}
+
+/* filter modal */
+.overlay{display:none;position:fixed;inset:0;z-index:300;}
+.overlay.open{display:block;}
+.modal{position:absolute;background:var(--white);border:1px solid var(--border);border-radius:4px;box-shadow:0 8px 32px rgba(0,0,0,.15);z-index:301;}
+
+.fmod{width:280px;}
+.mod-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);}
+.mod-title{font-size:13px;font-weight:600;color:var(--text);}
+.mod-close{width:22px;height:22px;border:none;background:none;cursor:pointer;color:var(--t3);font-size:17px;display:flex;align-items:center;justify-content:center;border-radius:2px;}
+.mod-close:hover{background:var(--hover-bg);color:var(--text);}
+
+/* filter group */
+.fg{border-bottom:1px solid var(--border);}
+.fg-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;cursor:pointer;user-select:none;}
+.fg-hdr:hover{background:var(--panel-hdr-bg);}
+.fg-name{font-size:12px;color:var(--t2);}
+.fg-right{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--text);}
+.fg-right svg{width:9px;height:9px;color:var(--t3);transition:transform .2s;}
+.fg.exp .fg-right svg{transform:rotate(180deg);}
+.fg-items{display:none;padding:2px 0 8px;}
+.fg.exp .fg-items{display:block;}
+.fg-item{display:flex;align-items:center;gap:10px;padding:7px 16px;font-size:12px;color:var(--text);cursor:pointer;user-select:none;}
+.fg-item:hover{background:var(--hover-bg2);}
+/* checkbox style */
+.cb{width:16px;height:16px;border:1.5px solid var(--cb-border);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--white);transition:border-color .15s,background .15s;}
+.fg-item.on .cb{background:var(--blue);border-color:var(--blue);}
+.cb-tick{display:none;width:10px;height:10px;}
+.fg-item.on .cb-tick{display:block;}
+
+.mod-foot{display:flex;justify-content:flex-end;gap:8px;padding:11px 16px;border-top:1px solid var(--border);}
+.btn{font-size:12px;font-weight:500;padding:6px 16px;border-radius:2px;cursor:pointer;font-family:var(--font);border:1px solid var(--border);background:var(--white);color:var(--text);}
+.btn:hover{background:var(--hover-bg);}
+.btn-p{background:var(--blue);border-color:var(--blue);color:#fff;}
+.btn-p:hover{opacity:.88;}
+
+/* sort modal */
+.smod{width:300px;}
+.sort-row{display:flex;align-items:center;gap:8px;padding:13px 16px;}
+.sort-sel{flex:1;font-size:12px;border:1px solid var(--border);border-radius:2px;padding:6px 8px;font-family:var(--font);color:var(--text);background:var(--white);cursor:pointer;outline:none;}
+.sort-sel:focus{border-color:var(--blue);}
+.sort-del{width:26px;height:26px;border:none;background:none;cursor:pointer;color:var(--t3);border-radius:2px;display:flex;align-items:center;justify-content:center;}
+.sort-del:hover{background:var(--danger-bg);color:var(--danger);}
+.sort-del svg{width:12px;height:12px;}
+
+/* more/display panel */
+.dp{display:none;position:absolute;right:16px;top:44px;background:var(--white);border:1px solid var(--border);border-radius:3px;box-shadow:0 4px 20px rgba(0,0,0,.12);width:250px;z-index:200;overflow:hidden;max-height:420px;overflow-y:auto;}
+.dp.open{display:block;}
+.dp-hdr{padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);border-bottom:1px solid var(--border);background:var(--panel-hdr-bg);}
+.dp-row{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--border);}
+.dp-label{font-size:12px;color:var(--text);}
+/* mini toggle */
+.mt{width:32px;height:18px;border-radius:9px;background:var(--blue);position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;}
+.mt.off{background:var(--toggle-off);}
+.mt::after{content:'';position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;top:3px;left:17px;transition:left .2s;}
+.mt.off::after{left:3px;}
+/* small select */
+.sp-sel{font-size:11px;border:1px solid var(--border);border-radius:2px;padding:4px 7px;font-family:var(--font);color:var(--text);background:var(--white);cursor:pointer;outline:none;max-width:120px;}
+.sp-sel:focus{border-color:var(--blue);}
+/* slider row */
+.sl-wrap{display:flex;align-items:center;gap:6px;}
+.sl{width:100px;accent-color:var(--blue);}
+.sl-val{font-size:11px;color:var(--t2);min-width:28px;text-align:right;}
+
+/* chart */
+.chart-body{padding:12px 12px 6px;background:var(--white);position:relative;}
+.chart-svg-wrap{position:relative;width:100%;}
+#wfSvg{width:100%;height:270px;overflow:visible;}
+.ctip{display:none;position:absolute;background:rgba(17,17,17,.92);color:#fff;font-size:11px;line-height:1.7;padding:7px 11px;border-radius:3px;pointer-events:none;white-space:nowrap;z-index:50;transform:translateX(-50%);}
+.ctip strong{font-size:12px;display:block;margin-bottom:2px;}
+.hz{position:absolute;top:0;left:0;right:0;bottom:0;cursor:crosshair;}
+
+/* legend */
+.chart-legend{display:flex;align-items:center;justify-content:center;gap:16px;padding:9px 14px 13px;border-top:1px solid var(--border);flex-wrap:wrap;}
+.leg-i{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2);}
+.leg-sw{width:24px;height:9px;border-radius:2px;flex-shrink:0;}
+
+/* try it — centered below chart panel, not at page bottom */
+.try-wrap{display:flex;justify-content:center;padding:16px 0 0;}
+.try-btn{display:inline-flex;align-items:center;gap:7px;background:var(--blue);color:#fff;font-size:13px;font-weight:600;padding:9px 22px;border-radius:2px;border:none;cursor:pointer;text-decoration:none;transition:opacity .15s;}
+.try-btn:hover{opacity:.87;}
+.grid-line{stroke:var(--grid-line);}
+.axis-tick{fill:var(--axis-tick);}
+.baseline{stroke:var(--baseline);}
+.connector{stroke:var(--connector);}
+.label-top{fill:var(--label-top);}
+.xlabel-normal{fill:var(--xlabel-normal);}
+.xlabel-total{fill:var(--text);}
+.total-bar{fill:var(--total-bar);}
+.default-bar{fill:var(--blue);}
+</style>
+<script>
+(function(){
+  function applyTheme(t){
+    var r=document.documentElement;
+    r.classList.remove('theme-light','theme-dark');
+    if(t==='dark')r.classList.add('theme-dark');
+  }
+  function readParentTheme(){
+    try{
+      if(!window.parent||window.parent===window)return null;
+      var pd=window.parent.document;
+      var attr=pd.documentElement.getAttribute('data-theme');
+      if(attr==='dark'||attr==='light')return attr;
+      var ls=window.parent.localStorage.getItem('theme');
+      if(ls==='dark'||ls==='light')return ls;
+    }catch(e){}
+    return null;
+  }
+  var initial=readParentTheme();
+  if(initial)applyTheme(initial);
+  try{
+    if(window.parent&&window.parent!==window){
+      var pdoc=window.parent.document;
+      new MutationObserver(function(){
+        var t=readParentTheme();
+        if(t)applyTheme(t);
+      }).observe(pdoc.documentElement,{attributes:true,attributeFilter:['data-theme','class']});
+    }
+  }catch(e){}
+})();
+</script>
+</head>
+<body>
+<div class="dash">
+
+  <!-- topbar: title + clear only -->
+  <div class="topbar">
+    <span class="topbar-title">Region-wise Sales by Division</span>
+    <span class="clear-all" id="clearAllBtn" onclick="clearAll()" style="display:none;">Clear All Filters</span>
+  </div>
+
+  <!-- kpi -->
+  <div class="kpi-row">
+    <div class="kpi kpi--a"><div class="kpi-lbl">Total Sales</div><div class="kpi-val" id="kpiT">142K</div></div>
+    <div class="kpi"><div class="kpi-lbl">Largest Step</div><div class="kpi-val" id="kpiL">+46.3K</div></div>
+    <div class="kpi"><div class="kpi-lbl">Steps</div><div class="kpi-val" id="kpiS">4</div></div>
+    <div class="kpi"><div class="kpi-lbl">Top Division</div><div class="kpi-val" id="kpiD">Chocolate</div></div>
+  </div>
+
+  <!-- chart panel -->
+  <div class="chart-panel">
+    <div class="w-hdr">
+      <span class="w-title">waterfall</span>
+      <div class="w-actions">
+
+        <!-- Filter -->
+        <button class="wa" id="wfBtn" onclick="openFMod()" title="Filters">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+
+        <!-- Sort -->
+        <button class="wa" id="sortBtn" onclick="openSMod()" title="Sort by">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M5 3v10M5 13l-2-2M5 13l2-2M11 13V3M11 3l-2 2M11 3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <!-- More / Display -->
+        <button class="wa" id="moreBtn" onclick="toggleDP(event)" title="Display settings">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="3" cy="8" r="1.3" fill="currentColor"/><circle cx="8" cy="8" r="1.3" fill="currentColor"/><circle cx="13" cy="8" r="1.3" fill="currentColor"/></svg>
+        </button>
+
+      </div>
+    </div><!-- end w-hdr -->
+
+    <!-- Display panel: outside the button so select interactions don't bubble into button -->
+    <div class="dp" id="dp">
+      <div class="dp-hdr">Display</div>
+      <div class="dp-row"><span class="dp-label">Data Labels</span><div class="mt" id="mt-labels" onclick="togDP('labels')"></div></div>
+      <div class="dp-row"><span class="dp-label">Label Position</span>
+        <select class="sp-sel" id="sel-lpos">
+          <option value="auto">Auto</option><option value="top">Top</option>
+          <option value="inside-top">Inside Top</option><option value="inside" selected>Inside</option>
+          <option value="inside-bottom">Inside Bottom</option><option value="bottom">Bottom</option>
+        </select>
+      </div>
+      <div class="dp-row"><span class="dp-label">Show connectors</span><div class="mt" id="mt-conn" onclick="togDP('conn')"></div></div>
+      <div class="dp-row"><span class="dp-label">Show subtotals</span><div class="mt off" id="mt-sub" onclick="togDP('sub')"></div></div>
+      <div class="dp-row"><span class="dp-label">Show grand total</span><div class="mt" id="mt-grand" onclick="togDP('grand')"></div></div>
+      <div class="dp-row">
+        <span class="dp-label">Bar Width (%)</span>
+        <div class="sl-wrap">
+          <input type="range" class="sl" id="sl-bw" min="20" max="90" value="55">
+          <span class="sl-val" id="sl-bw-v">55%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-body">
+      <div class="chart-svg-wrap" id="cWrap">
+        <svg id="wfSvg" viewBox="0 0 800 250" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="ctip" id="ctip"></div>
+        <div class="hz" id="hz"></div>
+      </div>
+    </div>
+
+    <div class="chart-legend">
+      <div class="leg-i"><div class="leg-sw" style="background:var(--choc)"></div>Chocolate</div>
+      <div class="leg-i"><div class="leg-sw" style="background:var(--other)"></div>Other</div>
+      <div class="leg-i"><div class="leg-sw" style="background:var(--sugar)"></div>Sugar</div>
+    </div>
+  </div>
+
+  <!-- Try it: centered, right after chart panel -->
+  <div class="try-wrap">
+    <button class="try-btn" onclick="toggleDP(event)">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      Try it
+    </button>
+  </div>
+
+</div>
+
+<!-- Filter Modal -->
+<div class="overlay" id="fmodOv" onclick="closeFMod(event)">
+  <div class="modal fmod" id="fmod">
+    <div class="mod-hdr">
+      <span class="mod-title">Filters · waterfall</span>
+      <button class="mod-close" onclick="closeFMod()">×</button>
+    </div>
+
+    <!-- Stack by group -->
+    <div class="fg exp" id="fg-sb">
+      <div class="fg-hdr" onclick="togFG('fg-sb')">
+        <span class="fg-name">Stack by</span>
+        <span class="fg-right"><span id="fg-sb-lbl">All</span><svg viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+      </div>
+      <div class="fg-items">
+        <div class="fg-item on" data-fg="sb" data-v="Chocolate" onclick="fgClick(this)"><span class="cb"><svg class="cb-tick" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></span>Chocolate</div>
+        <div class="fg-item on" data-fg="sb" data-v="Other" onclick="fgClick(this)"><span class="cb"><svg class="cb-tick" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></span>Other</div>
+        <div class="fg-item on" data-fg="sb" data-v="Sugar" onclick="fgClick(this)"><span class="cb"><svg class="cb-tick" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></span>Sugar</div>
+      </div>
+    </div>
+
+    <!-- Categories group -->
+    <div class="fg exp" id="fg-cat">
+      <div class="fg-hdr" onclick="togFG('fg-cat')">
+        <span class="fg-name">Categories</span>
+        <span class="fg-right"><span id="fg-cat-lbl">All</span><svg viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+      </div>
+      <div class="fg-items">
+        <div class="fg-item on" data-fg="cat" data-v="Atlantic" onclick="fgClick(this)"><span class="cb"><svg class="cb-tick" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></span>Atlantic</div>
+        <div class="fg-item on" data-fg="cat" data-v="Gulf" onclick="fgClick(this)"><span class="cb"><svg class="cb-tick" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></span>Gulf</div>
+        <div class="fg-item on" data-fg="cat" data-v="Interior" onclick="fgClick(this)"><span class="cb"><svg class="cb-tick" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></span>Interior</div>
+        <div class="fg-item on" data-fg="cat" data-v="Pacific" onclick="fgClick(this)"><span class="cb"><svg class="cb-tick" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></span>Pacific</div>
+      </div>
+    </div>
+
+    <div class="mod-foot">
+      <button class="btn" onclick="clearFMod()">Clear All</button>
+      <button class="btn btn-p" onclick="applyFMod()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sort Modal -->
+<div class="overlay" id="smodOv" onclick="closeSMod(event)">
+  <div class="modal smod" id="smod">
+    <div class="mod-hdr">
+      <span class="mod-title">Sort by</span>
+      <button class="mod-close" onclick="closeSMod()">×</button>
+    </div>
+    <div class="sort-row">
+      <select class="sort-sel" id="sortCol">
+        <option value="">Select a column</option>
+        <option value="value">Value (Sales)</option>
+      </select>
+      <select class="sort-sel" id="sortOrd" style="max-width:120px;">
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
+      </select>
+      <button class="sort-del" onclick="resetSort()">
+        <svg viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="mod-foot">
+      <button class="btn" onclick="resetSort()">Reset</button>
+      <button class="btn btn-p" onclick="applySort()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var raw=[
+    {r:'Atlantic',d:'Chocolate',v:37600},{r:'Atlantic',d:'Other',v:2800},{r:'Atlantic',d:'Sugar',v:800},
+    {r:'Gulf',d:'Chocolate',v:20100},{r:'Gulf',d:'Other',v:1700},{r:'Gulf',d:'Sugar',v:400},
+    {r:'Interior',d:'Chocolate',v:28900},{r:'Interior',d:'Other',v:2600},{r:'Interior',d:'Sugar',v:500},
+    {r:'Pacific',d:'Chocolate',v:40200},{r:'Pacific',d:'Other',v:2100},{r:'Pacific',d:'Sugar',v:500},
+  ];
+  var REGS=['Atlantic','Gulf','Interior','Pacific'];
+  var DIVS=['Chocolate','Other','Sugar'];
+  var DC={Chocolate:'#8B2252',Other:'#06B6D4',Sugar:'#F97316'};
+
+  var S={
+    rVis:{Atlantic:true,Gulf:true,Interior:true,Pacific:true},
+    dVis:{Chocolate:true,Other:true,Sugar:true},
+    showLabels:true, labelPos:'inside',
+    showConn:true, showSub:false, showGrand:true,
+    barW:55, sortCol:'', sortOrd:'asc'
+  };
+
+  function fmt(n){return Math.abs(n)>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'K':String(n);}
+
+  function buildSteps(){
+    var ar=REGS.filter(function(r){return S.rVis[r];});
+    var ss=ar.map(function(r){
+      var t=0,bd={};
+      raw.filter(function(x){return x.r===r&&S.dVis[x.d];}).forEach(function(x){t+=x.v;bd[x.d]=(bd[x.d]||0)+x.v;});
+      return {lbl:r,tot:t,bd:bd};
+    }).filter(function(s){return s.tot>0;});
+    if(S.sortCol==='value')ss.sort(function(a,b){return S.sortOrd==='asc'?a.tot-b.tot:b.tot-a.tot;});
+    if(S.showSub&&ss.length>1){
+      var si=Math.min(2,ss.length-1);
+      var stot=ss.slice(0,si+1).reduce(function(a,b){return a+b.tot;},0);
+      var sbd={};DIVS.forEach(function(d){sbd[d]=ss.slice(0,si+1).reduce(function(a,b){return a+(b.bd[d]||0);},0);});
+      ss.splice(si+1,0,{lbl:'Subtotal',tot:stot,bd:sbd,isSub:true});
+    }
+    if(S.showGrand&&ss.length){
+      var g=ss.filter(function(s){return !s.isSub;}).reduce(function(a,b){return a+b.tot;},0);
+      var gbd={};DIVS.forEach(function(d){gbd[d]=ss.filter(function(s){return !s.isSub;}).reduce(function(a,b){return a+(b.bd[d]||0);},0);});
+      ss.push({lbl:'Total',tot:g,bd:gbd,isTotal:true});
+    }
+    return ss;
+  }
+
+  var W=800,H=250,PL=50,PR=16,PT=22,PB=38,CW=W-PL-PR,CH=H-PT-PB;
+  function se(t,a){var e=document.createElementNS('http://www.w3.org/2000/svg',t);Object.keys(a).forEach(function(k){e.setAttribute(k,a[k]);});return e;}
+
+
+  function notifyParentHeight(){
+    try{
+      if(!window.parent||window.parent===window)return;
+      var h=Math.ceil(Math.max(
+        document.documentElement.scrollHeight||0,
+        document.body.scrollHeight||0
+      ));
+      var nodes=document.querySelectorAll('.overlay.open .modal, .dp.open');
+      for(var i=0;i<nodes.length;i++){
+        var r=nodes[i].getBoundingClientRect();
+        if(r.height>0)h=Math.max(h, Math.ceil(r.bottom + (window.scrollY||0) + 24));
+      }
+      window.parent.postMessage({type:'docs-demo-height',height:h,src:'/demos/waterfall-region-sales.html'},'*');
+    }catch(e){}
+  }
+  function scheduleHeightNotify(){
+    requestAnimationFrame(function(){requestAnimationFrame(notifyParentHeight);});
+  }
+
+  function render(){
+    var svg=document.getElementById('wfSvg');
+    while(svg.firstChild)svg.removeChild(svg.firstChild);
+    var ss=buildSteps();if(!ss.length){updKPI([],0);return;}
+    var grand=ss.reduce(function(a,b){return a+(!b.isSub?b.tot:0);},0);
+    if(ss.some(function(s){return s.isTotal;}))grand=ss.filter(function(s){return s.isTotal;})[0].tot;
+    var maxV=grand*1.13,nS=ss.length,sW=CW/nS;
+    var bW=Math.min(64,sW*(S.barW/100));
+    function yp(v){return PT+CH-(v/maxV)*CH;}
+    // grid
+    for(var gi=0;gi<=5;gi++){var gv=(maxV/5)*gi,gy=yp(gv);svg.appendChild(se('line',{x1:PL,y1:gy,x2:PL+CW,y2:gy,class:'grid-line','stroke-width':.5}));var gt=se('text',{x:PL-5,y:gy+4,'text-anchor':'end',class:'axis-tick','font-size':'9','font-family':'inherit'});gt.textContent=fmt(gv);svg.appendChild(gt);}
+    svg.appendChild(se('line',{x1:PL,y1:PT+CH,x2:PL+CW,y2:PT+CH,class:'baseline','stroke-width':1}));
+    var running=0,pCY=null,pBR=null;
+    ss.forEach(function(step,i){
+      var cx=PL+sW*i+sW/2,bx=cx-bW/2;
+      var base=(step.isTotal||step.isSub)?0:running;
+      var topV=(step.isTotal||step.isSub)?step.tot:running+step.tot;
+      var topY=yp(topV),baseY=yp(base),barH=baseY-topY;
+      // stacked bars
+      var sb=base;
+      DIVS.forEach(function(d){var dv=step.bd[d]||0;if(!dv)return;var sy=yp(sb+dv),sby=yp(sb),sh=sby-sy;svg.appendChild(se('rect',{x:bx,y:sy,width:bW,height:sh,fill:DC[d],rx:1}));sb+=dv;});
+      if(sb===base)svg.appendChild(se('rect',{x:bx,y:topY,width:bW,height:barH,class:step.isTotal?'total-bar':'default-bar',rx:1}));
+      // label — single label, position controlled by S.labelPos
+      if(S.showLabels){
+        var lpos=S.labelPos;
+        var lval=step.isTotal?fmt(step.tot):(step.isSub?'Sub: '+fmt(step.tot):(i===0?fmt(step.tot):'+'+fmt(step.tot)));
+        var lx=cx, ly, lfill, lfsize='9.5', lfw='700';
+        if(lpos==='top'||lpos==='auto'){
+          ly=topY-6; lfill='var(--label-top)';
+        } else if(lpos==='bottom'){
+          // just below each bar's own bottom edge; if bar sits on baseline, use inside near base
+          var atBaseline = Math.abs(baseY - (PT+CH)) < 2;
+          ly = atBaseline ? topY+barH-8 : baseY+12;
+          lfill = atBaseline ? '#fff' : 'var(--label-top)';
+        } else if(lpos==='inside-top'){
+          ly=topY+13; lfill='#fff';
+        } else if(lpos==='inside-bottom'){
+          ly=topY+barH-6; lfill='#fff';
+        } else {
+          ly=topY+barH/2+4; lfill='#fff';
+        }
+        if(barH>12||(lpos==='top'||lpos==='auto'||lpos==='bottom')){
+          var lt=se('text',{x:lx,y:ly,'text-anchor':'middle',fill:lfill,'font-size':lfsize,'font-weight':lfw,'font-family':'inherit'});
+          lt.textContent=lval; svg.appendChild(lt);
+        }
+      }
+      // connectors
+      if(S.showConn&&!step.isTotal&&!step.isSub){var cY=yp(running+step.tot);if(pCY!==null&&pBR!==null&&i>0)svg.appendChild(se('line',{x1:pBR,y1:pCY,x2:bx,y2:pCY,class:'connector','stroke-width':.9,'stroke-dasharray':'4,3'}));pCY=cY;pBR=bx+bW;}
+      else if(S.showConn&&(step.isTotal||step.isSub)&&pCY!==null&&pBR!==null)svg.appendChild(se('line',{x1:pBR,y1:pCY,x2:bx,y2:pCY,class:'connector','stroke-width':.9,'stroke-dasharray':'4,3'}));
+      // x label — pushed down when Bottom label position is active to make room
+      var xLabelY = (S.labelPos==='bottom') ? PT+CH+26 : PT+CH+14;
+      var xl=se('text',{x:cx,y:xLabelY,'text-anchor':'middle',class:(step.isTotal||step.isSub)?'xlabel-total':'xlabel-normal','font-size':'9.5','font-weight':(step.isTotal||step.isSub)?'700':'400','font-family':'inherit'});xl.textContent=step.lbl;svg.appendChild(xl);
+      if(!step.isTotal&&!step.isSub)running+=step.tot;
+    });
+    updKPI(ss,grand);
+    // show/hide clear all
+    var anyOff=REGS.some(function(r){return !S.rVis[r];})||DIVS.some(function(d){return !S.dVis[d];});
+    document.getElementById('clearAllBtn').style.display=anyOff?'inline':'none';
+  }
+
+  function updKPI(ss,grand){
+    document.getElementById('kpiT').textContent=fmt(grand);
+    var d=ss.filter(function(s){return !s.isTotal&&!s.isSub;});
+    if(!d.length){document.getElementById('kpiL').textContent='—';document.getElementById('kpiS').textContent='0';document.getElementById('kpiD').textContent='—';return;}
+    var lg=d.reduce(function(m,x){return x.tot>m.tot?x:m;},d[0]);
+    document.getElementById('kpiL').textContent='+'+fmt(lg.tot);
+    document.getElementById('kpiS').textContent=d.length;
+    var dt={};DIVS.forEach(function(dv){dt[dv]=d.reduce(function(a,b){return a+(b.bd[dv]||0);},0);});
+    var top=DIVS.filter(function(dv){return S.dVis[dv];}).reduce(function(a,b){return (dt[a]||0)>=(dt[b]||0)?a:b;},'Chocolate');
+    document.getElementById('kpiD').textContent=top||'—';
+  }
+
+  // tooltip
+  var tip=document.getElementById('ctip'),hz=document.getElementById('hz'),cw=document.getElementById('cWrap');
+  hz.addEventListener('mousemove',function(e){
+    var ss=buildSteps();if(!ss.length)return;
+    var rect=hz.getBoundingClientRect(),frac=(e.clientX-rect.left)/rect.width;
+    var sx=frac*W,sw2=CW/ss.length,idx=Math.max(0,Math.min(ss.length-1,Math.floor((sx-PL)/sw2)));
+    var step=ss[idx];if(!step)return;
+    var html='<strong>'+step.lbl+'</strong>';
+    DIVS.forEach(function(d){var v=step.bd[d]||0;if(!v)return;html+='<span style="color:'+DC[d]+'">'+d+': '+fmt(v)+'</span><br>';});
+    html+='<span style="color:#aaa">Total: '+fmt(step.tot)+'</span>';
+    tip.innerHTML=html;tip.style.display='block';
+    var wr=cw.getBoundingClientRect();tip.style.left=(e.clientX-wr.left)+'px';tip.style.bottom=(wr.height+4)+'px';
+  });
+  hz.addEventListener('mouseleave',function(){tip.style.display='none';});
+
+  // display panel toggles
+  var togState={labels:true,conn:true,sub:false,grand:true};
+  window.togDP=function(k){togState[k]=!togState[k];document.getElementById('mt-'+k).classList.toggle('off',!togState[k]);if(k==='labels')S.showLabels=togState[k];if(k==='conn')S.showConn=togState[k];if(k==='sub')S.showSub=togState[k];if(k==='grand')S.showGrand=togState[k];render();scheduleHeightNotify();};
+  window.toggleDP=function(e){ scheduleHeightNotify();
+    e.stopPropagation();
+    var dp=document.getElementById('dp');
+    var btn=document.getElementById('moreBtn');
+    var opening=!dp.classList.contains('open');
+    if(opening){
+      var br=btn.getBoundingClientRect();
+      var dashRect=document.querySelector('.dash').getBoundingClientRect();
+      var margin=16;
+      var spaceInCard=dashRect.bottom-br.bottom-margin;
+      var spaceInViewport=window.innerHeight-br.bottom-margin;
+      var available=Math.min(spaceInCard,spaceInViewport);
+      dp.style.maxHeight=Math.max(160,Math.min(420,available))+'px';
+    }
+    dp.classList.toggle('open');
+    btn.classList.toggle('active');
+  };
+  document.getElementById('sel-lpos').addEventListener('change',function(){S.labelPos=this.value;render();scheduleHeightNotify();});
+  document.getElementById('sl-bw').addEventListener('input',function(){S.barW=parseInt(this.value);document.getElementById('sl-bw-v').textContent=this.value+'%';render();scheduleHeightNotify();});
+
+  // filter modal
+  window.openFMod=function(){ scheduleHeightNotify();
+    var ov=document.getElementById('fmodOv');ov.classList.add('open');
+    var br=document.getElementById('wfBtn').getBoundingClientRect();
+    var m=document.getElementById('fmod');m.style.top=(br.bottom+6)+'px';m.style.right=(window.innerWidth-br.right)+'px';
+    document.getElementById('wfBtn').classList.add('active');
+  };
+  window.closeFMod=function(e){if(e&&!e.target.classList.contains('overlay'))return;document.getElementById('fmodOv').classList.remove('open');document.getElementById('wfBtn').classList.remove('active');};
+  window.togFG=function(id){ scheduleHeightNotify();document.getElementById(id).classList.toggle('exp');};
+  window.fgClick=function(el){
+    el.classList.toggle('on');
+    var g=el.dataset.fg,items=Array.from(document.querySelectorAll('[data-fg="'+g+'"]'));
+    var ct=items.filter(function(i){return i.classList.contains('on');}).length;
+    document.getElementById('fg-'+g+'-lbl').textContent=ct===items.length?'All':(ct===0?'None':ct+' of '+items.length);
+  };
+  window.clearFMod=function(){document.querySelectorAll('.fg-item').forEach(function(i){i.classList.add('on');});document.getElementById('fg-sb-lbl').textContent='All';document.getElementById('fg-cat-lbl').textContent='All';};
+  window.applyFMod=function(){
+    document.querySelectorAll('[data-fg="sb"]').forEach(function(el){S.dVis[el.dataset.v]=el.classList.contains('on');});
+    document.querySelectorAll('[data-fg="cat"]').forEach(function(el){S.rVis[el.dataset.v]=el.classList.contains('on');});
+    document.getElementById('fmodOv').classList.remove('open');document.getElementById('wfBtn').classList.remove('active');render();scheduleHeightNotify();
+  };
+
+  // sort modal
+  window.openSMod=function(){
+    var ov=document.getElementById('smodOv');ov.classList.add('open');
+    var br=document.getElementById('sortBtn').getBoundingClientRect();
+    var m=document.getElementById('smod');m.style.top=(br.bottom+6)+'px';m.style.right=(window.innerWidth-br.right)+'px';
+    document.getElementById('sortBtn').classList.add('active');
+  };
+  window.closeSMod=function(e){if(e&&!e.target.classList.contains('overlay'))return;document.getElementById('smodOv').classList.remove('open');document.getElementById('sortBtn').classList.remove('active');};
+  window.applySort=function(){S.sortCol=document.getElementById('sortCol').value;S.sortOrd=document.getElementById('sortOrd').value;closeSMod();render();scheduleHeightNotify();};
+  window.resetSort=function(){S.sortCol='';document.getElementById('sortCol').value='';document.getElementById('sortOrd').value='asc';closeSMod();render();scheduleHeightNotify();};
+
+  // clear all
+  window.clearAll=function(){
+    DIVS.forEach(function(d){S.dVis[d]=true;});REGS.forEach(function(r){S.rVis[r]=true;});
+    document.querySelectorAll('.fg-item').forEach(function(i){i.classList.add('on');});
+    document.getElementById('fg-sb-lbl').textContent='All';document.getElementById('fg-cat-lbl').textContent='All';
+    render();scheduleHeightNotify();
+  };
+
+  // close on outside click
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('#moreBtn')&&!e.target.closest('#dp')){
+      document.getElementById('dp').classList.remove('open');
+      document.getElementById('moreBtn').classList.remove('active');
+    }
+  });
+
+  render();scheduleHeightNotify();
+  window.addEventListener('resize',scheduleHeightNotify);
+})();
+</script>
+</body>
+</html>

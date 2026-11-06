@@ -1,0 +1,86 @@
+---
+title: "User guides"
+description: "User guides for a complex supply chain planning platform, with interactive demos readers can try."
+---
+
+<div className="pg">
+
+<span className="pg-eyebrow">Writing · User guides</span>
+
+<h1 className="pg-title">User guides</h1>
+
+<p className="pg-lede">Guides for planners, supply chain engineers and data scientists working in a complex planning platform. The pages below are real, with the product name and other identifying details masked.</p>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>A complete guide</h2>
+<p>Read it the way a planner would. It starts from the decision the reader has to make, and only then explains how each operation works.</p>
+</div>
+
+<div className="pg-split">
+<div className="pg-card pg-card--feature">
+<span className="pg-tag pg-tag--accent">Task and concept guide</span>
+
+<h3>Syncing and committing scenarios</h3>
+
+A planner works in a copy of a plan and, sooner or later, has to pull in a colleague's changes or push their own back. Both operations can overwrite work. The guide opens with a side-by-side comparison so readers choose the right operation first. It names the most common mistake, the record-level trap, and ends with a checklist to run before every commit.
+
+<p><a className="pg-link" href="/samples/scenarios/syncing-and-committing-scenarios">Read the guide</a><a className="pg-link" href="/samples/scenarios/scenario-permissions">Read the permissions guide</a></p>
+</div>
+
+<div className="pg-card">
+<span className="pg-eyebrow">How the guide is built</span>
+
+<ol className="pg-steps">
+<li><span className="pg-when">Decide</span><strong>Choose between sync and commit</strong><p>A comparison table: when to use each, direction, scope, what it overwrites, and the permission you need.</p></li>
+<li><span className="pg-when">Try</span><strong>See what each operation overwrites</strong><p>A simulator readers can use before they touch real data.</p></li>
+<li><span className="pg-when">Do</span><strong>Run a sync, run a commit</strong><p>Short procedures, with the record-level trap and "submit before you sync" called out where they bite.</p></li>
+<li><span className="pg-when">Check</span><strong>Review changes and logs, then the pre-commit checklist</strong><p>How to confirm what happened, and what to check every time.</p></li>
+</ol>
+</div>
+</div>
+</section>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>Try it</h2>
+<p>From the permissions guide. Three settings decide what a user can do in a scenario. Instead of a matrix, readers pick the three and see the result, and the rule that produced it.</p>
+</div>
+
+<AutoHeightIframe src="/demos/scenario-access-calculator.html" title="Access calculator: pick three settings and see a user's effective scenario permission" messageType="demo-height" initialHeight={560} />
+
+<p className="pg-note">Live demo from the guide, plain HTML, CSS and JavaScript. <a href="/samples/scenarios/scenario-permissions">Open it in the guide</a>.</p>
+</section>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>More guides</h2>
+<p>Two more pages with different jobs: one explains infrastructure to people who are not engineers, the other helps a builder choose and configure a chart.</p>
+</div>
+
+<div className="pg-grid-2">
+<div className="pg-card">
+<span className="pg-tag">Concept and task guide</span>
+
+<h3>Compute and parallelization</h3>
+
+How a large optimization run uses compute: what the head and worker nodes do, what each kind of note can run in parallel, how to plan compute for a large run, and what to check when a run is slow. Written for planners and solution builders, not engineers.
+
+<p><a className="pg-link" href="/samples/guides/compute-and-parallelization">Read the guide</a></p>
+</div>
+
+<div className="pg-card">
+<span className="pg-tag">Reference with a live example</span>
+
+<h3>Waterfall chart</h3>
+
+Opens with a decision tree that sends readers to a different chart when a waterfall is the wrong choice. Then the data it needs, how values are calculated, a live chart to explore, every property in tabs, and best practices.
+
+<p><a className="pg-link" href="/samples/guides/waterfall-chart">Read the guide</a></p>
+</div>
+</div>
+
+<p className="pg-note">Also in the samples: a forecasting quick start and API documentation, re-created for a fictional product. <a href="/samples">All writing samples</a>.</p>
+</section>
+
+</div>

@@ -39,7 +39,7 @@ const config: Config = {
       tagName: 'link',
       attributes: {
         rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap',
+        href: 'https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap',
       },
     },
   ],
@@ -68,8 +68,19 @@ const config: Config = {
       title: 'Vidya Patil',
       hideOnScroll: false,
       items: [
-        {to: '/work', label: 'Work', position: 'left', activeBaseRegex: '^/work'},
-        {to: '/samples', label: 'Writing samples', position: 'left', activeBaseRegex: '^/samples'},
+        {
+          type: 'dropdown',
+          label: 'Writing',
+          position: 'left',
+          items: [
+            {label: 'User guides', to: '/writing/user-guides'},
+            {label: 'Release notes', to: '/writing/release-notes'},
+            {label: 'All writing samples', to: '/samples'},
+          ],
+        },
+        {to: '/ai', label: 'AI', position: 'left'},
+        {to: '/program-management', label: 'Program management', position: 'left'},
+        {to: '/videos', label: 'Videos & podcasts', position: 'left'},
         {to: '/cv', label: 'CV', position: 'left'},
         {href: 'https://www.linkedin.com/in/vidyapatil18', label: 'LinkedIn', position: 'right'},
         {href: 'mailto:vidyapatil123@gmail.com', label: 'Email', position: 'right'},
@@ -78,7 +89,7 @@ const config: Config = {
     footer: {
       style: 'light',
       links: [],
-      copyright: `Vidya Patil · Prague · ${new Date().getFullYear()} · Built with Docusaurus, deployed from GitHub.`,
+      copyright: `Vidya Patil · Prague · ${new Date().getFullYear()} · <a href="/work">Case studies</a> · <a href="/samples">Writing samples</a> · Built with Docusaurus, deployed from GitHub`,
     },
     prism: {theme: prismThemes.github, darkTheme: prismThemes.dracula, additionalLanguages: ['bash', 'json', 'yaml', 'python']},
     tableOfContents: {minHeadingLevel: 2, maxHeadingLevel: 4},

@@ -4,10 +4,35 @@ export const hero = {
   name: 'Vidya Patil',
   title: 'Senior Manager, Documentation at Lyric',
   facts: ['Prague', 'Authorized to work in the Czech Republic'],
-  line: 'I write release notes and product docs, run the release process behind them, and build the prototypes and AI tools that change how my team works.',
+  line: 'A hands-on documentation leader. I write complex product guides, lead cross-functional release programs, and build prototypes and AI tools.',
+  example:
+    'For every release since July 2026, I publish the Release Hub about a week ahead: each customer-facing change, sorted by what customers must do. Then Product walks Customer Success through it in a pre-release session I set up.',
+  links: [
+    {label: 'Read a user guide', to: '/samples/scenarios/scenario-permissions', primary: true},
+    {label: 'Read a release note', to: '/samples/release-comms/release-note-build-and-live'},
+    {label: 'View CV', to: '/cv'},
+  ],
 };
 
-// Selected work: one wide feature, then two compact rows.
+// Selected work: the migration first, then the prototype, then two compact rows.
+export const migration = {
+  kicker: 'Docs platform · shipped June 2026',
+  title: 'Moving four documentation spaces to docs-as-code',
+  context:
+    'The product guide, science notes, predictions and release notes moved from GitBook to a Docusaurus site, live in June 2026.',
+  decisionLabel: 'The decision I owned',
+  decision:
+    'Every documentation change goes through a pull request with a preview link, the same way code does. I proposed this review workflow and got it approved in June 2025.',
+  steps: [
+    {when: 'Ticket', what: 'One Jira ticket per change'},
+    {when: 'Branch', what: 'A branch named after the ticket'},
+    {when: 'Pull request', what: 'A draft pull request against staging, with a preview link and a checklist for the page type'},
+    {when: 'Review and merge', what: 'Reviewed on the preview, merged, and released with the product'},
+  ],
+  result: '14 people outside the writing team merged documentation changes in the five months after go-live.',
+  action: {label: 'Read the case study', to: '/work/docs-as-code'},
+};
+
 export const feature = {
   kicker: 'Working prototype',
   title: 'Sync or commit: see what gets overwritten before you click',

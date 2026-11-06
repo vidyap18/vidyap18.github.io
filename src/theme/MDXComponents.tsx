@@ -1,6 +1,12 @@
 import MDXComponents from '@theme-original/MDXComponents';
 import {
   AutoHeightIframe,
+  BestPracticeCard,
+  BestPractices,
+  DecisionLink,
+  DecisionNo,
+  DecisionTree,
+  DecisionYes,
   ExpandableItem,
   Expandables,
   Step,
@@ -15,6 +21,12 @@ import {
 export default {
   ...MDXComponents,
   AutoHeightIframe,
+  BestPracticeCard,
+  BestPractices,
+  DecisionLink,
+  DecisionNo,
+  DecisionTree,
+  DecisionYes,
   ExpandableItem,
   Expandables,
   Step,

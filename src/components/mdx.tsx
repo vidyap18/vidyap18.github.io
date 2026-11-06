@@ -150,3 +150,82 @@ export function AutoHeightIframe({
     </div>
   );
 }
+
+/* ---------- Decision tree and best-practice cards ---------- */
+
+function inline(text: string): ReactNode[] {
+  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).filter(Boolean);
+  return parts.map((p, i) => {
+    if (p.startsWith('**')) return <strong key={i}>{p.slice(2, -2)}</strong>;
+    if (p.startsWith('`')) return <code key={i}>{p.slice(1, -1)}</code>;
+    return <React.Fragment key={i}>{p}</React.Fragment>;
+  });
+}
+
+// Children arrive either as a template-literal Markdown list or as rendered nodes.
+function ListOrNodes({children}: {children: ReactNode}) {
+  if (typeof children !== 'string') return <>{children}</>;
+  const items = children
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l.startsWith('- '))
+    .map((l) => l.slice(2));
+  if (!items.length) return <p>{inline(children.trim())}</p>;
+  return (
+    <ul>
+      {items.map((it) => (
+        <li key={it}>{inline(it)}</li>
+      ))}
+    </ul>
+  );
+}
+
+export function DecisionTree({question, children}: {question: string; children: ReactNode}) {
+  return (
+    <div className="vp-decision">
+      <div className="vp-decision__q">{question}</div>
+      <div className="vp-decision__body">{children}</div>
+    </div>
+  );
+}
+
+export function DecisionYes({title, children}: {title: string; children: ReactNode}) {
+  return (
+    <div className="vp-decision__col">
+      <span className="vp-decision__label">Yes</span>
+      <div className="vp-decision__title">{title}</div>
+      <ListOrNodes>{children}</ListOrNodes>
+    </div>
+  );
+}
+
+export function DecisionNo({title, children}: {title: string; children: ReactNode}) {
+  return (
+    <div className="vp-decision__col">
+      <span className="vp-decision__label">No</span>
+      <div className="vp-decision__title">{title}</div>
+      <ul>{children}</ul>
+    </div>
+  );
+}
+
+export function DecisionLink({label, children}: {label: string; href?: string; children?: ReactNode}) {
+  return (
+    <li>
+      <strong>{label}</strong> {children}
+    </li>
+  );
+}
+
+export function BestPractices({children}: {children: ReactNode}) {
+  return <div className="vp-best">{children}</div>;
+}
+
+export function BestPracticeCard({title, children}: {title: string; children: ReactNode}) {
+  return (
+    <div className="vp-best__card">
+      <h4>{title}</h4>
+      <ListOrNodes>{children}</ListOrNodes>
+    </div>
+  );
+}

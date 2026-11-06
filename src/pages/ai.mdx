@@ -1,0 +1,230 @@
+---
+title: "AI"
+description: "Hands-on AI work in documentation: investigating changes at the source, Claude skills for the team, shipped changes, prototypes, Jira automation and an AI assistant evaluation."
+---
+
+<div className="pg">
+
+<span className="pg-eyebrow">AI</span>
+
+<h1 className="pg-title">I build with AI, not just draft with it</h1>
+
+<p className="pg-lede">Claude is part of how my team investigates a change, drafts the page, ships it and checks it. These are the things I built and set up, grouped by what each one does. Screenshots are from the real work. The Release Hub is shown with fictional data, and the dashboard's numbers are blurred.</p>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>Investigate at the source</h2>
+<p>A first draft should start from the change itself, not from a meeting. I gave Claude the sources so writers check facts before they ask anyone.</p>
+</div>
+
+<div className="pg-grid-2">
+<div className="pg-card">
+<span className="pg-tag pg-tag--accent">Claude skill · I wrote it</span>
+
+<h3>The docs repository, searchable by Claude</h3>
+
+**docs-ui-help** gives Claude a local, searchable copy of our documentation repository. A GitHub Action exports the repository, the skill pulls it into a local cache, and Claude answers from it with file paths. A writer sees what the docs already say, and where, before booking time with an engineer.
+</div>
+
+<div className="pg-card">
+<span className="pg-tag pg-tag--accent">Workflow · I set it up</span>
+
+<h3>Drafts that start from the pull request</h3>
+
+Drafts start from the engineer's pull request and its Jira ticket. I set up Claude on the docs and product repositories, and the standard that pull-request and ticket descriptions have to meet, so the draft has what it needs. A writer then edits it, checks it with the engineer, and the product manager signs it off.
+</div>
+</div>
+</section>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>Draft with Claude, review it myself</h2>
+<p>Skills that do the repetitive part of writing well, and leave the judgment to a person.</p>
+</div>
+
+<div className="pg-grid-3">
+<div className="pg-card">
+<span className="pg-tag">Claude skill</span>
+
+<h3>docs-compass</h3>
+
+A drafting assistant for the team. It writes a commit-ready page with front matter and the site's components, suggests links to related pages from the real content tree, flags pages the latest release notes may have made stale, scans for dead links, and compares a draft with how competitors document the same thing.
+</div>
+
+<div className="pg-card">
+<span className="pg-tag">Claude skill</span>
+
+<h3>Release notes to Slack</h3>
+
+Turns the customer release notes into the company-wide Slack post. It keeps every item, the order, and every beta or version limit, and checks its own draft against a coverage list before I see it. <a href="/writing/release-notes">See a release and its Slack post</a>.
+</div>
+
+<div className="pg-card">
+<span className="pg-tag">Claude skill</span>
+
+<h3>Retrieval readiness</h3>
+
+The last check before a page ships: seven questions about whether an AI assistant can answer from it. It also triages a wrong answer and says when the page is fine and the problem is retrieval, so nobody edits a page that was never the issue.
+</div>
+</div>
+
+<p className="pg-note">The rule for all of them: nothing reaches a customer that a person has not reviewed.</p>
+</section>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>Ship changes</h2>
+<p>Changes to the docs site and the product, made with Claude Code and merged through normal review.</p>
+</div>
+
+<div className="pg-grid-3">
+<div className="pg-card">
+<span className="pg-tag pg-tag--accent">Built</span>
+
+<h3>Search and Ask AI, split</h3>
+
+Readers typed questions into keyword search, got poor matches and called search broken. I designed and built the change: **Search by keyword ⌘K** and **Ask a question ⌘I** as a matched pair on every page, with a typed question handed to the AI assistant. Engineering shipped the approach in their merged change.
+</div>
+
+<div className="pg-card">
+<span className="pg-tag pg-tag--accent">Built</span>
+
+<h3>Docs-site changes</h3>
+
+Search keywords added to 227 pages for the words readers actually type, a release highlights video on the docs home page, a CI workflow that keeps a last-updated date on about 3,000 pages, and search analytics so we see what people fail to find.
+</div>
+
+<div className="pg-card">
+<span className="pg-tag pg-tag--accent">Led</span>
+
+<h3>Help inside the product</h3>
+
+My writers ship in-product help straight into the product's frontend code: info tips, a close control for the chat widget, and removing coach marks that had outlived their use. Six changes merged since September 2026, three in review, including native info pop-ups that replace a third-party in-app help tool.
+</div>
+</div>
+</section>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>Prototype first</h2>
+<p>Before engineering builds a change to the docs site, I build a clickable version of it with Claude, using real content, so the decision is made on something people can use.</p>
+</div>
+
+<div className="pg-split">
+<figure className="pg-figure">
+<img src="/img/prototypes/versioning.png" alt="Prototype of a science note page with a version picker, version-specific pages in the sidebar and new-in-version badges" loading="lazy" />
+<figcaption>Prototype: documentation versioning per note.</figcaption>
+</figure>
+
+<div>
+<span className="pg-tag">Proposal and prototype</span>
+
+<h3>Documentation versioning per note</h3>
+
+Each analytics note in the product ships on its own version line, and site-wide versioning cannot model that. I wrote the proposal to engineering and built the prototype: a version picker on every note, pages that exist only in some versions, "new in this version" badges, versioned links and search results.
+
+<p><a className="pg-link" href="/samples/design/per-note-doc-versioning-proposal">Read the proposal (re-created)</a><a className="pg-link" href="/work/prototypes">See all prototypes</a></p>
+</div>
+</div>
+
+<div className="pg-grid-2" style={{marginTop: '2rem'}}>
+<figure className="pg-figure">
+<img src="/img/prototypes/role-based-ia.png" alt="Prototype of documentation navigation organised by role" loading="lazy" />
+<figcaption>Navigation by role. Adopted: the docs site was reorganised around it.</figcaption>
+</figure>
+<figure className="pg-figure">
+<img src="/img/work/ask-ai-dashboard.png" alt="Ask AI usage dashboard with numbers blurred" loading="lazy" />
+<figcaption>Ask AI review dashboard: usage and answer quality per account. Numbers blurred.</figcaption>
+</figure>
+</div>
+</section>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>Automate release work from Jira</h2>
+<p>Customer Success needs to know what changes for customers before each release. I built the pipeline from Jira to a preview they read every week.</p>
+</div>
+
+<div className="pg-split">
+<div>
+<figure className="pg-figure">
+<img src="/img/work/release-hub.png" alt="Release Hub board with changes grouped by what customers must do" loading="lazy" />
+<figcaption>The Release Hub, shown with fictional release data.</figcaption>
+</figure>
+
+<ul className="pg-list" style={{marginTop: '1.4rem'}}>
+<li><strong>Ticket to preview.</strong> A Claude skill reads a Jira ticket and its dependencies, drafts the preview row, applies the four impact groups the same way every time, and re-checks the sheet's columns before writing.</li>
+<li><strong>Every day.</strong> A scheduled job logs what changed, drafts customer-ready paragraphs that stay drafts until I review them, and reminds owners when a date is missing.</li>
+<li><strong>Customer requests.</strong> Customer Success's Top Ten requests feed the Hub, so each request sits next to the release that addresses it.</li>
+<li><strong>Roadmap.</strong> A Jira-fed roadmap dashboard for leadership, with a daily check that tells me where it and Jira disagree.</li>
+</ul>
+</div>
+
+<div className="pg-card">
+<span className="pg-eyebrow">What the drafter does, and what a writer decides</span>
+
+<div className="pg-flow">
+<div className="pg-panel"><span className="pg-panel__label">Ticket</span><p>PLN-1042 · Require one approver before a plan goes live</p><p>Drafts still save as before. Approver is set per plan.</p></div>
+<div className="pg-arrow">↓</div>
+<div className="pg-panel"><span className="pg-panel__label">Draft</span><p>Impact: Heads up. The old way still works, but the steps changed.</p><p>Customers need to know: plans now need one approver before they go live.</p><p>Customer action: choose an approver for each plan.</p></div>
+<div className="pg-arrow">↓</div>
+<div className="pg-panel pg-panel--accent"><span className="pg-panel__label">The writer decides</span><p>Heads up or immediate action? Drafts still save, so heads up.</p><p>Add the date the approver must be set by, after checking it with the product manager.</p></div>
+</div>
+
+<p className="pg-note">Illustrative example with a fictional ticket.</p>
+</div>
+</div>
+</section>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>Test the assistant before customers rely on it</h2>
+<p>Our documentation assistant answers customer questions from the docs. I designed its evaluation and the rule for deciding whether a wrong answer is a docs problem or a system problem.</p>
+</div>
+
+<div className="pg-split">
+<div className="pg-card">
+<span className="pg-eyebrow">Two rounds, 126 graded answers, 22 reviewers</span>
+
+<div className="pg-tablewrap">
+<table className="pg-table">
+<thead><tr><th></th><th>Round one</th><th>Round two</th></tr></thead>
+<tbody>
+<tr><td>Reviewers</td><td>6, internal</td><td>16, customer-facing teams</td></tr>
+<tr><td>Fully correct</td><td>15 of 39</td><td>58 of 87</td></tr>
+<tr><td>Correct source cited</td><td>about half</td><td>about 4 in 5</td></tr>
+</tbody>
+</table>
+</div>
+
+<p className="pg-note">Different questions in each round, and retrieval changed too, so read it as a direction. I grouped the failures into retrieval, chunking and consistency, and sent each group to engineering.</p>
+</div>
+
+<div>
+<span className="pg-eyebrow">The seven checks I run on a wrong answer</span>
+
+<ol className="pg-checks">
+<li>Does the page name the thing the reader asked about?</li>
+<li>Does each section make sense on its own?</li>
+<li>Is the fact only inside a table?</li>
+<li>Are prerequisites inside the procedure?</li>
+<li>Does the page say what the product cannot do?</li>
+<li>Is each term used one way?</li>
+<li>Do two pages contradict each other?</li>
+</ol>
+
+<div className="pg-result">If the page passes all seven, the writer does not edit it. The question goes to engineering as a retrieval problem.</div>
+
+<p><a className="pg-link" href="/work/ask-ai">See the evaluation</a><a className="pg-link" href="/samples/method/retrieval-ready-docs">Read the method</a></p>
+</div>
+</div>
+</section>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>Make media with AI</h2>
+<p>A release podcast scripted with Claude and voiced with ElevenLabs, and feature explainers presented by Synthesia avatars. <a href="/videos">Open the library</a>.</p>
+</div>
+</section>
+
+</div>
