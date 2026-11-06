@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cascading changes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<style>.try button{background:#6B3F80!important;color:#fff}.try .r::before{background:#E6DCEB!important}.chip{white-space:normal;max-width:100%}</style>
+</head>
+<body>
+<div class="box">
+  <div class="body" style="display:flex;flex-direction:column;gap:10px"><div id="tree" style="display:flex;flex-direction:column;gap:8px"></div>
+    <div class="row" style="margin-top:4px"><button class="btn p" id="next"></button><span id="msg" style="flex:1 1 260px;font-size:15px"></span></div></div>
+  <div class="try"><p>Click to move the change down one level at a time ↑</p><span class="r"><button id="try">➤ Try It</button></span></div>
+</div>
+<script src="demo.js"></script>
+<script>
+var s=0,$=function(id){return document.getElementById(id)};
+var N=["Signature","Promo Uplift Forecast","Promo Uplift (North Region Only)"];
+var S=[["","No Changes","No Changes","Someone submits a change in the Signature."],["",'Direct parent out of sync - "Signature" updated','Cascading parent out of sync - "Signature" updated',"Promo Uplift Forecast must sync first. North Region Only cannot skip a level."],["","No Changes",'Direct parent out of sync - "Promo Uplift Forecast" updated',"Promo Uplift Forecast synced. Now North Region Only can sync."],["","No Changes","No Changes","Both levels are up to date."]];
+var L=["Submit Signature","Sync Promo Uplift Forecast","Sync North Region Only","Start over"];
+function chip(t){if(!t)return"";var y=t.indexOf("parent out of sync")>-1;var c=y?["#FFF4E5","#7A4E00"]:["#EEEBEF","#3A313F"];return '<span class="chip" style="background:'+c[0]+';color:'+c[1]+'">'+t+'</span>';}
+function render(){$("tree").innerHTML=N.map(function(n,i){return '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-left:'+(i*28)+'px;padding:11px 14px;border:1px solid #E7E0EA;border-radius:6px"><b style="font-size:16px;font-weight:600">'+n+'</b>'+chip(S[s][i])+'</div>'}).join("");$("next").textContent=L[s];$("msg").textContent=S[s][3];}
+$("next").onclick=$("try").onclick=function(){s=(s+1)%4;render()};render();
+</script></body></html>

@@ -1,0 +1,309 @@
+---
+title: "Syncing and Committing Scenarios"
+description: "Learn how to sync and commit Scenario changes, avoid overwrites, and review changes and logs."
+sidebar_position: 2
+sidebar_label: "Syncing and Committing Scenarios"
+keywords:
+  - sync from parent
+  - commit to parent
+  - re-sync with parent
+  - merge changes
+  - cascading changes
+  - sync status
+  - scenario logs
+---
+
+
+# Syncing and Committing Scenarios
+
+<span className="vp-label">Real page from a user guide I own. Product name, people and other identifying details are masked.</span>
+
+Sync and Commit are the two operations that move data between parent and child Scenarios. This page explains how they work, how to perform them, what gets overwritten, and how to avoid accidentally losing changes.
+
+:::info
+
+"Commit" here means Committing to Parent: pushing a child Scenario's tables up to its parent. To submit your own edits into the Application you are working in, alongside others editing it, see Solo Submit and Shared Submit.
+
+:::
+
+***
+
+### Choose Between Sync and Commit {#choose-between-sync-and-commit}
+
+Use this table to decide which operation you need. Each row summarizes the detail tables later on this page:
+
+| | **Sync from Parent** | **Commit** |
+| --- | --- | --- |
+| **Use it when** | The parent has changed and you want those changes in your child | Your child's plan is ready to become the parent's data |
+| **Direction** | Parent to child | Child to parent |
+| **Scope** | Only tables that changed in the parent | All tables, including ones you did not change |
+| **What it overwrites** | The whole child table, including rows you edited in it | Parent tables, with your child's version |
+| **Permission you need** | [Read Write or Admin](./scenario-permissions.mdx#scenario-permission-levels) on the child, and you can view the parent | [Read Write or Admin](./scenario-permissions.mdx#scenario-permission-levels) on both the child and the parent, plus Read Write app permission |
+
+#### Try It: See What Sync and Commit Overwrite {#try-it-sync-and-commit}
+
+Tick the tables that changed in the parent and in your child, then run **Sync from Parent** or **Commit**. The demo starts with both sides changing the Costs table, the case described in [The Record-Level Trap](#the-record-level-trap).
+
+<AutoHeightIframe
+    src="/demos/sync-commit-simulator.html"
+    title="Sync and Commit simulator: see which tables each operation overwrites"
+    messageType="demo-height"
+    initialHeight={520}
+  />
+
+***
+
+### Sync from Parent {#syncing-from-parent}
+
+Sync pulls changes from the parent down into your child Scenario. To sync, you need Read Write or Admin [scenario permission](./scenario-permissions.mdx#scenario-permission-levels) on the child Scenario, and you must be able to view its parent.
+
+| Detail                                           | How it works                                                                                                                                          |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Direction                                        | Parent to child                                                                                                                                       |
+| Scope                                            | Selective. Only tables that changed in the parent are pulled into the child.                                                                          |
+| Within a changed table                           | Full table overwrite. The entire table in the child is replaced with the parent's version, including any rows you edited in the child for that table. |
+| Tables you changed that the parent did not touch | Preserved. They are not affected by the sync.                                                                                                         |
+
+#### Run a Sync {#how-to-sync-changes-from-parent}
+
+1. Click the **Manage Scenarios** icon in the left sidebar, then select the Scenario that is out of sync.
+
+2. Click **Sync from Parent**. The **Sync from Parent** dialog appears.
+
+    <img src="/img/samples/scenarios/manage-scenarios-sync-from-parent-and-commit-buttons.png" alt="Manage Scenarios tab for October Demand Forecast with Promo Uplift Forecast selected, showing Sync from Parent and Commit buttons, the No Changes status, and the Changes and Logs tabs" data-size="xl" />
+
+3. Click **Sync Changes** to apply the parent changes to the child Scenario.
+
+   <img src="/img/samples/scenarios/sync-from-parent-dialog.png" alt="Sync from Parent dialog warning that conflicting local changes will be overwritten" data-size="m" />
+
+Once the sync succeeds, **Changes synced from parent successfully** appears and the merge is recorded in the [**Logs**](./syncing-and-committing-scenarios.mdx#logs-tab) tab. If the parent has nothing new for you, the dialog reads **No changes to sync with the parent**.
+
+:::info
+
+**Sync from Parent** and **Commit** appear only when Scenario Merge is enabled. If it is off, the **Manage Scenarios** tab shows a **Scenario merge disabled.** banner instead. Both buttons are unavailable while the selected Scenario has unsubmitted changes, is being updated, or has running actions.
+
+:::
+
+:::warning
+
+If you see an out-of-sync status in the **Manage Scenarios** tab but the changes are not visible in the Production Application, click **Reset** in the Application to refresh the view.
+
+:::
+
+<Expandables>
+  <ExpandableItem id="example-what-gets-overwritten" title="Example: What Gets Overwritten">
+
+**Setup**: The Signature (parent) Scenario contains four tables: Demand, Supply, Costs, Routes.
+
+1. Create a child Scenario called “**5% Growth**.”
+2. In the child Scenario, increase all values in the Demand table by 5% and submit your changes.
+3. Later, your colleague updates the parent Scenario and submits the changes:
+   * The Costs table gets new freight rates
+   * The Routes table gets three new routes
+4. Go to the child Scenario and click **Sync from Parent**.
+
+**Result**:
+
+* Costs and Routes are fully replaced with the parent's version.
+* Demand is untouched. Your 5% growth changes are preserved.
+* Supply is untouched. Nobody changed it.
+
+</ExpandableItem>
+</Expandables>
+
+#### The Record-Level Trap {#the-record-level-trap}
+
+<Expandables>
+  <ExpandableItem id="example-the-record-level-trap" title="Example: The Record-Level Trap (Same Table, Different Rows)">
+
+**Setup:** The parent Scenario contains a **Costs** table with 100 routes.
+
+1. Create a child Scenario.
+2. In the child Scenario, change the cost for **Route 15** from **$500 to $700** and submit your changes.
+3. Later, your colleague updates the parent Scenario. The cost for **Route 42** is changed from **$300 to $350**.
+4. Go to the child Scenario and click **Sync from Parent**.
+
+**Result**:
+
+* The entire Costs table in the child is replaced with the updated version from the parent
+* Route 42 now shows the updated value of $350
+* Route 15 returns to $500
+* Your $700 change is lost, even though the parent never modified Route 15
+
+**Why This Happens**
+
+Sync works at the **table level**, not the row level.
+
+If a table changes in the parent Scenario, the child receives the entire updated table during sync.
+
+</ExpandableItem>
+</Expandables>
+
+***
+
+### Commit to Parent {#committing-to-parent}
+
+Commit pushes all your child changes up to the parent Scenario. To commit, you need Read Write or Admin [scenario permission](./scenario-permissions.mdx#scenario-permission-levels) on both the child and the parent Scenario, plus Read Write app permission. If you only have Read Only on the parent, ask an Admin on the parent to give you **Read Write**. See [When an Action Is Blocked](./scenario-permissions.mdx#when-an-action-is-blocked).
+
+| Detail                 | How it works                                                                                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Direction              | Child to parent                                                                                                                                  |
+| Scope                  | Full overwrite. All tables from the child are pushed to the parent, including tables you did not change.                                         |
+| Parent changes at risk | Yes. If the parent had changes in a table that your child did not have, those changes will be overwritten by your child's version of that table. |
+
+#### Run a Commit {#how-to-commit-to-parent}
+
+1. Click the **Manage Scenarios** icon in the left sidebar, then select your Scenario.
+2. Click **Commit**.
+
+   <img src="/img/samples/scenarios/manage-scenarios-sync-from-parent-and-commit-buttons.png" alt="Manage Scenarios tab for October Demand Forecast with Promo Uplift Forecast selected, showing Sync from Parent and Commit buttons, the No Changes status, and the Changes and Logs tabs" data-size="xl" />
+
+   The **Commit Changes** dialog appears.
+3. Click **Merge Changes** to apply your changes to the parent Scenario. **Changes committed to parent successfully** appears when it finishes. If there is nothing to commit, the dialog reads **No changes to commit to the parent**.
+
+   <img src="/img/samples/scenarios/commit-changes-dialog.png" alt="Commit Changes dialog for Promo Uplift Forecast warning that conflicting parent updates will be overwritten" data-size="m" />
+
+:::warning
+
+**Commit blocked?** If the dialog says **This scenario is out of sync with the parent. Sync from parent first, then commit your changes.**, the parent Scenario was updated after you created your child. You need to [**Sync from Parent**](./syncing-and-committing-scenarios.mdx#how-to-sync-changes-from-parent) first, then retry the commit. This protects the parent from accidental overwrites.
+
+:::
+
+<Expandables>
+  <ExpandableItem id="example-commit-overwrites-untouched-changes" title="Example: Commit Overwrites Changes You Did Not Touch">
+
+**Setup**: The parent Scenario contains four tables: Demand, Supply, Costs, and Routes.
+
+1. Create a child Scenario called “**New Routes Test**.”
+2. In the child Scenario, add five new routes to the Routes table and submit your changes.
+3. Later, your colleague updates the parent Scenario. A new product line is added to the Demand table.
+4. Go to the child Scenario and click **Commit** to push your changes to the parent.
+
+**Result**
+
+* The parent Scenario now includes your new Routes changes
+* The colleague’s Demand updates are lost
+* The parent Demand table is replaced with the older version from the child Scenario
+
+This happens even though you never edited the Demand table in the child.
+
+**Why This Happens**
+
+Commit replaces the parent Scenario with the full state of the child Scenario, including tables you did not modify. If the child contains older versions of tables, those older versions overwrite the parent during commit.
+
+**How to Avoid This**
+
+Always click **Sync from Parent** before committing. This pulls the latest parent changes into the child first, so your commit includes the most up-to-date version of every table.
+
+</ExpandableItem>
+</Expandables>
+
+***
+
+#### Submit Before You Sync or Commit {#save-before-you-sync-or-commit}
+
+Both operations read from submitted data only. Unsubmitted changes are invisible to both.
+
+* If you make changes in the Signature Scenario but do not click **Submit**, the child will not receive those changes on the next sync. It only pulls from the parent's last submitted state.
+* If the selected Scenario has unsubmitted changes, **Sync from Parent** and **Commit** are unavailable, and the **Manage Scenarios** tab shows an **Unsaved Changes found** message with a **Save Changes** button. Click **Save Changes**, or **Submit** at the top of the page, then proceed.
+* The out-of-sync indicator compares submitted states only. Unsubmitted edits in the parent will not trigger a notification in your child.
+
+<Expandables>
+  <ExpandableItem id="example-forgetting-to-submit-before-sync" title="Example: Forgetting to Submit Before Sync">
+
+You update the Supply table in the Signature but do not click **Submit**. You switch to the child Scenario "5% Growth."
+
+* The child does not show an out-of-sync notification.
+* The parent's change is only in the live working view, not yet submitted.
+* You click **Sync from Parent**.
+
+**Result**: Nothing changes in the child. It already matches the parent's last submitted state. Your Supply table edit is invisible to the sync.
+
+**Fix**: Go back to the Signature, click **Submit**, then return to the child and click **Sync from Parent**.
+
+</ExpandableItem>
+</Expandables>
+
+***
+
+#### Sync Status and Cascading Changes {#cascading-changes}
+
+A status on a child means its **submitted** data differs from its immediate parent. The indicator compares submitted states only, not live working data. In a multi-level tree, changes move one level at a time. You cannot skip a level. Click **Submit Signature** in the demo to move a change down the tree and see the status each Scenario shows.
+
+<AutoHeightIframe
+    src="/demos/cascade-stepper.html"
+    title="Cascading changes: how a Signature change moves down a Scenario tree"
+    messageType="demo-height"
+    initialHeight={260}
+  />
+
+| **Status** | **What it means** |
+| --- | --- |
+| **No Changes** | Up to date. Nothing to do. |
+| **Local changes detected** | The child has submitted changes that differ from the parent. |
+| **Direct parent out of sync** | The parent has submitted changes that this child has not pulled yet. The badge also names the parent that updated. You can sync now. |
+| **Cascading parent out of sync** | A Scenario above yours has updates that have not synced down yet. The badge names the Scenario that updated. The parent must sync first. |
+
+These statuses appear next to the Scenario name on the **Manage Scenarios** tab. A child can show **Local changes detected** together with **Direct parent out of sync**. The Signature shows no status. In the **Scenarios** dropdown, a warning triangle next to the Scenario shows the same information when you hover over it: **Parent updated. Sync to get latest changes.** or **Cascading changes detected. Parent must sync first.**
+
+***
+
+### Review Changes and Logs {#viewing-changes-and-logs}
+
+The **Manage Scenarios** page gives you full visibility into what has been edited in a Scenario and what actions have been taken on it. This is useful for reviewing your changes before committing and for tracking the history of a Scenario over time.
+
+To access the Changes and Logs tabs:
+
+1. Click the **Manage Scenarios** icon in the left sidebar.
+2. Select your Scenario from the tree.
+3. Click either the [**Changes**](./syncing-and-committing-scenarios.mdx#changes-tab) or [**Logs**](./syncing-and-committing-scenarios.mdx#logs-tab) tab.
+
+    <img src="/img/samples/scenarios/manage-scenarios-signature-logs-tab-with-scenario-menu.png" alt="Manage Scenarios page for the Signature, showing the Logs tab with Merged from child, All Users, and Last 30 Days filters and the ellipsis menu open on a child Scenario" data-size="xl" />
+
+:::info
+
+The **Signature Scenario** does not include the **Changes** tab.
+
+:::
+
+#### Changes Tab {#changes-tab}
+
+Shows all tables modified in the selected Scenario compared to its parent, providing a quick view of what’s different before you commit.
+
+<img src="/img/samples/scenarios/manage-scenarios-changes-tab-no-modified-tables.png" alt="Changes tab on Manage Scenarios for Promo Uplift Forecast showing No modified tables" data-size="xl" style={{marginTop: 0, marginBottom: 0}} />
+
+If no edits have been made yet, it shows _No modified tables_.
+
+#### Logs Tab {#logs-tab}
+
+Records every commit and sync on the selected Scenario. Each entry shows who did it, whether they merged or synced, the Scenarios involved, and the time. Entries are grouped by date. On the Signature, the Logs tab opens filtered to **Merged from child**.
+
+<img src="/img/samples/scenarios/manage-scenarios-logs-tab-filters.png" alt="Logs tab on Manage Scenarios for the Signature with Merged from child, All Users, and Last 30 Days filters" data-size="xl" />
+
+You can filter the Logs by:
+
+| Filter        | Options                                                             |
+| ------------- | ------------------------------------------------------------------- |
+| Activity type | All Activity, Merged to parent, Merged from child, Sync from parent |
+| User          | All Users, By Me                                                    |
+| Time period   | Last 7 Days, Last 30 Days, Last 90 Days                             |
+
+***
+
+### Before Every Commit {#before-every-commit}
+
+Follow these steps each time, so a commit does not overwrite work you meant to keep:
+
+1. **Submit** in both Scenarios. Sync and Commit read submitted data only. See [Submit Before You Sync or Commit](#save-before-you-sync-or-commit).
+2. Click **Sync from Parent** to pull the latest parent tables into your child.
+3. Check the [**Changes**](#changes-tab) tab. Only the tables you meant to change should be listed.
+4. Click **Commit**, then look for the **Merged to parent** entry in the [**Logs**](#logs-tab) tab.
+
+***
+
+**See More**
+
+* Managing Scenarios: Compare Scenarios before you commit one.
+* [Scenario Permissions](./scenario-permissions.mdx#scenario-permission-levels): Who can sync and commit each Scenario.
+* Understanding Data Layers in Scenarios: How submitted and live data relate.
+* Troubleshooting Scenarios: Fix a blocked commit or a Cascading parent out of sync status.

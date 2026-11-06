@@ -1,0 +1,94 @@
+---
+title: "Forecast Lab overview"
+description: "What Forecast Lab does, who it is for, and the end-to-end flow from a prepared demand history dataset to a deployed forecast model."
+sidebar_position: 1
+keywords:
+  - Forecast Lab
+  - demand forecasting
+  - forecast model
+  - model selection
+  - Meridian Studio
+---
+# Forecast Lab overview
+
+<span className="vp-label">Original sample, re-created for a fictional product.</span>
+
+Forecast Lab is the part of Meridian Studio where you train and deploy a demand forecast model from prepared history. You bring a demand history dataset, Forecast Lab compares candidate models for every product, location, and channel series, and you deploy the result as a single model version that your pipelines run on a schedule.
+
+## What Forecast Lab does
+
+For each series in your history, Forecast Lab:
+
+- Trains several candidate models, drawn from statistical, machine learning, and foundation model families.
+- Backtests each candidate on recent periods that are held out from training.
+- Selects the candidate with the lowest error on the metric you choose.
+- Packages the selected model for every series into one deployable model version.
+
+You do not write code. Most settings are read from the forecast specification that is created with your demand history dataset, so experiment setup is short.
+
+Forecast Lab also records why each model was selected, which drivers influenced the forecast, and how accuracy compares across candidates, so you can explain a forecast rather than only report it.
+
+## Who it is for
+
+- **Demand planners** who need a forecast for the next planning cycle and want to review flagged series instead of every series.
+- **Analysts** who want to compare models, test drivers such as price and promotions, and tune the selection metric.
+- **Pipeline owners** who schedule the deployed model, retrain it as new history arrives, and keep forecast outputs flowing to downstream planning.
+
+## End-to-end flow
+
+<Stepper>
+<Step>
+
+**Prepare history**
+Build a demand history dataset in Data Prep. The dataset includes the history, series keys, driver tables, and the forecast specification that Forecast Lab reads.
+
+</Step>
+<Step>
+
+**Create a model and map data**
+Create a model in Forecast Lab and map the five dataset tables to the forecast inputs. Auto-map handles tables whose column names match the expected schema.
+
+</Step>
+<Step>
+
+**Choose a selection metric and validate**
+Review the forecast specification, pick the metric used to compare candidates, and run validation to catch mapping and coverage problems before training starts.
+
+</Step>
+<Step>
+
+**Run the experiment and review results**
+Forecast Lab backtests candidate models for each series and selects one. Review aggregate accuracy, filter to flagged series, and inspect any series in detail.
+
+</Step>
+<Step>
+
+**Train and deploy**
+Train the selected models on the full history and deploy a model version to the Model Library.
+
+</Step>
+<Step>
+
+**Generate and refresh forecasts**
+Add the deployed version to a pipeline, run it to write forecast outputs, and retrain it when new history arrives.
+
+</Step>
+</Stepper>
+
+<div className="vp-shot">Screenshot: Forecast Lab home page with the Create model button and a list of existing models and their deployed versions</div>
+
+## Prerequisites
+
+Before you start, confirm that you have:
+
+- A Meridian Studio workspace with the **Forecast Lab** role. If **Forecast Lab** does not appear in the left navigation, ask your workspace admin.
+- A demand history dataset built with the current version of the Prepare History job in Data Prep. Datasets from earlier versions can fail validation.
+- At least two full years of history at the time bucket you forecast at, so that backtesting has enough periods to work with. Shorter history works but limits the number of backtest windows.
+- A pipeline where the forecast outputs will be consumed.
+
+## Where to go next
+
+- New to Forecast Lab? Start with [Build your first model](./build-your-first-model.mdx). It takes you from an empty model to forecast outputs in nine steps.
+- Already have a deployed model? See [Retrain a model](./retrain-a-model.mdx) to refresh it with new history.
+- Need the meaning of a setting? See [Forecast settings](./forecast-settings.mdx).
+- Want to ask about results in plain language? See [Ask the Forecast Assistant](./ask-the-forecast-assistant.mdx).

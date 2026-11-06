@@ -1,0 +1,17 @@
+---
+title: "API documentation sample"
+description: "API documentation sample: what the set contains and the decisions behind it."
+sidebar_position: 0
+sidebar_label: "About this set"
+---
+# API documentation sample
+
+<span className="vp-label">Original sample, re-created for a fictional product. Not runnable.</span>
+
+**Who it's for:** Developers and analytics engineers who need planning data out of a platform they do not administer, so every page starts from the API key and works outward.
+
+**What I decided and why:** I split one long reference page into a Diátaxis set, kept the API to five endpoints with a single pagination shape, and wrote the OpenAPI file first so that every field name in the prose has one source of truth.
+
+**What I'd do next:** Generate the reference page from the YAML in CI, add plan-version scoping to the query endpoint, and test the Power Query script against a mock server before publishing.
+
+Execution status: the API and its host are fictional, so the examples are not runnable. Every parameter, field and example in the pages was checked against the OpenAPI spec, and the Python blocks compile.

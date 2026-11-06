@@ -1,0 +1,63 @@
+---
+title: "Build and Live workspaces for planning models"
+description: "Release-note entry introducing separate Build and Live workspaces in Meridian Studio planning models."
+sidebar_position: 1
+---
+# Build and Live workspaces for planning models
+
+<span className="vp-label">Original sample, re-created for a fictional product.</span>
+
+## Build in Build, promote to Live
+
+**Category:** Planning models · **Tag:** New feature
+
+> Planners build and validate changes in Build, then promote a stable version to Live when it is ready.
+
+Until now, every change a planner saved to a model went live the moment it was saved, in front of everyone using it. A half-finished hierarchy or a renamed measure could land mid-cycle.
+
+Planning models now have two workspaces, **Build** and **Live**, so you can change one and keep the other steady.
+
+<div className="vp-shot">Video: Build and Live in two minutes</div>
+
+**What happens to your existing models**
+
+Every existing model becomes its Build workspace. Its link, scenarios, data and user access do not change, so your team can keep working as it does today.
+
+Nothing is promoted automatically. You decide which models to promote and when. There is no need to move everything at once.
+
+**Build and Live**
+
+| Build | Live |
+| --- | --- |
+| Available automatically for every existing model | Created the first time a planner promotes the model |
+| Where planners change, configure and validate | Where business users work with a stable version |
+| Keeps the existing link | Gets its own link to share with business users |
+| Changes as planners work | Changes only when a planner promotes an update |
+
+:::info Two things to know before you promote
+
+* **Planning models only.** Dashboards and data connections are not affected.
+* **Promotion is one way.** Once a model has a Live workspace you cannot remove it. You can only promote newer changes into it.
+
+:::
+
+**Why it matters**
+
+Planners can keep improving a model without exposing unfinished work to the people who rely on it. Business users get a version that changes only on purpose, and every change to Live passes a readiness check first.
+
+**What to do**
+
+* **Build.** Make changes in Edit mode, then switch to Preview mode to see the model as a business user will. The Edit/Preview switch replaces the Quick edit bar.
+* **Validate.** When you click **Promote**, Meridian Studio runs a readiness check and stops on any blocking issue, so nothing broken reaches Live.
+* **Promote.** The Promotion panel creates the Live workspace the first time and publishes later changes after that.
+* **Operate.** Share the Live link with business users. In Live, only settings a planner has marked as approved stay editable. Structural changes still happen in Build.
+
+The **Models** page lists Build workspaces by default. Use the **Workspace** filter to see models with a Live workspace.
+
+:::tip
+
+Save any changes made through the Quick edit bar before rollout day. Unsaved changes may not carry over.
+
+:::
+
+The Build and Live FAQ answers the questions we hear most. The full guide and the promotion guide have everything else.

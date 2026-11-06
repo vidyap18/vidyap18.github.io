@@ -1,0 +1,354 @@
+openapi: 3.0.3
+info:
+  title: Meridian External API
+  version: "1.0"
+  description: Read planning data from Meridian Studio. List datasets, query rows with filters and pagination, and export datasets to CSV or Parquet. Authenticate every request with an API key in the X-Meridian-Key header.
+servers:
+  - url: https://{tenant}.meridian.example/api/v1
+    description: Your organization's Meridian Studio tenant
+    variables:
+      tenant:
+        default: demo
+        description: The subdomain of your Meridian Studio URL
+security:
+  - apiKey: []
+tags:
+  - { name: Datasets, description: Discover datasets and read rows. }
+  - { name: Exports, description: Export datasets as files. }
+paths:
+  /datasets:
+    get:
+      operationId: listDatasets
+      tags: [Datasets]
+      summary: List datasets
+      description: Returns the datasets the API key can read, sorted by name.
+      parameters:
+        - $ref: "#/components/parameters/pageSize"
+        - $ref: "#/components/parameters/pageToken"
+      responses:
+        "200":
+          description: A page of datasets.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DatasetList" }
+              example:
+                datasets:
+                  - { datasetId: ds_2b7f9c, name: demand_forecast, displayName: Demand forecast, rowCount: 184320, updatedAt: "2026-11-04T06:15:00Z" }
+                  - { datasetId: ds_41e0aa, name: inventory_positions, displayName: Inventory positions, rowCount: 52110, updatedAt: "2026-11-04T06:20:00Z" }
+                nextPageToken: null
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        default: { $ref: "#/components/responses/UnexpectedError" }
+  /datasets/{datasetId}:
+    get:
+      operationId: getDataset
+      tags: [Datasets]
+      summary: Get a dataset
+      description: Returns a dataset and its fields. Call it to find field names before you filter.
+      parameters:
+        - $ref: "#/components/parameters/datasetId"
+      responses:
+        "200":
+          description: The dataset.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Dataset" }
+              example:
+                datasetId: ds_2b7f9c
+                name: demand_forecast
+                displayName: Demand forecast
+                rowCount: 184320
+                updatedAt: "2026-11-04T06:15:00Z"
+                fields:
+                  - { name: sku, type: string, nullable: false }
+                  - { name: location, type: string, nullable: false }
+                  - { name: week_start, type: date, nullable: false }
+                  - { name: forecast_units, type: number, nullable: true }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        default: { $ref: "#/components/responses/UnexpectedError" }
+  /datasets/{datasetId}/query:
+    post:
+      operationId: queryRows
+      tags: [Datasets]
+      summary: Query rows
+      description: Returns the rows of a dataset that match every filter in the request. Rows are returned in the dataset key order unless you set orderBy. Send nextPageToken from each response as pageToken until a response has no nextPageToken.
+      parameters:
+        - $ref: "#/components/parameters/datasetId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/QueryRequest" }
+            example:
+              fields: [sku, location, week_start, forecast_units]
+              filters:
+                - { field: location, op: eq, value: DC-NORTH }
+                - { field: week_start, op: gte, value: "2026-11-02" }
+              pageSize: 2
+      responses:
+        "200":
+          description: A page of rows.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/QueryResponse" }
+              example:
+                datasetId: ds_2b7f9c
+                rows:
+                  - { sku: SKU-10442, location: DC-NORTH, week_start: "2026-11-02", forecast_units: 1280 }
+                  - { sku: SKU-10443, location: DC-NORTH, week_start: "2026-11-02", forecast_units: 315.5 }
+                nextPageToken: eyJrIjoiU0tVLTEwNDQzIn0
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        default: { $ref: "#/components/responses/UnexpectedError" }
+  /datasets/{datasetId}/exports:
+    post:
+      operationId: createExport
+      tags: [Exports]
+      summary: Create an export
+      description: Starts an export of every row that matches the filters. The export runs in the background. Poll GET /exports/{exportId} until status is complete, then download the file from downloadUrl.
+      parameters:
+        - $ref: "#/components/parameters/datasetId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ExportRequest" }
+            example:
+              format: csv
+              filters:
+                - { field: location, op: in, value: [DC-NORTH, DC-WEST] }
+      responses:
+        "202":
+          description: The export was accepted and queued.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Export" }
+              example:
+                exportId: exp_9c3d1e
+                datasetId: ds_2b7f9c
+                format: csv
+                status: queued
+                createdAt: "2026-11-05T09:30:00Z"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        default: { $ref: "#/components/responses/UnexpectedError" }
+  /exports/{exportId}:
+    get:
+      operationId: getExport
+      tags: [Exports]
+      summary: Get export status
+      description: Returns the state of an export. When status is complete, the response includes downloadUrl.
+      parameters:
+        - $ref: "#/components/parameters/exportId"
+      responses:
+        "200":
+          description: The export.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Export" }
+              example:
+                exportId: exp_9c3d1e
+                datasetId: ds_2b7f9c
+                format: csv
+                status: complete
+                createdAt: "2026-11-05T09:30:00Z"
+                completedAt: "2026-11-05T09:31:12Z"
+                rowCount: 61440
+                downloadUrl: https://files.meridian.example/exports/exp_9c3d1e.csv.gz?sig=REDACTED
+                expiresAt: "2026-11-06T09:31:12Z"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        default: { $ref: "#/components/responses/UnexpectedError" }
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-Meridian-Key
+      description: An API key created in Meridian Studio under Admin settings > API keys.
+  parameters:
+    datasetId:
+      name: datasetId
+      in: path
+      required: true
+      description: The dataset ID, as returned by List datasets.
+      schema: { type: string, pattern: "^ds_[a-z0-9]{6}$" }
+      example: ds_2b7f9c
+    exportId:
+      name: exportId
+      in: path
+      required: true
+      description: The export ID, as returned by Create an export.
+      schema: { type: string, pattern: "^exp_[a-z0-9]{6}$" }
+      example: exp_9c3d1e
+    pageSize:
+      name: pageSize
+      in: query
+      description: Maximum number of items to return.
+      schema: { type: integer, minimum: 1, maximum: 1000, default: 100 }
+    pageToken:
+      name: pageToken
+      in: query
+      description: The nextPageToken from the previous response. Omit for the first page.
+      schema: { type: string }
+  responses:
+    BadRequest:
+      description: A parameter or the request body is invalid.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              code: INVALID_FILTER
+              message: Field 'region' does not exist in dataset ds_2b7f9c.
+              field: filters[0].field
+    Unauthorized:
+      description: The X-Meridian-Key header is missing, or the key is invalid or revoked.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error: { code: UNAUTHENTICATED, message: Provide a valid API key in the X-Meridian-Key header. }
+    NotFound:
+      description: The resource does not exist, or the key cannot read it.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error: { code: NOT_FOUND, message: Dataset ds_000000 was not found. }
+    TooManyRequests:
+      description: The key exceeded 60 requests per minute.
+      headers:
+        Retry-After:
+          description: Seconds to wait before you retry.
+          schema: { type: integer }
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error: { code: RATE_LIMITED, message: Rate limit of 60 requests per minute exceeded. }
+    UnexpectedError:
+      description: An unexpected error. Retry with exponential backoff.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error: { code: INTERNAL, message: An internal error occurred. }
+  schemas:
+    DatasetSummary:
+      type: object
+      required: [datasetId, name, displayName, rowCount, updatedAt]
+      properties:
+        datasetId: { type: string, example: ds_2b7f9c }
+        name: { type: string, description: Machine-readable name, example: demand_forecast }
+        displayName: { type: string, description: Name shown in Meridian Studio, example: Demand forecast }
+        rowCount: { type: integer, format: int64, example: 184320 }
+        updatedAt: { type: string, format: date-time, description: When rows last changed }
+    Dataset:
+      allOf:
+        - $ref: "#/components/schemas/DatasetSummary"
+        - type: object
+          required: [fields]
+          properties:
+            fields: { type: array, items: { $ref: "#/components/schemas/Field" } }
+    Field:
+      type: object
+      required: [name, type, nullable]
+      properties:
+        name: { type: string, example: forecast_units }
+        type: { type: string, enum: [string, integer, number, boolean, date, timestamp] }
+        nullable: { type: boolean }
+    DatasetList:
+      type: object
+      required: [datasets]
+      properties:
+        datasets: { type: array, items: { $ref: "#/components/schemas/DatasetSummary" } }
+        nextPageToken: { type: string, nullable: true, description: Send as pageToken to get the next page. Null on the last page. }
+    Filter:
+      type: object
+      required: [field, op, value]
+      properties:
+        field: { type: string, description: A field name from the dataset, example: location }
+        op: { type: string, enum: [eq, neq, gt, gte, lt, lte, in] }
+        value:
+          description: The value to compare. Use an array of up to 500 values with the in operator.
+          oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+            - type: array
+              items:
+                oneOf: [{ type: string }, { type: number }]
+    OrderBy:
+      type: object
+      required: [field]
+      properties:
+        field: { type: string, example: week_start }
+        direction: { type: string, enum: [asc, desc], default: asc }
+    QueryRequest:
+      type: object
+      properties:
+        fields: { type: array, items: { type: string }, description: Fields to return. Omit to return every field. }
+        filters:
+          type: array
+          maxItems: 20
+          items: { $ref: "#/components/schemas/Filter" }
+          description: Conditions a row must meet. All filters must match.
+        orderBy:
+          $ref: "#/components/schemas/OrderBy"
+        pageSize: { type: integer, minimum: 1, maximum: 1000, default: 100 }
+        pageToken: { type: string, description: The nextPageToken from the previous page. }
+    QueryResponse:
+      type: object
+      required: [datasetId, rows]
+      properties:
+        datasetId: { type: string, example: ds_2b7f9c }
+        rows:
+          type: array
+          description: One object per row, keyed by field name.
+          items: { type: object, additionalProperties: true }
+        nextPageToken: { type: string, nullable: true, description: Send as pageToken to get the next page. Null on the last page. }
+    ExportRequest:
+      type: object
+      required: [format]
+      properties:
+        format: { type: string, enum: [csv, parquet] }
+        filters: { type: array, maxItems: 20, items: { $ref: "#/components/schemas/Filter" } }
+    Export:
+      type: object
+      required: [exportId, datasetId, format, status, createdAt]
+      properties:
+        exportId: { type: string, example: exp_9c3d1e }
+        datasetId: { type: string, example: ds_2b7f9c }
+        format: { type: string, enum: [csv, parquet] }
+        status: { type: string, enum: [queued, running, complete, failed] }
+        createdAt: { type: string, format: date-time }
+        completedAt: { type: string, format: date-time, nullable: true }
+        rowCount: { type: integer, format: int64, nullable: true }
+        downloadUrl:
+          type: string
+          format: uri
+          nullable: true
+          description: Signed URL, present when status is complete. CSV files are gzip-compressed and end in .csv.gz.
+        expiresAt: { type: string, format: date-time, nullable: true, description: "When downloadUrl stops working, 24 hours after completion." }
+        error: { type: string, nullable: true, description: "Why the export failed, when status is failed." }
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              enum: [INVALID_ARGUMENT, INVALID_FILTER, UNAUTHENTICATED, NOT_FOUND, RATE_LIMITED, INTERNAL]
+            message: { type: string }
+            field: { type: string, description: "The request field that caused the error, if any." }

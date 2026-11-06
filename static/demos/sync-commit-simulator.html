@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sync and Commit simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<style>.try button{background:#6B3F80!important;color:#fff}.try .r::before{background:#E6DCEB!important}</style>
+<style>
+.g{display:grid;grid-template-columns:minmax(90px,1fr) 120px 120px minmax(200px,2.4fr);gap:10px;align-items:center;padding:11px 16px;border-bottom:1px solid #EFEAF1;font-size:15px}
+.gh{background:#FAF8FB;font-size:12.5px;font-weight:600;letter-spacing:.03em;color:#6B6270;border-bottom:1px solid #E7E0EA}
+input[type=checkbox]{width:18px;height:18px;margin:0;cursor:pointer}
+.res{padding:5px 10px;border-radius:4px;font-size:14px;line-height:1.4}
+</style></head>
+<body>
+<div class="box">
+  <div class="head"><span>Jane Doe works in the <b>Signature</b> (the parent). John Doe works in his child Scenario, <b>John_Promo_Test</b>. Tick what each of them changed and submitted.</span></div>
+  <div class="g gh"><span>TABLE</span><span>JANE CHANGED (PARENT)</span><span>JOHN CHANGED (CHILD)</span><span>RESULT</span></div>
+  <div id="rows"></div>
+  <div class="row" style="padding:14px 16px"><button class="btn" id="sync">↓ Sync from Parent</button><button class="btn" id="commit">↑ Commit</button><span id="msg" style="flex:1 1 260px;font-size:15px"></span></div>
+  <div class="try"><p>Tick or untick tables for Jane and John, then run Sync or Commit ↑</p><span class="r"><button id="try">➤ Try It</button></span></div>
+</div>
+<script src="demo.js"></script>
+<script>
+var T=["Demand","Supply","Costs","Routes"],P=[0,0,1,1],C=[1,0,1,0],run=null,$=function(id){return document.getElementById(id)};
+function res(i){var p=P[i],c=C[i],anyP=P.some(Boolean);
+ if(!run)return["Run Sync or Commit","#F5F3F6","#6B6270"];
+ if(run==="sync"){if(p&&c)return["Replaced by Jane's version. John's edits here are lost.","#FDF3F2","#B3261E"];if(p)return["Replaced by Jane's version","#F3ECF6","#6B3F80"];if(c)return["Kept. John's edits stay.","#EAF6EE","#2E7D4F"];return["Unchanged","#F5F3F6","#6B6270"];}
+ if(anyP)return["Blocked","#FFF4E5","#7A4E00"];return c?["Pushed. The parent gets John's edits.","#EAF6EE","#2E7D4F"]:["Pushed. John's unchanged copy goes up (same data).","#F5F3F6","#6B6270"];}
+function render(){
+ $("rows").innerHTML=T.map(function(n,i){var r=res(i);return '<div class="g"><b>'+n+'</b><input type="checkbox" data-k="P" data-i="'+i+'" '+(P[i]?"checked":"")+' style="accent-color:#8A7F90" aria-label="Jane changed '+n+'"><input type="checkbox" data-k="C" data-i="'+i+'" '+(C[i]?"checked":"")+' style="accent-color:#6B3F80" aria-label="John changed '+n+'"><span class="res" style="background:'+r[1]+';color:'+r[2]+'">'+r[0]+'</span></div>'}).join("");
+ var anyP=P.some(Boolean),lost=P.filter(function(p,i){return p&&C[i]}).length;
+ $("msg").textContent=!run?"Start here: Jane and John both changed Costs. Run Sync to see what happens to John's edit."
+  :run==="sync"?(lost?lost+" table(s) John edited were replaced because Jane also changed them.":"No edits lost. Sync replaced only the tables Jane changed.")
+  :anyP?"Commit blocked: Jane changed the parent after John's child was created. John must Sync from Parent first.":"All four of John's tables were pushed to the parent, including ones he did not change.";}
+$("rows").onchange=function(e){var t=e.target;(t.dataset.k==="P"?P:C)[+t.dataset.i]=t.checked?1:0;run=null;render();};
+$("sync").onclick=function(){run="sync";render()};$("commit").onclick=function(){run="commit";render()};
+$("try").onclick=function(){run=run==="sync"?"commit":"sync";render()};render();
+</script></body></html>

@@ -1,0 +1,177 @@
+---
+title: "Retrain a model"
+description: "Refresh a deployed forecast model with new demand history, compare the new version with the previous one, and roll back if needed."
+sidebar_position: 3
+keywords:
+  - retrain model
+  - model version
+  - rollback
+  - auto-deploy
+  - Forecast Lab
+---
+# Retrain a model
+
+<span className="vp-label">Original sample, re-created for a fictional product.</span>
+
+Retraining updates a deployed forecast model with new history without repeating the full experiment. The selected model for each series stays the same; only its parameters are refit to the latest data.
+
+## When to retrain
+
+Retrain when all of the following are true:
+
+- New history has arrived since the last training, for example last week's sales.
+- Demand patterns are stable and you are satisfied with the selected models.
+- The dataset structure is unchanged: the same series keys, the same driver columns, and the same forecast specification.
+
+Run a full experiment instead when demand has shifted, when you add or remove products, locations, channels, or drivers, or when you change a setting in the forecast specification. See [Retrain modes](#retrain-modes) for how to tell the two cases apart.
+
+|                  | Retrain                | Full experiment                                      |
+| ---------------- | ---------------------- | ---------------------------------------------------- |
+| Model comparison | Skipped                | Runs                                                 |
+| Selected models  | Unchanged              | Can change                                           |
+| Time             | Minutes                | Hours                                                |
+| Use for          | Regular data refreshes | New setup, or a change to data structure or settings |
+
+## What happens during a retrain
+
+<Stepper>
+<Step>
+
+**Validate the new history**
+Forecast Lab checks that the dataset still matches the mapping and the forecast specification the model was built with.
+
+</Step>
+<Step>
+
+**Refit the selected models**
+Each series' selected model is retrained on the full updated history.
+
+</Step>
+<Step>
+
+**Create a new version**
+The result is saved as the next version, for example `v4`, alongside earlier versions.
+
+</Step>
+<Step>
+
+**Deploy the version (optional)**
+With **Auto-deploy** on, the version is published to the Model Library without further action.
+
+</Step>
+<Step>
+
+**Update pipelines (optional)**
+With **Auto-update version** on in a pipeline, the pipeline switches to the new version on its next run.
+
+</Step>
+</Stepper>
+
+## What is preserved
+
+A retrain keeps:
+
+- The data mapping from Step 3 of [Build your first model](./build-your-first-model.mdx).
+- The selected model for every series.
+- The selection metric and all values from the forecast specification.
+- Every earlier version. Versions are never overwritten.
+
+Fitted parameters, backtest scores, and driver importance are recomputed for the new version.
+
+## Retrain modes
+
+<Tabs defaultValue="refreshed-data">
+<TabsList>
+<TabsTrigger value="refreshed-data">Same data, refreshed</TabsTrigger>
+<TabsTrigger value="changed-configuration">Changed configuration</TabsTrigger>
+</TabsList>
+<TabsContent value="refreshed-data">
+
+**Use this when:** the dataset was rebuilt with new periods and nothing else changed.
+
+No remapping is needed. The model reads the latest build of the mapped dataset.
+
+**To retrain once:**
+
+1. In Forecast Lab, open the model.
+2. On the **Train and deploy** page, click **Retrain model**.
+3. Wait for the new version to appear in the version list.
+
+**To retrain on a schedule:**
+
+1. On the **Train and deploy** page, open the **More** menu next to **Retrain model** and select **Schedule retrain**.
+2. Choose **One time** or **Recurring**. For recurring, pick a frequency (daily, weekly, or monthly) and a start time.
+3. Click **Schedule**.
+
+<div className="vp-shot">Screenshot: Schedule retrain dialog with Recurring selected, a weekly frequency, and a Monday 06:00 start time</div>
+
+For an unattended refresh, also turn on **Auto-deploy** on the model and **Auto-update version** in each pipeline that uses it.
+
+</TabsContent>
+<TabsContent value="changed-configuration">
+
+**Use this when:** the dataset structure or a forecast specification setting changed. Examples: new products or locations in `series_keys`, a new driver column, or a different forecast horizon or time bucket.
+
+A retrain alone does not pick this up, because the mapping and the selected models are fixed. Instead:
+
+1. Rebuild the dataset in Data Prep with the new configuration.
+2. In Forecast Lab, create a new model. Do not remap the existing one.
+3. Map the rebuilt dataset, validate, and run the experiment, as in [Build your first model](./build-your-first-model.mdx).
+4. Train and deploy the new model, then replace the old model in your pipelines.
+
+Keep the old model until the new one has run in a pipeline at least once, so you can compare outputs.
+
+</TabsContent>
+</Tabs>
+
+## Deploy a retrained version
+
+If **Auto-deploy** is off, deploy the version yourself:
+
+1. On the **Train and deploy** page, find the new version in the list.
+2. Click **Deploy version**.
+
+To deploy every future version automatically, turn on **Auto-deploy** on the same page.
+
+## Update the version in a pipeline
+
+1. In the pipeline, right-click the forecast model and select **Model details**.
+2. Choose one option:
+   - Turn on **Auto-update version** so the pipeline uses the latest deployed version from its next run. Recommended with scheduled retraining.
+   - Click **Change version**, select the version, and click **Update**.
+
+## Compare the new and old versions
+
+Before you point a production pipeline at a new version, compare it with the one it replaces:
+
+1. On the **Train and deploy** page, select two versions and click **Compare versions**.
+2. Review the comparison:
+   - **Aggregate accuracy** on the selection metric for each version, scored on the most recent backtest windows of the new history.
+   - **Series with the largest change** in accuracy or bias between the versions.
+   - **Training window** (`train_start` and `train_end`) for each version.
+3. Open any series in the list to see both versions' forecasts against actuals.
+
+<div className="vp-shot">Screenshot: Compare versions view showing v3 and v4 side by side with aggregate WMAPE and a list of series with the largest change</div>
+
+A new version is not always better. A retrain that includes an unusual period, such as a stockout or a one-off promotion that is not captured as a driver, can lower accuracy on some series. Use the **Needs review** filter to find them.
+
+## Roll back
+
+If a new version performs worse, roll back without retraining:
+
+1. In each affected pipeline, open **Model details**, click **Change version**, select the previous version, and click **Update**. If **Auto-update version** is on, turn it off first.
+2. In Forecast Lab, on the **Train and deploy** page, open the **More** menu for the new version and select **Retire version**. Retired versions stay in the version list but cannot be selected in pipelines.
+
+Forecast outputs written by the new version remain in `forecast_output` under their `run_id`. If the pipeline uses **Replace** write mode, the next run of the restored version overwrites them.
+
+## Example: weekly refresh
+
+Your warehouse loads last week's sales every Monday, and planning meets on Tuesday.
+
+One-time setup:
+
+1. Turn on **Auto-deploy** on the model.
+2. Turn on **Auto-update version** in the planning pipeline.
+3. Schedule a weekly retrain for Monday at 06:00.
+
+Every Monday, Forecast Lab validates the new history, retrains, and deploys, and the pipeline runs with the new version. On Tuesday, planners review the **Needs review** series.

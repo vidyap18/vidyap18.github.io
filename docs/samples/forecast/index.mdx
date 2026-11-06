@@ -1,0 +1,32 @@
+---
+title: "User guide sample: train your first forecast model"
+description: "User guide sample: train your first forecast model: what the set contains and the decisions behind it."
+sidebar_position: 0
+sidebar_label: "About this set"
+---
+# User guide sample: train your first forecast model
+
+<span className="vp-label">Original sample, re-created for a fictional product.</span>
+
+## Process note
+
+I wrote these pages for a demand planner training a first model: someone who has prepared data but has never chosen a selection metric or deployed a model, so the quick start explains the two concepts that block that reader (accuracy metrics and backtesting) at the step where they are needed, not on a separate concepts page.
+I fixed one vocabulary for all five pages before drafting (setting names, input and output table names, button labels) and put the complete settings list in a single reference page, so the quick start and the retrain how-to each explain only the settings that matter at that moment and link out for the rest.
+Next, I would add a troubleshooting page keyed to validation messages, and run the quick start with two planners to find the step where they stop.
+
+## Diátaxis map
+
+| Page                           | Diátaxis type | Reader need                                                                                          |
+| ------------------------------ | ------------- | ---------------------------------------------------------------------------------------------------- |
+| `overview.md`                  | Explanation   | Understand what Forecast Lab does, who it serves, and the shape of the whole flow before starting.   |
+| `build-your-first-model.md`    | Tutorial      | Be led from an empty model to forecast outputs, with the two key concepts taught in place.           |
+| `retrain-a-model.md`           | How-to        | Refresh a deployed model, choose the right retrain mode, compare versions, and roll back.            |
+| `forecast-settings.md`         | Reference     | Look up a setting's default, allowed values, and effect, and find where it is set.                   |
+| `ask-the-forecast-assistant.md` | How-to        | Use the in-product assistant well, and know its limits and privacy behavior.                         |
+
+## Conventions used
+
+- MDX components: `<Stepper>` with `<Step>` children; `<Tabs defaultValue>` with `TabsList`, `TabsTrigger value`, and `TabsContent value`.
+- Admonitions: `:::warning`, `:::tip`, `:::note`.
+- Image placeholders: `![alt text](./images/name.png)`, with alt text that describes the screen state.
+- Front matter on every page: `title`, `description`, `type`, `keywords`.

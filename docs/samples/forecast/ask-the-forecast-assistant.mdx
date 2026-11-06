@@ -1,0 +1,115 @@
+---
+title: "Ask the Forecast Assistant"
+description: "Use the Forecast Assistant panel in Forecast Lab to ask about results, versions, and settings in plain language, and learn what it cannot do."
+sidebar_position: 5
+keywords:
+  - Forecast Assistant
+  - AI assistant
+  - ask a question
+  - forecast results
+  - Forecast Lab
+---
+# Ask the Forecast Assistant
+
+<span className="vp-label">Original sample, re-created for a fictional product.</span>
+
+The **Forecast Assistant** is a question-and-answer panel inside Forecast Lab. You ask a question in plain language and get an answer grounded in the model you have open: its results, its settings, and its data mapping.
+
+The assistant is available on the **Experiment setup**, **Results**, and **Train and deploy** pages of any demand forecast model.
+
+:::note
+The Forecast Assistant is in beta and is enabled per workspace. If you do not see the assistant icon in Forecast Lab, ask your workspace admin whether it is turned on.
+:::
+
+<div className="vp-shot">Screenshot: Forecast Assistant panel open on the right side of the Results page, answering a question about the lowest-accuracy series</div>
+
+## When to use the assistant
+
+| When you are       | Ask about                                                                | Example                                   |
+| ------------------ | ------------------------------------------------------------------------ | ----------------------------------------- |
+| Reviewing results  | Accuracy, bias, flagged series, and why a series got the model it did.   | "Which series have the highest bias?"     |
+| Comparing versions | What changed between two versions or runs.                               | "What changed since v3?"                  |
+| Setting up         | What a setting means or what an input expects.                           | "What does Release lag do?"               |
+| Learning           | What Forecast Lab does and which tables it needs.                        | "What is a backtest window?"              |
+
+For a number you can read directly from the page, the page is faster. The assistant is most useful when you would otherwise filter, sort, and compare several views to reach an answer.
+
+## Open the panel
+
+1. Open a demand forecast model in Forecast Lab.
+2. Click the assistant icon in the top-right corner of the page.
+
+The panel opens on the right. You can keep it open while you filter results, change the selection metric, or open a series.
+
+<div className="vp-shot">Screenshot: Empty Forecast Assistant panel with the greeting and the question field</div>
+
+## Ask a question
+
+1. In the field at the bottom of the panel, type your question in plain language.
+2. Press **Enter** or click **Send**.
+
+The answer is based on the model's latest completed experiment and its deployed versions. Questions that scan all series take a few seconds; questions about one series or one setting return faster.
+
+:::note
+The assistant reads results as of the last completed experiment or retrain. While a retrain is in progress, answers reflect the previous version until it finishes.
+:::
+
+## Continue the conversation
+
+The assistant keeps the context of the current conversation. Type a follow-up in the same panel and it is treated as a continuation of the previous question.
+
+| First question                                        | Follow-up                                  |
+| ----------------------------------------------------- | ------------------------------------------ |
+| "Which series have the lowest accuracy?"              | "Show only the ones at DE locations."      |
+| "Why was seasonal naive selected for this series?"    | "How did gradient boosting score on it?"   |
+| "What changed since v3?"                              | "List the series that got worse."          |
+
+To start a new topic, click **New conversation** at the top of the panel. Earlier conversations stay in the panel's history for the current session.
+
+## Sample questions
+
+**About your results**
+
+- "Which 20 series contribute the most error to the aggregate WMAPE?"
+- "How many series are flagged as Needs review, and for which reasons?"
+- "Which drivers had the highest importance across the selected models?"
+
+**About a series**
+
+- "Why was exponential smoothing selected for product 4471 at location DE-07?"
+- "What was each candidate's backtest error for this series?"
+
+**About versions and runs**
+
+- "Compare aggregate accuracy between v3 and v4."
+- "Which run_id was the last one written with release lag 0?"
+
+**About setup**
+
+- "What would change if I switched the selection metric to RMSE?"
+
+## What the assistant cannot do
+
+The assistant reads only. It does not:
+
+- Change settings, mappings, or the selection metric. It can tell you where to change them.
+- Train, retrain, deploy, or retire a version, or run a pipeline.
+- Answer about a model other than the one you have open. Open that model and ask there.
+- Read data outside Forecast Lab, such as pipeline tables that are not forecast outputs, or external systems.
+- Produce a forecast for a series or period that is not in the experiment results or the output tables. If you ask for one, it says so.
+- Replace validation. A question about data quality returns what validation already reported, not a new check.
+
+If an answer is wrong or incomplete, click **Flag answer** under the response and add a short note. Flags are reviewed to improve the assistant during the beta.
+
+## Privacy
+
+- The assistant has the same access you have. It cannot see models, datasets, or workspaces you cannot open.
+- Questions and answers are stored with your workspace for 30 days and are visible to workspace admins for audit.
+- Your questions and your workspace data are not used to train the assistant's underlying model.
+- Do not paste credentials, personal data about individuals, or data from outside Meridian Studio into the panel.
+
+## Related
+
+- [Build your first model](./build-your-first-model.mdx)
+- [Retrain a model](./retrain-a-model.mdx)
+- [Forecast settings](./forecast-settings.mdx)

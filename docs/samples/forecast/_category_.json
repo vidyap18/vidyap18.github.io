@@ -1,0 +1,12 @@
+{
+  "label": "User guide: train your first forecast model",
+  "position": 2,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "samples/forecast/index"
+  },
+  "customProps": {
+    "description": "User guide sample: train your first forecast model"
+  }
+}

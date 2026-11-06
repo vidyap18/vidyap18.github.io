@@ -1,0 +1,122 @@
+---
+title: "Build and Live workspaces, the change in one minute"
+description: "Customer briefing on the Build and Live split for Meridian Studio planning models, what changes on rollout day, and how to move an existing model to Live."
+sidebar_position: 2
+---
+
+# Build and Live workspaces
+
+<span className="vp-label">Original sample, re-created for a fictional product.</span>
+
+## The change in one minute
+
+**Scope:** This applies to planning models only. Dashboards and data connections are not affected and do not get Build and Live workspaces.
+
+Every Meridian Studio planning model can now have a Build workspace and a Live workspace.
+
+| Build | Live |
+| --- | --- |
+| Where planners create, change and validate the model | Where business users work with the stable model |
+| Changes appear immediately | Changes appear only after a planner promotes them |
+| Structural editing is allowed | Only approved settings are editable |
+
+This briefing uses two terms:
+
+* **Planner:** builds, configures, validates and promotes models.
+* **Business user:** uses models for day-to-day planning, and may also test changes in Build.
+
+Inside a model, planners use **Edit mode** to make changes and **Preview mode** to see the model as a business user would.
+
+**The core idea:** planners can keep evolving a model without exposing unfinished changes to the people who depend on it.
+
+## What changes on rollout day
+
+**What changes**
+
+* Existing models become their Build workspace and show a **Build** label.
+* Planners see the new Edit mode / Preview mode switch.
+* The Quick edit bar is no longer in the top bar. Planners make changes in Edit mode and check the business-user experience in Preview mode.
+* Planners gain the option to promote a model to Live.
+* The Models page shows Build workspaces by default. Use the **Workspace** filter to see Live workspaces.
+
+**What does not change**
+
+* Existing models continue to work.
+* Existing links continue to work.
+* Existing scenarios and data remain available.
+* Existing users keep their access.
+* You do not need to promote every model immediately.
+* Business users are not removed from Build automatically.
+
+**Before rollout:** planners should save all changes made through the Quick edit bar. Unsaved changes may not be retained when the new experience is enabled.
+
+**Important:** a Live workspace is not created automatically. You decide which models to promote and when. Until then, the existing model continues to operate as Build.
+
+## What this means for you
+
+* **Nothing stops working on rollout day.** Existing models keep working from the same link until you choose to promote them.
+* **You decide when to create Live.** Models are not promoted automatically.
+* **Build is where models change.** Planners make and validate structural changes there.
+* **Live is where business users work.** Once promoted, it is the stable day-to-day version.
+
+## How it works
+
+**Build** (make changes in Build) → **Validate** (switch to Preview mode and run the readiness check) → **Promote** (choose when the model is ready) → **Operate** (business users work in Live)
+
+Planners make changes in Build, switch to Preview mode to check what business users will see, and promote when the model is ready. Live stays stable while further work continues in Build. Selected business users can be given access to Build to test workflows before changes reach Live.
+
+Before promoting, Meridian Studio runs a readiness check on the model. If it finds blocking issues, the planner must resolve them before continuing.
+
+## Moving an existing model to Live
+
+**1. Identify models that are ready.** Start with models that are actively used for planning cycles and have reached a stable state, especially those that need to stay steady while planners keep working. You do not need to move every model at once.
+
+**2. Complete the first promotion.** Planners promote a model from the Promotion panel, which also shows readiness-check results and any issues that must be resolved first. During the first promotion only, the planner can carry across scenario data, users and roles, and scheduled runs, so Live starts with the data and access already in use.
+
+**3. Move scheduled runs to Live.** Scheduled runs move to Live during the first promotion. Select the option to remove the existing schedules from Build. Otherwise, the same runs will fire in both workspaces.
+
+**4. Share the Live link.** Live gets its own link. Share it with business users, direct them to use Live from now on, and review who should keep access to Build. The existing Build link stays available.
+
+**5. Review access.** Access to Build and Live is managed separately for each model. A typical setup:
+
+| User group | Build | Live |
+| --- | --- | --- |
+| Planners | Yes | Yes |
+| Most business users | No | Yes |
+
+A business user can be given Build access for testing without being made a planner.
+
+## Live: what is and is not editable
+
+**Simple rule:** operate in Live. Create in Build.
+
+| Available in Live, subject to permissions | Must be changed in Build |
+| --- | --- |
+| Run planning jobs such as forecast, replenishment and scenario compare | Change how planning jobs are wired together |
+| View and edit data in approved planning tables | Add or remove tables |
+| Upload data | Change the data model, hierarchies or measures |
+| Change approved settings, for example safety-stock targets or the planning horizon | Mark which settings are approved for Live |
+| Create and change run schedules | Upgrade solver versions |
+| Manage scenarios | Edit pages and layouts |
+| Add or remove users and roles | Edit data connections |
+| View and download audit logs | Change the model's appearance |
+
+## FAQ
+
+**Why can I see more models after rollout?** Existing models are classified as Build workspaces and shown by default. Use the Workspace filter to see Live workspaces.
+
+**Do we need to promote every model immediately?** No. Existing models continue to work in Build. Promote stable models when they are ready.
+
+**Can business users test before Live?** Yes. Business users who need to validate a model can be given access to Build to test workflows before changes reach Live.
+
+**Can a planner make a quick structural fix directly in Live?** No. The change must be made in Build and promoted.
+
+**What counts as an approved setting?** A setting a planner has explicitly marked as editable in Live, such as a safety-stock target. Everything else is read-only in Live.
+
+**What happens if the readiness check fails?** Promotion stops. The Promotion panel lists each blocking issue and the component it affects. Fix the issues in Build and promote again.
+
+**Can we go back to a single workspace?** No. Once a model has a Live workspace it keeps it. You can continue to promote newer changes into it.
+
+## Want more details
+
+See the Build and Live user guides on the Meridian documentation site for step-by-step instructions on promoting models, managing scenarios and data, and controlling access.

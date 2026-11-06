@@ -1,0 +1,181 @@
+---
+title: "Your first query in 10 minutes"
+description: "Create an API key, list the datasets you can read, query rows with a filter, and page through the results with curl and Python."
+sidebar_position: 1
+keywords:
+  - Meridian External API
+  - getting started
+  - API key
+  - query rows
+  - pagination
+  - Python example
+---
+
+# Your first query in 10 minutes
+
+<span className="vp-label">Original sample, re-created for a fictional product. Not runnable.</span>
+
+In this tutorial you make your first calls to the Meridian External API. By the end you can list the datasets in your Meridian Studio workspace, fetch filtered rows from one of them, and page through a result set that is larger than one response.
+
+## Prerequisites
+
+- A Meridian Studio account with the Developer or Admin role in the workspace you want to read.
+- `curl` on your path.
+- Python 3.9 or later with the `requests` package (`pip install requests`).
+- The subdomain of your Meridian Studio URL. If you sign in at `https://harbor.meridian.example`, your tenant is `harbor`. The examples use `demo`.
+
+## Step 1: Create an API key
+
+1. In Meridian Studio, open **Admin settings** > **API keys** and click **Create key**.
+2. Enter a name, such as `tutorial`, and select the workspace the key can read.
+3. Click **Create**, then copy the key. Meridian Studio shows the key once.
+4. Store the key in an environment variable so it never appears in your code:
+
+   ```bash
+   export MERIDIAN_API_KEY="<your-api-key>"
+   ```
+
+Every request sends the key in the `X-Meridian-Key` header.
+
+## Step 2: List your datasets
+
+Call `GET /datasets` to see what the key can read.
+
+```bash
+curl "https://demo.meridian.example/api/v1/datasets" \
+  -H "X-Meridian-Key: $MERIDIAN_API_KEY"
+```
+
+```python
+import os
+import requests
+
+BASE_URL = "https://demo.meridian.example/api/v1"
+HEADERS = {"X-Meridian-Key": os.environ["MERIDIAN_API_KEY"]}
+
+response = requests.get(f"{BASE_URL}/datasets", headers=HEADERS, timeout=30)
+response.raise_for_status()
+for dataset in response.json()["datasets"]:
+    print(dataset["datasetId"], dataset["name"], dataset["rowCount"])
+```
+
+The Python examples in the next steps reuse `BASE_URL`, `HEADERS` and the imports from this step.
+
+The response lists each dataset with its `datasetId`, `name`, `displayName`, `rowCount` and `updatedAt`:
+
+```json
+{
+  "datasets": [
+    { "datasetId": "ds_2b7f9c", "name": "demand_forecast", "displayName": "Demand forecast", "rowCount": 184320, "updatedAt": "2026-11-04T06:15:00Z" },
+    { "datasetId": "ds_41e0aa", "name": "inventory_positions", "displayName": "Inventory positions", "rowCount": 52110, "updatedAt": "2026-11-04T06:20:00Z" }
+  ],
+  "nextPageToken": null
+}
+```
+
+Copy the `datasetId` of the dataset you want. The rest of this tutorial uses `ds_2b7f9c`, the demand forecast.
+
+If you get `401`, the header is missing or the key is wrong.
+
+## Step 3: Query rows with a filter
+
+Call `POST /datasets/{datasetId}/query`. The body names the fields you want, the filters a row must match, and a page size. The demand forecast dataset has the fields `sku`, `location`, `week_start` and `forecast_units`. To see the fields of any dataset, call `GET /datasets/{datasetId}`.
+
+```bash
+curl "https://demo.meridian.example/api/v1/datasets/ds_2b7f9c/query" \
+  -H "X-Meridian-Key: $MERIDIAN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fields": ["sku", "location", "week_start", "forecast_units"],
+    "filters": [
+      { "field": "location", "op": "eq", "value": "DC-NORTH" },
+      { "field": "week_start", "op": "gte", "value": "2026-11-02" }
+    ],
+    "pageSize": 2
+  }'
+```
+
+```python
+query = {
+    "fields": ["sku", "location", "week_start", "forecast_units"],
+    "filters": [
+        {"field": "location", "op": "eq", "value": "DC-NORTH"},
+        {"field": "week_start", "op": "gte", "value": "2026-11-02"},
+    ],
+    "pageSize": 2,
+}
+response = requests.post(f"{BASE_URL}/datasets/ds_2b7f9c/query", headers=HEADERS, json=query, timeout=30)
+response.raise_for_status()
+page = response.json()
+print(page["rows"])
+print(page.get("nextPageToken"))
+```
+
+The response holds one object per row and a token for the next page:
+
+```json
+{
+  "datasetId": "ds_2b7f9c",
+  "rows": [
+    { "sku": "SKU-10442", "location": "DC-NORTH", "week_start": "2026-11-02", "forecast_units": 1280 },
+    { "sku": "SKU-10443", "location": "DC-NORTH", "week_start": "2026-11-02", "forecast_units": 315.5 }
+  ],
+  "nextPageToken": "eyJrIjoiU0tVLTEwNDQzIn0"
+}
+```
+
+A `pageSize` of 2 keeps the output short; in real code use the default of 100, or up to 1000.
+
+If you get `400` with the code `INVALID_FILTER`, a field name in `filters` does not exist in the dataset. The `field` value in the error tells you which one.
+
+## Step 4: Page through the results
+
+A response with a `nextPageToken` has more rows. Send the token back as `pageToken` in the same request body, and stop when the token is `null`.
+
+With curl, repeat the request from step 3 with one more field in the body:
+
+```json
+{
+  "fields": ["sku", "location", "week_start", "forecast_units"],
+  "filters": [
+    { "field": "location", "op": "eq", "value": "DC-NORTH" },
+    { "field": "week_start", "op": "gte", "value": "2026-11-02" }
+  ],
+  "pageSize": 2,
+  "pageToken": "eyJrIjoiU0tVLTEwNDQzIn0"
+}
+```
+
+In Python, wrap the loop in a generator so that callers never see pages:
+
+```python
+def query_rows(dataset_id, query):
+    """Yield every row that matches the query, one page at a time."""
+    body = dict(query)
+    while True:
+        response = requests.post(f"{BASE_URL}/datasets/{dataset_id}/query", headers=HEADERS, json=body, timeout=30)
+        response.raise_for_status()
+        page = response.json()
+        yield from page["rows"]
+        if not page.get("nextPageToken"):
+            return
+        body["pageToken"] = page["nextPageToken"]
+
+total = sum(row["forecast_units"] or 0 for row in query_rows("ds_2b7f9c", query))
+print(f"Forecast units for DC-NORTH from 2026-11-02: {total}")
+```
+
+Keep the fields, filters and page size identical on every page. The token records where the previous page ended, so changing the query between pages returns an `INVALID_ARGUMENT` error.
+
+## What you learned
+
+- Every request authenticates with an API key in the `X-Meridian-Key` header.
+- `GET /datasets` tells you which datasets a key can read and their IDs.
+- `POST /datasets/{datasetId}/query` returns the rows that match all of your filters.
+- Results come in pages. Send `nextPageToken` back as `pageToken` until it is `null`.
+
+## What's next
+
+- To pull a whole dataset into a file instead of paging through rows, see [Connect the API to Power BI or Tableau](./how-to-connect-bi-tool.mdx).
+- For every parameter and error of the query endpoint, see [Query rows](./reference-query-endpoint.mdx).
+- To understand why the API is shaped this way, see [Authentication, datasets, rows and pagination](./explanation-auth-and-data-model.mdx).

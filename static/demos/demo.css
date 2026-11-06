@@ -1,0 +1,24 @@
+*{box-sizing:border-box}
+html,body{margin:0;background:transparent;overflow:hidden}
+body{font:16px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#1F1F24;-webkit-font-smoothing:antialiased}
+.box{border:1px solid #D9CFDE;border-radius:8px;overflow:hidden;background:#fff}
+.head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:12px 16px;background:#FAF8FB;border-bottom:1px solid #E7E0EA;font-size:15px}
+.head b{font-weight:600}
+.muted{color:#6B6270}
+.body{padding:16px}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.label{flex:0 0 180px;font-size:15px;font-weight:600}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;background:#F2EFF4;border-radius:7px}
+.seg button{all:unset;cursor:pointer;padding:7px 14px;border-radius:5px;font-size:15px;font-weight:500;color:#3A313F}
+.seg button[aria-pressed="true"]{background:#6B3F80;color:#fff}
+.seg.light button[aria-pressed="true"]{background:#fff;color:#1F1F24;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.btn{all:unset;cursor:pointer;padding:8px 14px;border:1px solid #D9D9DE;border-radius:5px;font-size:15px;font-weight:500;background:#fff;white-space:nowrap}
+.btn.p{background:#6B3F80;border-color:#6B3F80;color:#fff}
+.chip{display:inline-block;padding:2px 9px;border-radius:4px;font-size:13px;font-weight:600;white-space:nowrap}
+.base{padding:1px 6px;border:1px solid #2B2BE0;color:#2B2BE0;font-size:11px;font-weight:700;letter-spacing:.04em}
+.try{display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 16px 18px;border-top:1px solid #E7E0EA;background:#FCFBFD}
+.try p{margin:0;font-size:15px;color:#6B6270;text-align:center}
+.try .r{position:relative;display:inline-flex}
+.try .r::before{content:"";position:absolute;inset:-7px;border-radius:12px;background:#DCD8FF;animation:rip 1.8s ease-out infinite}
+.try button{all:unset;position:relative;cursor:pointer;padding:9px 20px;border-radius:6px;background:#2B2BE0;color:#fff;font-size:15px;font-weight:600}
+@keyframes rip{0%{transform:scale(.9);opacity:.95}100%{transform:scale(1.4);opacity:0}}

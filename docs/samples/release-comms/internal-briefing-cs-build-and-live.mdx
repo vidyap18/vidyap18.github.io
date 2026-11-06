@@ -1,0 +1,64 @@
+---
+title: "Build and Live workspaces, briefing for customer success managers"
+description: "Internal briefing for customer success managers ahead of the Build and Live rollout, with talking points, likely objections, and escalation paths."
+sidebar_position: 4
+---
+
+# Build and Live: what to tell customers
+
+<span className="vp-label">Original sample, re-created for a fictional product.</span>
+
+## In one line
+
+Every planning model gets a Build workspace (where planners change things) and, when the customer chooses, a Live workspace (where business users work and only approved settings are editable). Nothing is promoted on rollout day, and nothing stops working.
+
+## What to tell customers
+
+* **Nothing breaks on rollout day.** Existing models become Build workspaces. Same link, same scenarios, same data, same access.
+* **Promotion is their call.** No model gets a Live workspace until a planner promotes it. They can take weeks or months.
+* **One action before rollout:** save any changes sitting in the Quick edit bar. This is the only thing that can be lost.
+* **Start with the models business users depend on most.** Those gain the most from a stable Live version.
+* **The first promotion can carry scenario data, users and roles, and scheduled runs**, so Live starts populated. Later promotions carry structure only.
+* **Point them to the one-minute briefing and the release note.** Both cover the Build → Validate → Promote → Operate flow.
+
+## Likely objections and answers
+
+**"We have forty models. Do we have to promote all of them?"**
+No. Promote the ones business users rely on daily. Models used for exploration can stay in Build indefinitely.
+
+**"Our business users already use the current link. Will it stop working?"**
+No. The existing link keeps opening Build. Live gets a second link, which the customer shares when ready and can roll out gradually.
+
+**"Our planners make small fixes in front of users all the time. Does this slow them down?"**
+Structural fixes now go through Build and a promotion, a few minutes including the readiness check. Settings the planner marks as approved, such as safety-stock targets, stay editable in Live, so day-to-day tweaks are not affected.
+
+**"What if the readiness check blocks us on something we cannot fix?"**
+Most findings include guidance. If a finding says it needs Meridian Support, raise a ticket with the model name and the finding text. Work in Build continues in the meantime.
+
+**"Can we undo a promotion?"**
+No. Once a model has a Live workspace, it keeps it. Newer changes can be promoted into it and access can be restricted, but it cannot be removed. Say this plainly before the first promotion.
+
+**"Why do our scheduled runs fire twice?"**
+They skipped the option to remove schedules from Build during the first promotion. Point them to step 3 of the migration in the customer briefing.
+
+## What not to say
+
+* Do not call Build "the old version" or imply it is going away. Build is permanent.
+* Do not promise a date for undoing promotions. It is not planned.
+* Do not describe approved settings as "everything a business user needs". The planner decides, model by model.
+
+## Who to escalate to
+
+| Situation | Escalate to |
+| --- | --- |
+| A readiness-check finding with no guidance, or marked as needing Meridian Support | Support lead |
+| A request for a feature change (undo promotion, more editable settings in Live) | Product manager, planning models |
+| Help deciding which models to promote first, or a complex access setup | Solutions architect |
+| A gap or error in the briefing, release note or guides | Documentation lead |
+| A walkthrough for a large planning team | Customer education lead |
+
+## Timeline
+
+* Ten days before rollout: pre-release email from the Meridian Studio team.
+* Rollout day: release note, user guides and walkthrough video go live.
+* First two weeks: check in with customers who had unsaved Quick edit bar changes or heavy scheduled-run use.

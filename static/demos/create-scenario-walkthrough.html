@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Create a Scenario: walkthrough</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<style>
+.stage{display:grid;place-items:center;min-height:420px;padding:24px;transition:background .3s}
+.card{background:#fff;border-radius:4px;box-shadow:0 10px 32px rgba(0,0,0,.2);color:#1F1F24}
+.hl{outline:3px solid #F2B84B;outline-offset:3px;border-radius:3px}
+.in{padding:10px 12px;border:1px solid #D9D9DE;border-radius:3px}
+.dots{display:flex;gap:6px}.dots button{all:unset;cursor:pointer;width:28px;height:6px;border-radius:3px;background:#D9CFDE}.dots button.on{background:#735385}
+.base{border-color:#735385;color:#735385}
+.try button{background:#9771A7}
+.try .r::before{background:#E7E2E9}
+.foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:12px 16px;border-top:1px solid #E7E0EA;font-size:15px}
+</style></head>
+<body>
+<div class="box">
+  <div class="head"><b>Walkthrough</b><span class="muted" id="cap"></span><button class="btn" id="play" style="margin-left:auto;padding:5px 12px;font-size:14px">Pause</button></div>
+  <div class="stage" id="stage"></div>
+  <div class="foot"><div class="dots" id="dots"></div><span id="txt"></span></div>
+  <div class="try"><p>Click to step through creating a Scenario, or click any step bar ↑</p><span class="r"><button id="try">➤ Try It</button></span></div>
+</div>
+<script src="demo.js"></script>
+<script>
+var F=[
+ {cap:"Open the dialog",dd:1,hl:"new",text:"In the Scenarios dropdown, click + Create New."},
+ {cap:"Choose the parent",hl:"parent",text:"Parent Scenario: the Scenario to copy. Here, the Signature."},
+ {cap:"Name it",hl:"name",name:"Q4_Promo_Test",desc:"Testing a 10% promotion in Q4",text:"Up to 50 characters and unique in the Application. The description is optional."},
+ {cap:"Decide who can see it",hl:"access",name:"Q4_Promo_Test",desc:"Testing a 10% promotion in Q4",text:"Unshared by default. Manage User Access lets you share it now, or you can share later."},
+ {cap:"Created",dd:1,created:1,hl:"created",text:"The new Scenario appears with a lock icon: only you and the App Admins can see it."}
+];
+var st=0,play=true,$=function(id){return document.getElementById(id)};
+function H(f,k){return f.hl===k?" hl":""}
+function dd(f){return '<div class="card" style="width:340px;max-width:100%">'+
+ '<div style="padding:16px 18px 12px;font-size:19px;font-weight:600;border-bottom:1px solid #ECECEF">Scenarios</div>'+
+ '<div style="padding:12px 14px"><div class="in" style="color:#8A8A94;font-size:14px">Search for scenarios</div></div>'+
+ '<div style="padding:0 14px 12px;font-size:15px"><div style="display:flex;align-items:center;gap:8px;padding:8px 6px"><span class="muted">⌄</span>Signature <span class="base">BASE</span></div>'+
+ '<div style="margin-left:13px;border-left:1px solid #E4E4E8">'+
+ '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px">Promo Uplift Forecast '+ICON.people+'</div>'+
+ '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px">Conservative Forecast '+ICON.lock+'</div>'+
+ (f.created?'<div class="'+H(f,"created")+'" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:#ECECF1">Q4_Promo_Test '+ICON.lock+'</div>':'')+
+ '</div></div><div style="display:flex;justify-content:space-between;padding:12px 14px;border-top:1px solid #ECECEF;font-size:15px"><span class="in">⇄ Compare</span><span class="'+H(f,"new")+'" style="padding:10px 14px;border-radius:3px;background:#9771A7;color:#fff;font-weight:500">+ Create New</span></div></div>';}
+function dlg(f){var ready=st>=2;return '<div class="card" style="width:480px;max-width:100%">'+
+ '<div style="display:flex;align-items:center;padding:18px 20px;border-bottom:1px solid #ECECEF"><span style="flex:1;font-size:21px;font-weight:600">Create Child Scenario</span><span style="font-size:18px;color:#55555F">✕</span></div>'+
+ '<div style="display:flex;flex-direction:column;gap:14px;padding:18px 20px;font-size:15px"><span style="color:#6A6A74">Create a new child scenario from the below selected parent scenario</span>'+
+ '<div class="'+H(f,"parent")+'" style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:500">Parent Scenario</span><div class="in" style="display:flex;align-items:center;gap:8px">'+ICON.layers+'<span style="flex:1">Signature</span><span class="muted">⌄</span></div></div>'+
+ '<div class="'+H(f,"name")+'" style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:500">Enter a name for the child scenario</span><div class="in" style="color:'+(f.name?"#1F1F24":"#9A9AA6")+'">'+(f.name||"e.g. Demand_Review")+'</div>'+
+ '<span style="font-weight:500;margin-top:4px">Scenario Description (Optional)</span><div class="in" style="min-height:44px;background:#F7F7F9;color:'+(f.desc?"#1F1F24":"#9A9AA6")+'">'+(f.desc||"Enter Scenario Notes here..")+'</div></div>'+
+ '<div class="'+H(f,"access")+'" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#F4F4F7;border-radius:3px"><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:500">Who can access it</span><span style="color:#6A6A74">Only you and the app admins, until you share it.</span></span><span style="color:#735385;font-weight:500;white-space:nowrap">Manage User Access</span></div></div>'+
+ '<div style="display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid #ECECEF;font-size:15px"><span class="in">Cancel</span><span style="padding:10px 16px;border-radius:3px;background:'+(ready?"#9771A7":"#E4E4E8")+';color:'+(ready?"#fff":"#8A8A94")+'">Create Scenario</span></div></div>';}
+function render(){var f=F[st];$("stage").style.background=f.dd?"#EDEDF1":"#6B6B70";$("stage").innerHTML=f.dd?dd(f):dlg(f);
+ $("cap").textContent="Step "+(st+1)+" of 5 · "+f.cap;$("txt").textContent=f.text;$("play").textContent=play?"Pause":"Play";
+ $("dots").innerHTML=F.map(function(_,i){return '<button class="'+(i===st?"on":"")+'" data-i="'+i+'" aria-label="Step '+(i+1)+'"></button>'}).join("");}
+$("dots").onclick=function(e){var b=e.target.closest("button");if(b){st=+b.dataset.i;play=false;render();}};
+$("play").onclick=function(){play=!play;render();};
+$("try").onclick=function(){st=(st+1)%5;play=false;render();};
+setInterval(function(){if(play){st=(st+1)%5;render();}},3000);render();
+</script></body></html>

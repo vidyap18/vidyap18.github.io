@@ -1,0 +1,191 @@
+---
+title: "Getting started with Scenarios"
+description: "Open Scenarios in your Application, create working copies, and edit data safely."
+sidebar_position: 3
+sidebar_label: "Getting started with Scenarios"
+keywords:
+  - getting started with scenarios
+  - create scenario
+  - create child scenario
+  - open scenario
+  - edit scenario data
+  - save scenario
+  - submit scenario
+  - scenario versioning
+  - scenario setup
+---
+
+
+# Getting started with Scenarios
+
+<span className="vp-label">Real page from a user guide I own. Product name, people and other identifying details are masked.</span>
+
+Once Scenarios are enabled for your Application, you can access them directly from the Production Application, create as many working copies as you need, and start editing data in isolation.
+
+This page covers the everyday tasks: opening a Scenario, creating one, and editing and submitting its data. An App Admin enables Scenarios for the Application first. See Configuring Scenarios.
+
+***
+
+### Accessing Scenarios {#accessing-scenarios}
+
+Scenarios must be enabled for the Application first. See Configuring Scenarios.
+
+1. Open your Production Application.
+2. Click the **Scenarios** dropdown at the top of the page.
+    The Scenarios you have access to are listed here. A Scenario that is not shared with you does not appear. See [When You Do Not Have Access](./scenario-permissions.mdx#when-you-do-not-have-access).
+    For example, in the _October Demand Forecast_ Application, the Signature appears first, followed by child Scenarios such as _Promo Uplift Forecast_ and _Conservative Forecast_.
+
+    <img src="/img/samples/scenarios/scenarios-dropdown-listing-signature-and-child-scenarios.png" alt="Scenarios dropdown listing the Signature, Promo Uplift Forecast, its North Region child, and Conservative Forecast" data-size="xl" />
+3. Click any Scenario name to switch the view to that Scenario's data.
+
+The icon next to each Scenario name shows whether it is shared. The Signature shows a **BASE** badge. See Scenario Access Icons.
+
+***
+
+### Create a Scenario {#creating-new-scenarios}
+
+Scenarios are created by duplicating the Signature or any existing Scenario. There is no limit to the number of Scenarios you can create.
+
+:::info
+
+**Scenarios Capability** must be turned on in **Settings**.
+
+You need Read Write or Admin app permission to create a Scenario. You can create a Scenario from any Scenario you have access to, including one you only have [Read Only](./scenario-permissions.mdx#scenario-permission-levels) on. A new Scenario is visible only to you and the App Admins until you share it. See Sharing Scenarios.
+
+You cannot create a Scenario while the Application has unresolved schema differences. If creation is blocked with an error, see Save, Reset, Scenario creation, or Action run is blocked by a schema error.
+
+:::
+
+#### Open the Create Child Scenario Dialog {#open-the-create-child-scenario-dialog}
+
+Open the dialog from whichever place is most convenient. The dialog is the same in every case.
+
+<Tabs defaultValue="from-the-scenarios-dropdown">
+<TabsList>
+<TabsTrigger value="from-the-scenarios-dropdown">From the Scenarios Dropdown</TabsTrigger>
+<TabsTrigger value="from-an-existing-scenario">From an Existing Scenario</TabsTrigger>
+<TabsTrigger value="from-the-manage-scenarios-tab">From the Manage Scenarios Tab</TabsTrigger>
+</TabsList>
+<TabsContent value="from-the-scenarios-dropdown">
+
+In the **Scenarios** dropdown menu, click **+ Create New**.
+
+The **Create Child Scenario** dialog appears.
+
+</TabsContent>
+<TabsContent value="from-an-existing-scenario">
+
+1. In the **Scenarios** dropdown, click the ellipsis (**...**) icon next to any existing Scenario.
+2. Select **Create Scenario**. The full menu is shown in Rename, Share, and Delete Scenarios.
+
+    The **Create Child Scenario** dialog appears.
+
+</TabsContent>
+<TabsContent value="from-the-manage-scenarios-tab">
+
+1. Go to the **Manage Scenarios** tab.
+2. Hover over any Scenario, click the ellipsis (**...**) icon, and select **+ Create Scenario**. The full menu is shown in Rename, Share, and Delete Scenarios.
+
+    The **Create Child Scenario** dialog appears.
+
+</TabsContent>
+</Tabs>
+
+#### Complete the Create Child Scenario Dialog {#complete-the-create-child-scenario-dialog}
+
+1. In **Parent Scenario**, select the Scenario you want to use as the base.
+2. Enter a name for the new Scenario.
+   **Note**: Scenario names are limited to 50 characters, and they must be unique across the Application, including Scenarios you cannot see. **Create Scenario** stays unavailable until you enter a name.
+3. (Optional) Enter a **Scenario Description**.
+4. (Optional) To share the Scenario now, click **Manage User Access** under **Who can access it**, then follow Add Users or Groups.
+5. Click **Create Scenario**.
+
+    <img src="/img/samples/scenarios/create-scenario-access.png" alt="Create Child Scenario dialog with Parent Scenario, name, Scenario Description, and Who can access it: Only you and the app admins, until you share it, with a Manage User Access link" data-size="m" />
+
+    The system copies the parent Scenario data into a new Scenario. Once the copy is complete, the Scenario can be modified.
+
+:::tip
+
+**Tips for Naming Scenarios**:
+
+* Be specific: _Promo\_Uplift\_Forecast_ is better than _Scenario\_2_ or _Child\_Scenario1_
+* Add dates when relevant
+* Be consistent if you create many Scenarios
+
+:::
+
+#### Try It: Walk Through Creating a Scenario {#try-it-create-scenario-walkthrough}
+
+Step through the **Create Child Scenario** dialog: choose a parent, name the Scenario, set access, and see it appear in the list.
+
+<AutoHeightIframe
+    src="/demos/create-scenario-walkthrough.html"
+    title="Walkthrough: creating a child Scenario step by step"
+    messageType="demo-height"
+    initialHeight={520}
+  />
+
+***
+
+### Edit and Submit Data in a Scenario {#editing-data-in-scenarios}
+
+All edits in Meridian Studio are Scenario-specific. Changes you make in one Scenario stay isolated and do not affect any other Scenario, including the Signature. This lets you safely test different planning assumptions without impacting other versions.
+
+For a full explanation of how data is stored and how changes flow between data layers, see Understanding Data Layers in Scenarios.
+
+To edit data, you need Read Write or Admin on the Scenario. See [Scenario Permission Levels](./scenario-permissions.mdx#scenario-permission-levels). If editing is unavailable, see [When an Action Is Blocked](./scenario-permissions.mdx#when-an-action-is-blocked).
+
+1. Make edits to the table and save the changes using the **Save** button at the bottom of the table.
+
+    ![A Scenario table with edited cells highlighted, an unsaved changes warning, and the Discard and Save buttons](/img/samples/scenarios/scenario-table-edits-with-discard-and-save.png)
+2. Click **Submit** at the top of the page to write your changes to the Scenario's submitted state. Until you do this, edits exist only in the live working view. Clicking **Reset** or navigating away will discard them. When Solo Submit is turned on, **Reset** is unavailable. See Solo Submit and Shared Submit.
+
+    ![The Submit icon at the top of the page with a red dot showing unsubmitted changes](/img/samples/scenarios/scenario-submit-icon-with-unsubmitted-changes-dot.png)
+3. Click **Submit** to proceed when the confirmation dialog appears.
+
+A red dot on the **Submit** icon means you have unsubmitted changes.
+
+Next to the page breadcrumb, a status badge shows what is happening to the Scenario's data:
+
+* **Updating Data:** Data is being updated. Editing is temporarily disabled until the update completes.
+* **Data Updated Successfully:** Charts have refreshed. Reload the page to see other changes.
+* **Data Update Failed:** Reload the app and try again.
+
+#### How Submitting Replaces Earlier Versions {#scenario-versioning}
+
+Scenarios do not keep a full version history. Submit is not a snapshot. It is an overwrite.
+
+* Each time you click **Submit**, your latest changes replace the previously submitted state. Only your most recent submission is kept, and earlier versions are not stored.
+* If you click **Reset** and **Reload** after submitting, you get your last submitted state, not the version before you submitted.
+
+**How to Preserve Earlier Versions**
+
+If you want to keep a snapshot before making more changes, create a new child Scenario first. This gives you a separate copy you can safely return to later.
+
+See Understanding Data Update Actions to learn what each action does.
+
+<Expandables>
+  <ExpandableItem id="example-two-submissions-keep-only-the-second" title="Example: Two submissions in a row keep only the second">
+
+**Setup:**
+
+1. Create a child Scenario with the original values in the Demand Forecast table.
+2. Update 10 rows and click **Submit**.
+3. Make five additional changes and click **Submit** again.
+
+**Result:**
+
+* Only the latest submitted version is preserved. The earlier submitted version is no longer available
+* Clicking **Reset** returns the table to the most recent submission, not the original state
+
+</ExpandableItem>
+</Expandables>
+
+***
+
+**See More**
+
+* Managing Scenarios: Compare, rename, share, and delete Scenarios.
+* [Syncing and Committing Scenarios](./syncing-and-committing-scenarios.mdx): Move changes between parent and child Scenarios.
+* Sharing Scenarios: Decide who can see and change each Scenario.
+* [Scenario Permissions](./scenario-permissions.mdx): What each permission allows and why an action might be blocked.

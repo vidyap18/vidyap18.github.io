@@ -1,0 +1,43 @@
+---
+title: "Forecast settings"
+description: "Reference for the settings that control a Forecast Lab model, with where each is set, its default, its allowed values, and its effect."
+sidebar_position: 4
+keywords:
+  - forecast settings
+  - forecast horizon
+  - time bucket
+  - selection metric
+  - write mode
+---
+# Forecast settings
+
+<span className="vp-label">Original sample, re-created for a fictional product.</span>
+
+This page lists every setting that affects a Forecast Lab model. Each setting lives in one of three places:
+
+- **Forecast specification**: set in the Prepare History job in Data Prep and read-only in Forecast Lab. To change one, rebuild the dataset and create a new model.
+- **Forecast Lab**: set on the **Experiment setup** or **Train and deploy** page of the model.
+- **Pipeline**: set on the model in each pipeline that runs it.
+
+## Settings
+
+| Setting                 | Set in                 | Default   | Allowed values                                                | Effect                                                                                                                                                                             |
+| ----------------------- | ---------------------- | --------- | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Forecast horizon**    | Forecast specification | 13        | 1 to 104 periods                                              | Number of future periods written on each run. Longer horizons add planning visibility and increase error at the far steps.                                         |
+| **Time bucket**         | Forecast specification | Week      | Day, Week, Month, Quarter                                     | Period size for history and forecasts. Finer buckets show more detail and more noise; coarser buckets are more stable.                                                             |
+| **Release lag**         | Forecast specification | 1         | 0 to 4 periods                                                | Periods between the last history period and the first forecast period. Use 0 when forecasts are consumed immediately, and 1 or more to reflect the lead time between the data cut and the decision. |
+| **Learning window**     | Forecast specification | 52        | 4 to 156 periods                                              | Past periods used as input features. Use at least one full seasonal cycle. Longer windows need more history per series.                                |
+| **Model types**         | Forecast specification | All       | Any combination of Statistical, Machine learning, Foundation  | Candidate families compared in the experiment. Fewer families run faster.                                                                                                         |
+| **Backtest windows**    | Forecast specification | 4         | 1 to 12                                                       | Held-out windows used to score candidates. More windows give a more reliable comparison and need more history.                                                                    |
+| **Overlapping windows** | Forecast specification | Off       | On, Off                                                       | Off moves each window back by the horizon length. On moves it by one period, which yields more windows at a higher compute cost.                        |
+| **Selection horizon**   | Forecast specification | All steps | Any contiguous range of steps from 0 to the horizon minus 1   | Forecast steps that count toward the selection score. Narrow it to the steps your planning decision uses.                                                                         |
+| **Selection metric**    | Forecast Lab           | WMAPE     | MAE, RMSE, WMAPE, sMAPE                                       | Error metric that decides the selected model for each series. See [Key concepts: accuracy metrics](./build-your-first-model.mdx#key-concepts-accuracy-metrics).                     |
+| **Auto-deploy**         | Forecast Lab           | Off       | On, Off                                                       | Publishes every new version to the Model Library without a manual deploy.                                                                                                         |
+| **Write mode**          | Pipeline               | Append    | Append, Replace                                               | Whether each run adds rows to `forecast_output` or replaces them. Locked on the first run of the model in a pipeline.                                                              |
+| **Auto-update version** | Pipeline               | Off       | On, Off                                                       | Switches the pipeline to the latest deployed version on its next run.                                                                                                             |
+
+## Notes
+
+- Changing any forecast specification value requires a new model, not a retrain. See [Retrain modes](./retrain-a-model.mdx#retrain-modes).
+- With **Overlapping windows** off, the experiment needs, per series, at least **Learning window** + **Forecast horizon** × **Backtest windows** periods of history. Validation reports series that fall short.
+- A retrain schedule is set on the **Train and deploy** page and is not part of the model version. See [Retrain a model](./retrain-a-model.mdx).

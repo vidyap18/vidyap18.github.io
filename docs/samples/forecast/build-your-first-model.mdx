@@ -1,0 +1,270 @@
+---
+title: "Build your first model"
+description: "Create a demand forecast model in Forecast Lab, map a prepared demand history dataset, choose a selection metric, review results, and deploy the model to generate forecasts."
+sidebar_position: 2
+keywords:
+  - build first model
+  - forecast model
+  - selection metric
+  - backtesting
+  - WMAPE
+  - Forecast Lab
+---
+# Build your first model
+
+<span className="vp-label">Original sample, re-created for a fictional product.</span>
+
+This quick start takes you from an empty model to forecast outputs in nine steps. It covers only the settings you need for a first model. For every other setting, see [Forecast settings](./forecast-settings.mdx).
+
+**Time to complete:** about 45 minutes, plus experiment and training time, which depends on the size of your dataset.
+
+## Before you begin
+
+- You have the **Forecast Lab** role in your Meridian Studio workspace.
+- A demand history dataset exists in Data Prep and was built with the current version of the Prepare History job.
+- You know which pipeline will consume the forecasts.
+
+## Step 1: Create the model
+
+1. Sign in to Meridian Studio.
+2. In the left navigation, click **Forecast Lab**.
+3. Click **Create model**.
+4. Under **Model type**, select **Demand forecast**.
+5. Enter a name and an optional description. Use a name that identifies the scope, for example `Retail weekly demand - EU`.
+6. Click **Create**.
+
+<div className="vp-shot">Screenshot: Create model dialog with the Demand forecast type selected and a model name entered</div>
+
+## Step 2: Set up the experiment
+
+After you create the model, the **Experiment setup** page opens. You use this page to:
+
+- Map the input tables from your demand history dataset.
+- Review the forecast specification that Data Prep generated.
+- Choose the metric that Forecast Lab uses to select a model for each series.
+
+Most forecast settings are read from the forecast specification, so this page needs only a few decisions from you.
+
+<div className="vp-shot">Screenshot: Experiment setup page with the Map data, Forecast specification, and Model selection criteria sections</div>
+
+## Step 3: Map data
+
+The experiment reads five tables from your demand history dataset. In **Map data**, you connect each table to the forecast input that expects it.
+
+:::warning
+- If you are replacing an existing model, create a new model rather than remapping the old one. Mapping a new dataset into a model that has already been trained invalidates its versions.
+- Confirm that the dataset was built with the current version of the Prepare History job. Datasets built with earlier versions can have different column names and fail validation in Step 6.
+:::
+
+To map the tables:
+
+1. Click **Edit mapping**.
+2. Select the forecast input you want to map, for example **Demand history**.
+3. Choose one of the following:
+   - Click **Auto-map** to match source columns to the expected fields by name. Auto-map works when the source table uses the field names listed in [Expected fields](#expected-fields).
+   - Click **Map manually** to choose the source table and assign each column yourself. Use this option when column names differ from the expected schema, or when a table has extra columns you want to exclude.
+4. Go to **Datasets** > **Demand history** > **Tables** and select the source table for the input.
+5. Repeat for each forecast input. All five mappings are required.
+
+   | Forecast input         | Dataset table     | Required |
+   | ---------------------- | ----------------- | -------- |
+   | Demand history         | `history`         | Yes      |
+   | Series keys            | `series_keys`     | Yes      |
+   | Historical drivers     | `drivers_history` | Yes      |
+   | Future drivers         | `drivers_future`  | Yes      |
+   | Forecast specification | `forecast_spec`   | Yes      |
+
+6. Click **Save mapping**.
+
+<div className="vp-shot">Screenshot: Map data panel showing five forecast inputs, each with a mapped dataset table and a green check</div>
+
+### Expected fields
+
+Each forecast input expects specific key fields. When your source tables use these names, **Auto-map** matches them without manual work.
+
+- **Demand history** (`history`): `product_id`, `location_id`, `channel_id`, `period`, and `demand_qty`. Optional fields that improve accuracy when present: `on_hand_qty`, `stockout_flag`, and `shipped_qty`.
+- **Series keys** (`series_keys`): `product_id`, `location_id`, `channel_id`, `start_date`, `end_date`, and `as_of_date`. These rows define which product, location, and channel combinations are forecast and the dates they are active.
+- **Historical drivers** (`drivers_history`) and **Future drivers** (`drivers_future`): `product_id`, `location_id`, `channel_id`, and `period`. Every other column is detected as a driver and used as a model feature. Future drivers must cover the full forecast horizon.
+- **Forecast specification** (`forecast_spec`): one row of settings. Forecast Lab reads it and shows the values in Step 4.
+
+:::tip
+Keep driver column names identical in `drivers_history` and `drivers_future`. A driver that exists in history but not in the future table is dropped from the model with a validation warning.
+:::
+
+## Step 4: Review the forecast specification
+
+When the forecast specification table is mapped, Forecast Lab reads it and shows the settings in three panels. These values are read-only here. To change one, edit the Prepare History job in Data Prep and rebuild the dataset.
+
+| Panel               | Setting                    | Example value                             | What it controls                                                                   |
+| ------------------- | -------------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------- |
+| Forecast dimensions | Product, Location, Channel | `product_id`, `location_id`, `channel_id` | The keys that define a series.                                                     |
+| Time settings       | Forecast horizon           | 13                                        | How many future periods are forecast in each run.                                  |
+| Time settings       | Time bucket                | Week                                      | The period size for history and forecasts.                                         |
+| Time settings       | Release lag                | 1                                         | How many periods after the last history period the first forecast period starts.   |
+| Modeling settings   | Learning window            | 52                                        | How many past periods each model uses as input features.                           |
+| Modeling settings   | Model types                | All                                       | Which candidate families take part: statistical, machine learning, and foundation. |
+
+<div className="vp-shot">Screenshot: Forecast specification section with the Forecast dimensions, Time settings, and Modeling settings panels</div>
+
+For how each setting affects accuracy, see [Forecast settings](./forecast-settings.mdx).
+
+## Step 5: Choose the selection metric
+
+The **Model selection criteria** section controls how Forecast Lab compares candidate models for each series. Three values come from the forecast specification and are read-only:
+
+- **Backtest windows**: how many held-out windows are used to score each candidate.
+- **Overlapping windows**: whether consecutive backtest windows can overlap.
+- **Selection horizon**: which forecast steps count toward the score.
+
+One value is yours to choose. In **Selection metric**, pick the error metric that decides which candidate wins.
+
+<div className="vp-shot">Screenshot: Model selection criteria section with the Selection metric list open</div>
+
+### Key concepts: accuracy metrics
+
+| Metric                                              | What it measures                                                          | Use it when                                                                                                                              |
+| --------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **MAE** (mean absolute error)                       | Average error in units, with every unit of error weighted equally.        | You want a plain measure of how far off the forecast is and your series have similar volumes.                                           |
+| **RMSE** (root mean squared error)                  | Average error in units, with large misses weighted more heavily.          | A few large misses cost more than many small ones, for example when a stockout is expensive.                                             |
+| **WMAPE** (weighted mean absolute percentage error) | Total absolute error as a share of total demand.                          | Series have very different volumes and you want high-volume series to carry more weight. This is the default for most planning use cases. |
+| **sMAPE** (symmetric mean absolute percentage error) | Percentage error that treats over-forecasting and under-forecasting alike. | You compare accuracy across series with low or intermittent demand, where WMAPE is unstable.                                             |
+
+### How backtesting selects a model
+
+For each series, Forecast Lab places a backtest window at the end of the history, trains every candidate on the periods before the window, and forecasts into it. The window then moves back by the horizon length (or by one period when **Overlapping windows** is on) and the process repeats for the configured number of windows.
+
+Each candidate's error is averaged across all windows at the selection horizon steps, using your selection metric. The candidate with the lowest average error becomes the selected model for that series. Selection is independent per series, so different series can use different models.
+
+:::note
+The selection metric decides only which candidate wins. The results page still shows every metric for every candidate, so you can check how a different choice would have changed the outcome.
+:::
+
+## Step 6: Validate setup
+
+1. Click **Validate setup**.
+2. Wait for validation to finish. Time depends on dataset size.
+
+Validation checks that:
+
+- All five inputs are mapped and the expected key fields exist.
+- The forecast specification is consistent with the mapped data, for example the time bucket matches the spacing of `period`.
+- Each series has enough history for the learning window plus the backtest windows.
+- `product_id`, `location_id`, and `channel_id` values match across all four data tables.
+- Future drivers cover every period in the forecast horizon.
+
+If validation fails, click **View log** to see which check failed and which rows caused it. Fix the dataset in Data Prep, rebuild it, and validate again.
+
+When validation passes, click **Save and run experiment**.
+
+## Step 7: Review results
+
+The experiment trains and backtests every candidate for every series. When it finishes, the **Results** page opens.
+
+<div className="vp-shot">Screenshot: Results page with numbered callouts for data coverage, series count, aggregate WMAPE, filters, the Needs review filter, and the series list</div>
+
+| Callout | What it shows                                                                                                                                    |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1       | The date range of the history used, and the horizon that will be forecast.                                                                       |
+| 2       | The number of series processed, for example 1,140.                                                                                                |
+| 3       | Aggregate accuracy on your selection metric, for example a WMAPE of 18.4% across all series.                                                     |
+| 4       | Filters by product, location, and channel attributes.                                                                                            |
+| 5       | The **Needs review** filter, which lists series with high bias, low accuracy, or too little history. Start here rather than reviewing every series. |
+| 6       | The series list. Click a series to open its details.                                                                                             |
+
+### Series details
+
+For a single series, the details view shows:
+
+- **Candidate models**: which models were tested, for example gradient boosting, seasonal naive, exponential smoothing, moving average, and the foundation model.
+- **Selected model**: which candidate won and its score on each metric.
+- **Accuracy comparison**: a chart of each candidate's forecast against actuals in every backtest window.
+- **Driver importance**: how much each driver, such as price or a promotion flag, contributed to the forecast.
+- **Preprocessing applied**: any outlier correction or transformation used for this series.
+
+<div className="vp-shot">Screenshot: Series details view with the candidate model table and the backtest chart</div>
+
+You can also ask the Forecast Assistant about the results in plain language. See [Ask the Forecast Assistant](./ask-the-forecast-assistant.mdx).
+
+To follow the experiment while it runs, click **View log** in the top-right corner.
+
+## Step 8: Train and deploy
+
+When you are satisfied with the selected models:
+
+1. Click **Train all models**. Forecast Lab retrains each selected model on the full history, including the periods that were held out for backtesting.
+2. When training finishes, click **Deploy version**.
+
+<div className="vp-shot">Screenshot: Train and deploy page with the Train all models button and the version list</div>
+
+Forecast Lab deploys one model version that wraps every selected model. At run time, the version routes each series to its own selected model. The version appears in the **Model Library** under **Forecast models**.
+
+## Step 9: Generate forecasts
+
+1. Open the pipeline where the forecasts will be consumed.
+2. Click **Model Library** > **Forecast models**.
+3. Click **Add** on the version you deployed. If the pipeline already contains an earlier version of the same model, remove it first.
+4. Set the model's input to the demand history dataset. Use the same dataset you mapped in Step 3.
+5. Click **Run pipeline**.
+
+<div className="vp-shot">Screenshot: Pipeline canvas with the demand history dataset connected to the deployed forecast model</div>
+
+The model writes two output tables. The next section describes them.
+
+## Understanding forecast outputs
+
+Each pipeline run writes two tables. Both include a `run_id` column, so you can join them or filter either table to one run.
+
+### forecast_output table
+
+Contains one row per series, forecast period, and run.
+
+| Column         | Type    | Description                                            |
+| -------------- | ------- | ------------------------------------------------------ |
+| `run_id`       | string  | Identifier of the pipeline run that produced the row.  |
+| `product_id`   | string  | Product key from the series keys table.                |
+| `location_id`  | string  | Location key from the series keys table.               |
+| `channel_id`   | string  | Channel key from the series keys table.                |
+| `period_start` | date    | First day of the forecast period.                      |
+| `horizon_step` | integer | Position of the period in the horizon, starting at 0.  |
+| `forecast_qty` | decimal | Point forecast for the period.                         |
+| `lower_bound`  | decimal | Lower edge of the 80% prediction interval.             |
+| `upper_bound`  | decimal | Upper edge of the 80% prediction interval.             |
+| `model_name`   | string  | Selected model that produced the row.                  |
+
+By default, each run appends rows to this table. Use the **Write mode** setting on the model in the pipeline to change this:
+
+- **Append** (default): each run adds rows. Earlier runs are kept, so you can track how the forecast for the same period changes from week to week.
+- **Replace**: each run deletes all existing rows before it writes.
+
+:::warning
+**Write mode** is locked on the first run of the model in a pipeline. Changing it later has no effect on that pipeline. To switch modes, remove the model from the pipeline, add it again, set **Write mode**, and run.
+:::
+
+### forecast_run_log table
+
+Contains one row per run with the settings that were in effect.
+
+| Column             | Type      | Description                                                              |
+| ------------------ | --------- | ------------------------------------------------------------------------ |
+| `run_id`           | string    | Identifier of the pipeline run. Matches `forecast_output.run_id`.        |
+| `model_version`    | string    | Deployed version that ran, for example `v3`.                             |
+| `run_timestamp`    | timestamp | When the run started, in UTC.                                            |
+| `forecast_horizon` | integer   | Number of periods forecast.                                              |
+| `time_bucket`      | string    | Period size: `day`, `week`, `month`, or `quarter`.                       |
+| `release_lag`      | integer   | Periods between the last history period and the first forecast period.   |
+| `train_start`      | date      | First history period used in training.                                   |
+| `train_end`        | date      | Last history period used in training.                                    |
+| `selection_metric` | string    | Metric used to select models in this version.                            |
+| `write_mode`       | string    | `append` or `replace`.                                                   |
+
+:::tip
+To compare two runs, filter `forecast_output` to the two `run_id` values and join on the series keys and `period_start`. The `forecast_run_log` row for each run tells you whether the model version or training window changed between them.
+:::
+
+## What's next
+
+You have a deployed forecast model and a pipeline that writes forecasts.
+
+- To refresh the model as new history arrives, see [Retrain a model](./retrain-a-model.mdx).
+- To understand or tune a setting, see [Forecast settings](./forecast-settings.mdx).
+- To ask about results without leaving the page, see [Ask the Forecast Assistant](./ask-the-forecast-assistant.mdx).

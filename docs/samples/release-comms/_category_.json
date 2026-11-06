@@ -1,0 +1,12 @@
+{
+  "label": "Release communication",
+  "position": 3,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "samples/release-comms/index"
+  },
+  "customProps": {
+    "description": "Release communication sample"
+  }
+}

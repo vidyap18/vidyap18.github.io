@@ -1,0 +1,12 @@
+{
+  "label": "API documentation",
+  "position": 4,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "samples/api/index"
+  },
+  "customProps": {
+    "description": "API documentation sample"
+  }
+}

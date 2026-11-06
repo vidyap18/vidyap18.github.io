@@ -1,0 +1,139 @@
+---
+title: "Connect the API to Power BI or Tableau"
+description: "Load a Meridian Studio dataset into Power BI with a Power Query script that exports the data on every refresh, or into Tableau through a scheduled CSV export."
+sidebar_position: 2
+keywords:
+  - Power BI
+  - Tableau
+  - business intelligence
+  - export dataset
+  - Power Query
+---
+
+# Connect the API to Power BI or Tableau
+
+<span className="vp-label">Original sample, re-created for a fictional product. Not runnable.</span>
+
+This guide loads one dataset into a BI tool through the export endpoints. An export produces a file with every row that matches your filters, which suits a BI refresh better than paging through the query endpoint.
+
+## Before you begin
+
+Complete [Your first query in 10 minutes](./tutorial-first-query.mdx) so that you have an API key and know your tenant. Then collect these values.
+
+| Value | Where to find it |
+|---|---|
+| Tenant | The subdomain of your Meridian Studio URL. For `https://harbor.meridian.example` it is `harbor`. |
+| API key | **Admin settings** > **API keys**. Create a key for the BI tool rather than reusing one, so that you can revoke it on its own. |
+| Dataset ID | Call `GET /datasets`, or open the dataset in Meridian Studio and copy the ID from the **Details** panel. The example uses `ds_2b7f9c`. |
+
+## Connect from Power BI
+
+The Power Query script creates an export, waits for it to complete, downloads the compressed CSV and promotes the header row. It runs again on every scheduled refresh.
+
+1. In Power BI Desktop, click **Home** > **Get data** > **Blank query**.
+2. In the Power Query Editor, click **Home** > **Advanced editor**.
+3. Replace the contents with this script.
+
+```powerquery
+let
+    // ===== Replace these three values =====
+    Tenant = "demo",
+    ApiKey = "YOUR_API_KEY",
+    DatasetId = "ds_2b7f9c",
+    // ======================================
+
+    BaseUrl = "https://" & Tenant & ".meridian.example/api/v1",
+    Headers = [#"X-Meridian-Key" = ApiKey, #"Content-Type" = "application/json"],
+
+    // Step 1: Create an export
+    Created = Json.Document(Web.Contents(BaseUrl, [
+        RelativePath = "datasets/" & DatasetId & "/exports",
+        Headers = Headers,
+        Content = Text.ToBinary("{""format"": ""csv""}")
+    ])),
+    ExportId = Created[exportId],
+
+    // Step 2: Poll until the export completes (10 seconds between checks, 30 checks)
+    WaitForExport = (attempt as number) as record =>
+        let
+            Export = Json.Document(Web.Contents(BaseUrl, [
+                RelativePath = "exports/" & ExportId,
+                Headers = Headers,
+                IsRetry = true
+            ]))
+        in
+            if Export[status] = "complete" then Export
+            else if Export[status] = "failed" or attempt >= 30 then error "Export " & ExportId & " did not complete: " & Export[status]
+            else Function.InvokeAfter(() => @WaitForExport(attempt + 1), #duration(0, 0, 0, 10)),
+    Completed = WaitForExport(0),
+
+    // Step 3: Download and decompress the file
+    Compressed = Web.Contents(Completed[downloadUrl]),
+    CsvBinary = Binary.Decompress(Compressed, Compression.GZip),
+
+    // Step 4: Parse as CSV and promote the header row
+    Parsed = Csv.Document(CsvBinary, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+    Result = Table.PromoteHeaders(Parsed, [PromoteAllScalars = true])
+in
+    Result
+```
+
+4. Replace `Tenant`, `ApiKey` and `DatasetId` with your values.
+5. Click **Done**. When Power BI asks how to connect, choose **Anonymous** for both the API host and the file host. The API key travels in the header, not in the credential.
+6. Click **Close & Apply**.
+
+To export a subset, add a `filters` array to the body in step 1 of the script. It takes the same filter objects as the query endpoint, for example `{"format": "csv", "filters": [{"field": "location", "op": "eq", "value": "DC-NORTH"}]}`.
+
+The key is stored in the query text. Treat the `.pbix` file as a secret, or move the key into a Power BI parameter and mark it sensitive.
+
+## Connect from Tableau
+
+Tableau Desktop has no scripted connector, so schedule the export outside Tableau and connect to the file it writes.
+
+1. Save this script as `meridian_export.py` and set `MERIDIAN_API_KEY` in the environment.
+
+```python
+import gzip
+import os
+import shutil
+import time
+
+import requests
+
+BASE_URL = "https://demo.meridian.example/api/v1"
+HEADERS = {"X-Meridian-Key": os.environ["MERIDIAN_API_KEY"]}
+DATASET_ID = "ds_2b7f9c"
+
+
+def call(method, url, **kwargs):
+    response = requests.request(method, url, headers=HEADERS, timeout=30, **kwargs)
+    response.raise_for_status()
+    return response.json()
+
+
+export = call("POST", f"{BASE_URL}/datasets/{DATASET_ID}/exports", json={"format": "csv"})
+while export["status"] in ("queued", "running"):
+    time.sleep(10)
+    export = call("GET", f"{BASE_URL}/exports/{export['exportId']}")
+if export["status"] != "complete":
+    raise SystemExit(f"Export {export['exportId']} failed: {export['error']}")
+
+# The download URL is signed. Do not send the API key to it.
+with requests.get(export["downloadUrl"], stream=True, timeout=300) as download:
+    download.raise_for_status()
+    with gzip.open(download.raw) as source, open("demand_forecast.csv", "wb") as target:
+        shutil.copyfileobj(source, target)
+```
+
+2. Schedule the script with cron or Task Scheduler to run before each Tableau refresh, writing to a location that Tableau Server can read.
+3. In Tableau, connect to **Text file** and choose `demand_forecast.csv`. Schedule the extract refresh to run after the script.
+
+## Troubleshooting
+
+| Symptom | Cause and fix |
+|---|---|
+| `401` on the first request | The key is missing, mistyped or revoked. Create a new key and update the script. |
+| `404` for the dataset | The dataset ID is wrong, or the key's workspace does not contain it. Check with `GET /datasets`. |
+| Status stays `queued` or `running` | Large datasets take longer. Raise the attempt limit, or add filters to export fewer rows. |
+| The download fails | `downloadUrl` expired. URLs are valid for 24 hours after completion; run the export again. |
+| `429` during refresh | Several reports share one key. Use one key per report, or stagger the refresh schedules. |

@@ -1,0 +1,241 @@
+---
+title: "Per-note documentation versioning: proposal and initial structure"
+description: "A design proposal for supporting independently versioned note documentation on the Meridian Studio docs site without duplicating the whole documentation set per version."
+sidebar_position: 6
+sidebar_label: "Design proposal"
+---
+
+# Per-note documentation versioning: proposal and initial structure
+
+<span className="vp-label">Original sample, re-created for a fictional product.</span>
+
+**For:** Engineering
+**From:** Product documentation
+**Purpose:** Agree on a direction for supporting independent note versions on the Meridian Studio docs site. A clickable prototype of the proposed experience accompanies this document.
+
+## 1. Context and problem
+
+Meridian Studio notes do not move on one release cycle. Network Design, Inventory Planning and Route Simulation are each released on their own version line, and a customer environment can run Network Design 2.3 alongside Inventory Planning 1.6. Customers need to read the documentation for the version they are actually running, and they need to switch versions without leaving the note they are in.
+
+Today the docs site has one version: whatever was published last. A customer on an older note version reads about inputs and parameters that do not exist in their environment, or asks support.
+
+Our static site generator supports versioning, but it versions the whole docs instance together. A single site-wide version cannot express "Network Design is on 2.3 while Inventory Planning is on 1.6". We need versioning at the note level, with an authoring workflow that stays manageable and a reading experience that stays clear.
+
+### What actually changes between versions
+
+Based on the change history of the notes that already have multiple versions, most pages in a note do not change per version. The overview, how-it-works page, concepts, troubleshooting, related notes and changelog are usually stable. The pages that change are inputs, outputs, parameters, sample datasets and the occasional version-specific concept page. The design should reuse the stable pages and fork only the pages that change.
+
+## 2. Goals and non-goals
+
+Goals:
+
+- Each note carries its own set of versions, independent of every other note.
+- Readers can see which version they are on and switch versions in place.
+- Every page has a permanent, version-explicit URL, and the bare note URL lands on the latest version.
+- Older versions stay readable and searchable, and are clearly marked as such.
+- Writers maintain shared content once; version-specific content is the exception.
+- Site search and the docs assistant both know which version a result belongs to.
+
+Non-goals for this proposal:
+
+- Final implementation details or component design.
+- The complete redirect map from existing URLs.
+- The full migration script.
+- Final search index configuration or docs assistant indexing changes.
+- Versioning for anything other than notes.
+
+## 3. Options considered
+
+### Option A: site-wide versioning
+
+Use the generator's built-in versioning and cut a new site version whenever any note releases. No custom tooling, but a site version would have to be labelled with a tuple of note versions that readers cannot interpret, and every note is copied on every cut. Rejected: the mechanism exists but models the wrong thing.
+
+### Option B: one docs instance per note
+
+Give each note its own generator plugin instance with native versioning. This uses versioning as designed, but means dozens of instances with their own configuration, breaks the shared tree where notes are browsed together, and still copies every page per version, including the stable ones. Rejected: high overhead and a worse reading experience.
+
+### Option C: folder duplication by hand
+
+Writers copy the whole note folder into `2.2/`, `2.3/` and so on. Simple, but a shared-page fix must be applied to every copy, "latest" and "archived" live in people's heads, and nothing drives a selector, warnings or redirects. Rejected: works for one note with two versions and fails after that.
+
+### Option D: shared plus version-specific authoring, materialized at build time (proposed)
+
+Writers maintain shared pages once and version-specific pages separately, with a small manifest per note. A build step generates complete versioned folders that the generator reads as if they were hand-written. There is no duplication in the authored source, the single docs instance and shared sidebar survive, and the manifest drives the selector, warnings and redirects from one place. The cost is a custom build step that Engineering owns, and generated output that must be kept out of source control. The rest of this document describes this option.
+
+## 4. Proposed design
+
+### 4.1 Authoring layout
+
+Using Network Design as the example:
+
+```
+notes/network/network-design/
+  versions.json
+
+  _shared/
+    index.md
+    how-network-design-works.md
+    core-concepts/
+    advanced-concepts/
+    troubleshooting/
+    related-notes.md
+    changelog.md
+
+  _versions/
+    2.3/
+      parameters.md
+      inputs/
+        structural-tables/
+        specialized-tables/
+          carbon-cost.md
+      outputs/
+        summary-reports/
+        detailed-reports/
+    2.2/
+      parameters.md
+      inputs/
+      outputs/
+    2.0/
+      parameters.md
+      inputs/
+      outputs/
+```
+
+Rules:
+
+- A page common to all versions lives in `_shared` and is written once.
+- A page that differs in a version lives under `_versions/<id>/` at the same relative path, and overrides the shared file for that version only. If `advanced-concepts/multi-echelon-modeling.md` changes only in 2.4, the writer adds `_versions/2.4/advanced-concepts/multi-echelon-modeling.md` and leaves the shared page alone.
+- No flag or front-matter field marks an override. The presence of the file is the signal.
+
+### 4.2 Version manifest
+
+Each versioned note has a `versions.json`:
+
+```json
+{
+  "latest": "2.3",
+  "versions": [
+    { "id": "2.3", "label": "2.3", "status": "latest" },
+    { "id": "2.2", "label": "2.2", "status": "supported" },
+    { "id": "2.0", "label": "2.0", "status": "archived" }
+  ]
+}
+```
+
+The manifest is the single source for which version is latest, which versions appear in the selector and in what order, which versions show the archived warning, and where the bare note URL redirects.
+
+### 4.3 Build-time materialization
+
+At build time a script walks each note that has a manifest and, for every listed version, writes a complete folder: the contents of `_shared` first, then `_versions/<id>` on top, with the version-specific file winning on any path collision.
+
+```
+.generated/notes/network/network-design/
+  2.3/   index.md, how-network-design-works.md, core-concepts/, parameters.md, inputs/, outputs/, changelog.md
+  2.2/   index.md, how-network-design-works.md, core-concepts/, parameters.md, inputs/, outputs/, changelog.md
+  2.0/   index.md, how-network-design-works.md, core-concepts/, parameters.md, inputs/, outputs/, changelog.md
+```
+
+The important property: writers work with shared and version-specific content, but the generator receives ordinary, complete versioned folders. Nothing downstream needs to know about the overlay.
+
+The build should also validate that every manifest version has a folder, every `_versions/<id>` folder is in the manifest, and no internal link points at a version that does not exist.
+
+### 4.4 URL behaviour
+
+Every rendered page carries an explicit version in its URL, including the latest:
+
+```
+/notes/network/network-design/2.3/
+/notes/network/network-design/2.3/inputs/structural-tables/site
+/notes/network/network-design/2.2/inputs/structural-tables/site
+/notes/network/network-design/2.0/outputs/summary-reports
+```
+
+The bare note path redirects to the latest version from the manifest:
+
+```
+/notes/network/network-design  ->  /notes/network/network-design/2.3/
+```
+
+This gives a stable "take me to latest" link for release notes and in-product help, and a permanent URL for every actual page.
+
+### 4.5 Version-scoped sidebars
+
+The sidebar must never mix pages from different versions. On a Network Design 2.3 page the sidebar shows the 2.3 tree only; after switching to 2.2 it shows the 2.2 tree only. A page that exists in 2.3 but not in 2.2 simply does not appear in the 2.2 tree.
+
+```
+Network Design 2.3            Network Design 2.2
+  Overview                      Overview
+  Inputs                        Inputs
+    Structural tables             Structural tables
+    Specialized tables          Outputs
+      Carbon cost               Parameters
+  Outputs
+    Carbon cost report
+  Parameters
+```
+
+### 4.6 Version selector and fallback
+
+The selector sits below the breadcrumb and above the page title, so the version is always visible without reading as a warning. The dropdown lists versions from the manifest with their status: `2.3 · Latest`, `2.2`, `2.0 · Archived`. Selecting a version navigates to the same page in that version if it exists.
+
+If the page does not exist in the selected version (Carbon cost was introduced in 2.3), the reader is taken to that version's note overview with a short explanation:
+
+> Carbon cost does not exist in Network Design 2.2, so you have been taken to the Network Design 2.2 overview.
+
+This avoids a broken page and tells the reader plainly that the version they picked does not include that capability.
+
+### 4.7 Archived-version warning
+
+Every page in an archived version shows a persistent banner:
+
+> You are viewing an archived version of Network Design. Go to the latest version: 2.3
+
+The banner is injected at build time from the manifest. Writers never add it by hand.
+
+### 4.8 Search
+
+Both latest and archived versions are indexed, and every result row shows its version:
+
+```
+Network Design: Carbon cost                 [2.3]
+Apply carbon pricing to lanes that cross...
+
+Network Design: Overview                    [2.0]
+The Network Design note lets you optimise...
+```
+
+When several versions of the same page match, the latest ranks first or results are grouped by version. Older versions must never look like current documentation.
+
+### 4.9 Docs assistant version awareness
+
+The retrieval-augmented docs assistant needs the same awareness. It should answer from the version the user asks about, default to latest when no version is given, and show the version in its answer or source citation. How version reaches the assistant's index is an open question for its owners.
+
+## 5. Migration and pilot plan
+
+We should not migrate every note at once.
+
+1. **Pilot on Network Design.** It has real multi-version history and the clearest cases: a page introduced in one version, a parameter changed in another. Build and validate against it the materialization script, manifest validation, selector, version-scoped sidebar, archived-warning injection, redirects from the bare path and from existing URLs, the version field in the search index, and docs assistant handling.
+2. **Extend to the other notes with version history.** Inventory Planning, Route Simulation and Demand Shaping are where customers are already on different versions.
+3. **Everything else stays unversioned** until it needs a second active version. A note without a `versions.json` builds exactly as it does today.
+
+The prototype walks through the selector, the sidebar changing across versions, the Carbon cost fallback, the archived banner and version badges in search.
+
+## 6. Open questions
+
+- Is build-time materialization the right mechanism, or should the overlay happen in the generator's content-loading layer?
+- Should generated content live in `.generated` or elsewhere, and should it be gitignored?
+- Should an invalid version reference fail the build or warn?
+- How should versioned sample dataset files be stored and served?
+- How should the search index carry version metadata?
+- Does the docs assistant index built pages or source files, and can version be stored as chunk metadata?
+- How long do archived versions remain available, and what happens when a version is fully retired?
+
+## 7. Decision requested
+
+Engineering is asked to agree on the direction, not the details: support independent note versions by combining shared authoring with version-specific overrides, generating complete versioned folders at build time, giving every page a version-explicit URL, scoping sidebars per version, and making search and the docs assistant version-aware. If the direction is agreed, the next step is the Network Design pilot in section 5.
+
+---
+
+*Process note: this is an original re-creation of a design proposal I wrote and prototyped for a real documentation platform.*
+*The company, product, note names, versions, pages and URLs are fictional; the structure, options, trade-offs and open questions mirror the original.*
+*The original included a clickable prototype that engineering used to review the proposed experience.*

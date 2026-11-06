@@ -1,0 +1,285 @@
+---
+title: "Understanding Scenario Permissions"
+description: "What Admin, Read Write, and Read Only allow in a Scenario, how Access Level privileges and app permissions limit them, how the Signature works, and what to do when an action is blocked."
+sidebar_position: 1
+sidebar_label: "Understanding Scenario Permissions"
+keywords:
+  - scenario permissions
+  - scenario access
+  - scenario admin
+  - read write
+  - read only
+  - access level privilege
+  - effective permission
+  - signature access
+  - signature permissions
+---
+
+
+# Understanding Scenario Permissions
+
+<span className="vp-label">Real page from a user guide I own. Product name, people and other identifying details are masked.</span>
+
+A scenario permission (Admin, Read Write, or Read Only) sets what a user can do in one specific Scenario. Each Scenario's Admins decide who can access it and at which level when they share the Scenario. Meridian Studio checks every user's scenario permission together with their app permission and Access Level privilege, so each user gets only the access that their role allows.
+
+Use this page to see what each permission allows, work out a user's access, and fix a blocked action.
+***
+
+### Where Scenario Permissions Apply {#where-scenario-permissions-apply}
+
+Scenario permissions apply to Next-Gen Applications only. The table lists which permission controls access to each kind of Scenario:
+
+| Scenario | Permission that applies |
+| --- | --- |
+| Scenarios in Next-Gen Applications | Scenario permission |
+| Scenarios in classic Applications | The user's app permission, as before |
+| The Signature | Scenario permission, with its own defaults. See [Signature Access](#signature-access). |
+| Config Scenarios | The user's app permission |
+
+***
+
+### Scenario Permission Levels {#scenario-permission-levels}
+
+Admins on a Scenario assign a permission to each user or group when they share it. You get Admin on every Scenario you create. App Admins and Org Admins get Admin on every Scenario in the Application automatically, unless their Access Level privilege is lower.
+
+The table below lists what Admin, Read Write, and Read Only allow in a Scenario. In the **Add User** and **Add Group** dialogs, these permissions appear as **Admin**, **Read/Write**, and **Read-Only**.
+
+| Action | Admin | Read Write | Read Only |
+| --- | --- | --- | --- |
+| View, download, compare | ✔️ | ✔️ | ✔️ |
+| Create a Scenario from it\* | ✔️ | ✔️ | ✔️ |
+| Update data | ✔️ | ✔️ | ✖️ |
+| Run actions | ✔️ | ✔️ | ✖️ |
+| Sync from parent | ✔️ | ✔️ | ✖️ |
+| Commit changes into parent | ✔️ | ✔️ | ✖️ |
+| Share scenario | ✔️ | ✖️ | ✖️ |
+| Rename, delete | ✔️ | ✖️ | ✖️ |
+
+Two rows need extra context:
+
+* Create a Scenario from it\*: A Read Only user can [create a Scenario from it](./getting-started-with-scenarios.mdx#creating-new-scenarios) only if they have Read Write app permission. The new Scenario belongs to them, and the original Scenario does not change.
+* Commit changes into parent: This row covers [committing a child Scenario into its parent](./syncing-and-committing-scenarios.mdx#committing-to-parent). You need Read Write or Admin on both the child Scenario and the parent Scenario. The changes apply immediately.
+
+Your Access Level privilege and app permission can limit what a user can do, even when this table or a share grants more. See [How Your Access Is Decided](#how-your-access-is-decided). To decide which permission to assign to a user, see Choose a Permission.
+
+#### Check Permissions in the Share Scenario Dialog {#view-the-permission-table-in-the-product}
+
+The **What each permission can do** table in the product matches the table above. To open it, click the info icon next to **Permission** on the **Users** tab of the **Manage User Access** or **Share Scenario** dialog.
+
+<img src="/img/samples/scenarios/permission-levels1.png" alt="Manage User Access Users tab with the What each permission can do tooltip open next to the Permission column" data-size="l" />
+
+***
+
+### How Your Access Is Decided {#how-your-access-is-decided}
+
+Three levels of access decide what you can do in a Scenario. Meridian Studio checks all three before it allows an action.
+
+#### The Three Levels of Access {#the-three-levels-of-access}
+
+The table describes each level, its scope, and who sets it:
+
+| Level | Scope | Who sets it | Options | What it controls |
+| --- | --- | --- | --- | --- |
+| Access Level privilege | Your whole organization | A User Admin or Org Admin, in **Admin Settings** | Full Studio Access, App Read Write, App Read Only | The highest permission you can hold anywhere in Meridian Studio |
+| App permission | One Application | An App Admin, when they share the Application | Admin, Read Write, Read Only | What you can do in the Application, including whether you can create Scenarios |
+| Scenario permission | One Scenario | An Admin on the Scenario, in the **Share Scenario** dialog | Admin, Read Write, Read Only | What you can do in one specific Scenario |
+
+:::info
+
+The App Read Write and App Read Only privileges are not app permissions. A privilege applies across your organization and is set in **Admin Settings**. It caps the app permission an App Admin can assign to you in each Application.
+
+:::
+
+#### Two Rules for Scenario Access {#rules-that-combine-the-three-levels}
+
+Meridian Studio applies two rules to determine your effective scenario access: one compares the three levels, and one resolves multiple scenario shares.
+
+| Rule | When it applies | What Meridian Studio does |
+| --- | --- | --- |
+| Your privilege and app permission set a ceiling | Meridian Studio compares your Access Level privilege, app permission, and scenario permission | The App Read Only privilege or a Read Only app permission limits you to Read Only on every Scenario. With Read Write app permission, you can still be Admin on a Scenario you create or one an Admin shares with you as Admin. |
+| Highest scenario share wins | You have scenario access from more than one source, such as a direct share and a group | You get the highest scenario permission among those sources. The **Share Scenario** dialog shows **Multiple** under **Level Assigned**. |
+
+#### Limits From Your Access Level Privilege {#limits-from-your-access-level-privilege}
+
+Your Access Level privilege sets the highest scenario permission you can hold:
+
+| Access Level privilege | Highest scenario permission |
+| --- | --- |
+| Full Studio Access | Admin |
+| App Read Write | Admin |
+| App Read Only | Read Only |
+
+:::info
+
+A user with the App Read Only privilege can view a Scenario but cannot change it, even when an Admin grants a higher permission through a group.
+
+:::
+
+In the **Share Scenario** dialog, a warning icon appears next to the user's permission when their Access Level privilege is lower than the permission they hold:
+
+<img src="/img/samples/scenarios/conflict-privilege.png" alt="Manage User Access Users tab with a warning icon next to a user's Admin permission and a tooltip saying the user cannot use all the capabilities of the permission without the requisite Access Level privilege" data-size="l" />
+
+If a user's privilege comes from a group rather than a direct assignment, the highest privilege applies. See Seeing Where a User's Privileges Come From.
+
+<img src="/img/samples/scenarios/privileges-info.png" alt="Privileges Info tab showing Access Level privileges and where they apply, including Scenario permissions" data-size="xl" />
+
+For the full matrix, including admin privileges, see Scenario Permissions in Understanding Privileges. To check or change a user's privilege, see Managing Users.
+
+#### Limits From Your App Permission {#limits-from-your-app-permission}
+
+Your app permission also limits your scenario permission. The table shows what each app permission allows across the Scenarios in one Application:
+
+| App permission | Scenario access it allows |
+| --- | --- |
+| Read Only | You cannot create Scenarios or change data in any Scenario. Your scenario permission is Read Only at most on any Scenario, even when an Admin grants a higher permission. |
+| Read Write | You can be Admin on a Scenario, for example one you create or one an Admin shares with you as Admin. This applies to that Scenario only and does not change your app permission. |
+| Admin | You are Admin on every Scenario in the Application automatically. |
+
+Your Access Level privilege caps your app permission. If your app permission is higher than your privilege allows, you work at the privilege's level. For example, an App Admin with the App Read Write privilege works as Read Write in the Application.
+
+#### Examples of Effective Scenario Permissions {#examples}
+
+The table shows how the rules apply to common combinations:
+
+| User's access | Effective scenario permission | Why |
+| --- | --- | --- |
+| Read Only app permission, granted Read Write on a Scenario | Read Only | The app permission is lower, so it wins. |
+| Read Write app permission, granted Read Only directly and Read Write through a group | Read Write | Across sources, the highest wins, and the Read Write app permission allows it. |
+| App Read Write privilege and Read Write app permission, creates their own Scenario | Admin on that Scenario | The creator is Admin. The App Read Write privilege allows Admin on a Scenario. |
+| Read Write app permission, not shared on the Scenario | No access | The Scenario does not appear in the user's list. |
+
+#### Try It: Work Out a User's Access {#try-it-work-out-access}
+
+Pick a privilege, an app permission, and how the Scenario is shared to see the effective scenario permission and which actions it allows. The demo applies the same rules as the tables above.
+
+<AutoHeightIframe
+    src="/demos/scenario-access-calculator.html"
+    title="Scenario access calculator: effective scenario permission from privilege, app permission, and shares"
+    messageType="demo-height"
+    scrolling="no"
+    initialHeight={480}
+  />
+
+***
+
+### Signature Access {#signature-access}
+
+The Signature is the baseline every other Scenario starts from, so by default only App Admins can change it. It always appears first in the list.
+
+#### Default Permissions on the Signature {#default-signature-permissions}
+
+All users with access to the Application can open the Signature. Each user automatically gets a permission on the Signature, based on their app permission:
+
+| App permission | Default permission on the Signature | Level Assigned |
+| --- | --- | --- |
+| Admin | Admin | Application |
+| Read Write | Read Only | Application |
+| Read Only | Read Only | Application |
+
+Users added to the Application later get Read Only on the Signature automatically. An App Admin does not need to share the Signature with them.
+
+#### How the Signature Differs From Other Scenarios {#how-the-signature-differs}
+
+On the Signature, Admin, Read Write, and Read Only allow the same actions as in the [Scenario Permission Levels](#scenario-permission-levels) table. Read Only users can still view, download, and compare the Signature, and create child Scenarios from it if they have Read Write app permission. The table lists only the rules that are different on the Signature:
+
+| Rule | Other Scenarios | Signature |
+| --- | --- | --- |
+| Who is Admin | The creator, users granted Admin, and App Admins | App Admins only. The **Permission** dropdown for the Signature does not include **Admin**. |
+| Default for users with Read Write app permission | No access until an Admin shares the Scenario | Read Only |
+| Who can edit it and commit child Scenarios into it | Users with Read Write or Admin on the Scenario | App Admins, and users an App Admin grants Read Write. See Grant Read Write on the Signature. |
+| Who can share it | Users with Admin on the Scenario | App Admins only, from **Share Signature** |
+| Rename and delete | Users with Admin on the Scenario | No user, including App Admins |
+| Remove a user | An Admin removes the user in the **Share Scenario** dialog | Not possible, because the user's access comes from the Application. To remove a user, remove the user from the Application. |
+
+:::info
+
+**Changes from the October 24, 2026 release**
+
+* Users with Read Write app permission could edit the Signature, because there were no Signature permissions. They now get Read Only automatically, because their permission on the Signature comes from the Application. Users who edited the Signature before lose that edit access until an App Admin grants them Read Write on it.
+* The **Edit Signature Scenario** setting is removed from Next-Gen Applications. Classic Applications keep it. In a Next-Gen Application, App Admins control who can edit the Signature through scenario permissions.
+
+:::
+
+***
+
+### Scenarios Created Before Scenario Permissions {#scenarios-created-before-scenario-permissions}
+
+Access to Scenarios created before the October 24, 2026 release depends on when the user got access to the Application. The table shows both cases:
+
+| User | Access to Scenarios created before the release |
+| --- | --- |
+| Had access to the Application before the release, directly or through the Composition | Keeps access at the level of their app permission. For example, a user with Read Write app permission has Read Write on each of these Scenarios. They can edit them, but only an Admin on a Scenario can rename or delete it. The Signature is the exception. See [Signature Access](#signature-access). |
+| Added to the Application after the release, directly or through the Composition | Does not see these Scenarios automatically. They see one only if they are an App Admin, belong to a group that already has access, or an Admin shares it with them. |
+
+These Scenarios now work like any other Scenario. An Admin on one of them can add or remove users and groups in the **Manage User Access** or **Share Scenario** dialog.
+
+A user who loses all access to the Application also loses access to its Scenarios. Removing only their Composition access does not affect their Scenario access while they still have a direct app permission.
+
+***
+
+### Troubleshoot Scenario Access {#troubleshoot-scenario-access}
+
+#### When You Do Not Have Access {#when-you-do-not-have-access}
+
+A Scenario does not appear in your **Scenarios** dropdown or on the **Manage Scenarios** tab when it is not shared with you, or when you joined the Application after it was created. A direct link to the Scenario opens an access-restricted page. The link does not open the Signature or any other Scenario.
+
+To get access, ask an Admin on the Scenario or an App Admin to share it with you.
+
+#### When an Action Is Blocked {#when-an-action-is-blocked}
+
+Use this table when an option is missing or unavailable, or an action is blocked:
+
+| What you see | Why it happens | What to do |
+| --- | --- | --- |
+| **Share Scenario**, **Rename Scenario**, or **Delete Scenario** is missing from the ellipsis menu<br /><img src="/img/samples/scenarios/child-scenario-only-view.png" alt="Scenarios dropdown ellipsis menu showing only Create Scenario when you do not have Admin on the Scenario" data-size="m" /> | You do not have Admin on the Scenario. | Ask an Admin on the Scenario to make the change, or to grant you Admin. |
+| You cannot [create a Scenario](./getting-started-with-scenarios.mdx#creating-new-scenarios) | You have Read Only app permission. | Ask an App Admin for Read Write app permission. |
+| Creating a Scenario fails with **Table schemas have changed since this app was last updated.**<br /><img src="/img/samples/scenarios/error-schema.png" alt="Error notification saying table schemas have changed since this app was last updated and to click Update Changes in the Semantic Layer to proceed" data-size="m" /> | A column was added, removed, renamed, or changed data type in the Sequence, and the Semantic Model has not been updated yet. Deleting a table from the Sequence, or using a table that is not in Storage Class 2, shows a similar message. Changing a Primary Key or **Allow Edits** does not block Scenario creation. | Click **Update Changes** in the Semantic Model, then create the Scenario again. See the fix for each message. |
+| You cannot edit data or run actions in a Scenario<br /><img src="/img/samples/scenarios/permission-levels1.png" alt="What each permission can do table with Update data and Run actions unavailable for Read Only" data-size="m" /> | You have Read Only on the Scenario, you have Read Only app permission, or your Access Level privilege is App Read Only. | Ask an Admin on the Scenario for Read Write. If your app permission is Read Only, ask an App Admin. If your privilege is App Read Only, ask a User Admin to update it first. A higher permission has no effect until your privilege allows it. |
+| **Re-sync with parent** or **Sync from Parent** is unavailable, but the Scenario shows that it is out of sync with its parent<br /><img src="/img/samples/scenarios/resync-with-parent.png" alt="Scenarios dropdown with the ellipsis menu open and Re-sync with parent selected" data-size="m" /> | You have Read Only on the Scenario. Read Only users see the sync status so they know the data may be out of date, but they cannot sync. | Ask a user with Read Write or Admin on the Scenario to [sync it](./syncing-and-committing-scenarios.mdx#syncing-from-parent). |
+| You cannot [commit a child Scenario](./syncing-and-committing-scenarios.mdx#committing-to-parent) into its parent<br /><img src="/img/samples/scenarios/cannot-commit-a-child.png" alt="Manage Scenarios with Commit disabled and a tooltip that you need edit access to the target scenario to merge" data-size="m" /> | You have Read Only on the parent or on the child. Committing needs Read Write on both. On the Signature, every user except App Admins has Read Only unless an App Admin granted them Read Write. | Ask for Read Write on the parent and on the child. For the Signature, ask an App Admin to grant you Read Write on it. |
+| You cannot edit data or run actions in the Signature | You have Read Only on the Signature. This is the default for every user except App Admins. | Ask an App Admin to grant you Read Write on the Signature. You need Read Write app permission for this. |
+| **A scenario with this name already exists**<br /><img src="/img/samples/scenarios/scenario-withname-exists.png" alt="Create Child Scenario dialog with the name already exists validation error" data-size="m" /> | A Scenario you cannot see uses the same name. | Choose a different name. |
+
+#### When You Share a Scenario {#when-you-share-a-scenario}
+
+For problems in the **Share Scenario**, **Add User**, or **Add Group** dialog, see these sections in Sharing Scenarios:
+
+| What you see | Where to find the cause and fix |
+| --- | --- |
+| A user or group cannot be selected in **Add User** or **Add Group**, or an **Access Level Privilege Conflict** warning appears | Why Some Users or Groups Cannot Be Selected |
+| A user's **Permission** dropdown is unavailable (**Edit Disabled**) | Permissions You Cannot Change in the Share Scenario Dialog |
+| **+ Add New User(s)** is not shown, or **Admin** is missing from the **Permission** dropdown, on the Signature | How the Signature's Sharing Dialog Differs |
+| A user shows **Admin** from the **Application**, but cannot see Scenarios that are not shared with them | [When an App Admin cannot see a Scenario](#app-admin-cannot-see-a-scenario), below |
+
+<Expandables>
+<ExpandableItem id="app-admin-cannot-see-a-scenario" title={<span className="text-primary">When an App Admin cannot see a Scenario</span>} subtitle="The Access Level privilege caps the app permission">
+
+Example: A user is an App Admin in the Application, but their Access Level privilege does not allow App Admin:
+
+1. In the **Share App** dialog, their **Admin** permission shows a warning icon. The message says they cannot use all the capabilities of this permission because they do not have the required Access Level privilege.
+
+    <img src="/img/samples/scenarios/image1.png" alt="Share App dialog with a user's Admin permission, Level Assigned Application, and the Access Level privilege warning" data-size="xl" />
+
+2. An Admin creates a Scenario. In its **Manage User Access** dialog, the user is listed with **Admin**, **Level Assigned** shows **Application**, and the **Permission** dropdown is unavailable.
+
+    <img src="/img/samples/scenarios/image2.png" alt="Manage User Access dialog for a Scenario with the user listed as Admin, Level Assigned Application, and the Permission dropdown unavailable" data-size="xl" />
+
+3. The user opens their **Scenarios** dropdown. The new Scenario is missing. They see only the Signature and the Scenarios they created or that are shared with them, because their privilege caps their app permission and they do not get Admin on every Scenario.
+
+    <img src="/img/samples/scenarios/image3.png" alt="Scenarios dropdown for the user, listing the Signature, a shared Scenario, and a Scenario they created, without the new Scenario" data-size="xl" />
+
+To grant the user access, ask a User Admin to assign a privilege that allows App Admin in Managing Users. Or ask an App Admin to change the user's app permission to one their privilege allows, then share the Scenario with them.
+
+</ExpandableItem>
+</Expandables>
+
+***
+
+**See more**
+
+* Sharing Scenarios: Share a Scenario, review who has access, and change or remove access.
+* [Syncing and Committing Scenarios](./syncing-and-committing-scenarios.mdx#choose-between-sync-and-commit): The permissions you need on the child and the parent.
+* Understanding Privileges: The highest scenario permission each Access Level privilege allows.
+* Managing Applications: App permissions.
+* Solo Submit and Shared Submit: Who can submit in each mode.
+* Troubleshooting Scenarios: Fix other common Scenario issues.

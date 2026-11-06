@@ -1,0 +1,81 @@
+---
+title: "Writing documentation a retrieval-augmented assistant can answer from"
+description: "How I review product documentation for a RAG-based docs assistant: what the ingestion pipeline actually sees, seven lenses for finding content that breaks when it is chunked, how to triage a wrong answer, and what not to change."
+sidebar_position: 5
+sidebar_label: "Method: AI-ready docs"
+keywords:
+  - retrieval-augmented generation
+  - documentation review
+  - chunking
+  - docs assistant
+  - technical writing method
+---
+
+# Writing documentation a retrieval-augmented assistant can answer from
+
+<span className="vp-label">Method article.</span>
+
+When a company puts a chat assistant in front of its documentation, the docs team inherits a second reader. The first reader is a person with a sidebar, a breadcrumb, a page title and the ability to scroll up. The second reader is a language model that receives a few hundred characters cut out of a page, with no sidebar and nowhere to scroll. Documentation that works for the first reader is not automatically usable by the second.
+
+This article describes the review method I built for the documentation of Meridian Studio, a supply-chain planning platform whose docs are organised around "notes": modular analytics components that each ship on their own version line. The method is a documentation quality review narrowed to one question: would this section still make sense if it were handed to a model with no other context?
+
+## Why human-readable is not retrieval-ready
+
+A well-organised page relies on structure the reader can see. The title says which note the page belongs to. A heading called "Parameters" is clear because the reader just came from the overview. A table is clear because the header row sits above every value.
+
+Retrieval breaks that structure into pieces. A question about a default may pull back the one chunk that contains the row, without the header, without the sentence that explains the unit, and without the title that names the note. The model then answers from a fragment no human reader would ever have seen.
+
+So "retrieval-ready" does not mean "written for machines". It means each section carries enough of its own context to be understood alone. That is also, nearly always, a better page for people.
+
+## What the pipeline actually sees
+
+Before reviewing anything, I traced the ingestion code rather than reasoning from general RAG intuition. In the pipeline I worked with:
+
+- The text that gets embedded is the page title, the documentation path (the breadcrumb), the heading hierarchy, and the visible body of each section. Nothing else.
+- Front-matter `keywords:` are not read by ingestion. The only way a synonym or abbreviation helps is by appearing naturally in visible content.
+- Chunking is heading-aware and measured in characters, not tokens. Parent headings travel with each chunk. Sections larger than the chunk size are split into overlapping character windows.
+- The chunker has no structural understanding of paragraphs, lists or tables. A large table can be cut so that a row loses its header or a value loses the sentence that explains it.
+- A note's identity is not a special metadata field. It reaches a chunk only through the title, path, headings or body text of that chunk.
+
+I also kept a list of what I had not traced: retrieval, filtering, query rewriting, reranking, context assembly and the generation prompt. That list sets the limit on what a documentation change can promise. I never write "this will make the assistant answer correctly"; I write "this may improve chunk-level context".
+
+## Seven lenses
+
+I work through these in order. On solid documentation most of them produce nothing, and that is the expected outcome. Forcing a finding into every category is the failure mode the method exists to prevent.
+
+1. **Page identity and abbreviations.** Does a deep page say which note it belongs to, and is an abbreviation already in real use defined where a cold reader first meets it? Failure: the Network Design note is called "ND" on six sibling pages and in the changelog, but never once next to its full name.
+2. **Chunk-level context.** Read each section as if it were the only thing retrieved; generic headings such as "Inputs" and "Examples" are the riskiest. Failure: a collapsed block titled "Configuration" explains lead-time rounding without naming the table or note it applies to.
+3. **Facts trapped in tables.** Look for a default or constraint a user would ask about directly that exists only inside a large table. Failure: the only statement that `horizon_weeks` defaults to 52 is a cell in a forty-row parameter table.
+4. **Prerequisites split from procedures.** Look for a procedure whose success silently depends on a setting documented elsewhere. Failure: "Run the allocation" works only when `enable_substitution` is on, which is explained three pages away and never referenced from the steps.
+5. **Capability boundaries.** Make an already-established limitation explicit, but never infer a boundary from absence. Failure: a connector table omits incremental sync, and a reviewer concludes the connector does not support it.
+6. **Terminology.** Where two terms are confirmed to mean the same thing, add a short bridge without renaming either. Failure: the overview says "supply group" and the parameters page says "sourcing cluster", with no connecting sentence and no evidence they are the same object.
+7. **Contradictions.** A default stated two ways, two schemas for one object, an example that violates the rule above it. Failure: the inputs page says `priority` is 1 to 5 and the sample dataset uses 0.
+
+Each finding gets one label (retrieval-readiness improvement, human readability improvement, validation required, or no change needed) and one confidence level (high, medium, or needs validation). Every recommendation names the exact sentence and location; "add more context" is not a finding.
+
+Before a recommendation is written down it must pass four questions. Is it supported by documentation that already exists? Does it preserve the product meaning exactly? Does it make the section better on its own? Would it still be a good edit if the assistant did not exist? Any "no" drops it or sends it to a subject-matter expert.
+
+## Triaging a wrong answer
+
+The most common request is not "review this page" but "the assistant got this wrong, is it a docs problem?" The same lenses apply, with one addition: the honest answer is sometimes no.
+
+I locate the source page the question should have drawn from and run the review. If the page already uses the vocabulary the user asked with, contains the answer, and holds up under all seven lenses, I say so plainly and record the verdict as "likely a system issue". The failure may sit in indexing, retrieval, ranking, context assembly or generation, and I list those as an undifferentiated set, because I have not traced them. I do not propose a mechanism, even hedged as a guess; hedging changes how a claim sounds, not whether it is backed.
+
+That verdict matters. It stops writers from rewriting good documentation to manufacture a fix, and it gives the engineering team a clean signal: the input was fine, look elsewhere.
+
+## What not to do
+
+- Do not stuff keywords, add lists of alternate search terms, or insert synonyms that do not read naturally. The embedded text is the visible text, so this only makes the page worse for readers.
+- Do not repeat the note name in every paragraph. One clarifying mention at a natural point is the ceiling.
+- Do not convert a table to prose. Restate the one fact that matters in a single sentence, in the table's own words.
+- Do not invent a limitation, a default, or an abbreviation expansion because it seems obvious. If it is not written down, it is a question for the note's owner.
+- Do not resolve a contradiction by picking whichever page looks newer. Quote both sides and name who needs to confirm.
+- Do not edit a page that is already good just to have something to report.
+
+The underlying rule is simple. Retrieval is the lens, not the justification. A change belongs in the review only if it would be a good documentation change on its own.
+
+---
+
+*Process note: this article is an original re-creation of an internal review method I designed and ran against a production documentation assistant.*
+*Company, product, note names, parameters and examples are fictional; the pipeline facts reflect what I confirmed by tracing the real ingestion code.*
+*No internal paths, hostnames or identifiers from the original appear here.*

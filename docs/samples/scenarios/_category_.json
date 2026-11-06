@@ -1,0 +1,12 @@
+{
+  "label": "User guide: scenarios and permissions",
+  "position": 1,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "samples/scenarios/index"
+  },
+  "customProps": {
+    "description": "Real pages, masked, with four try-it demos"
+  }
+}

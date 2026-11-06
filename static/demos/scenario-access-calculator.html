@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scenario access calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<style>
+.label-stack{flex:0 0 220px;display:flex;flex-direction:column;gap:2px}
+.label-stack .cap{font-size:13px;font-weight:400;line-height:1.4}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="head"><b>Access calculator</b></div>
+  <div class="body" style="display:flex;flex-direction:column;gap:12px">
+    <div class="row"><div class="label-stack"><span class="label" style="flex:none">Access Level privilege</span><span class="cap muted">Your whole organization. Set in Admin Settings.</span></div><div class="seg" id="s0"></div></div>
+    <div class="row"><div class="label-stack"><span class="label" style="flex:none">App permission</span><span class="cap muted">One Application. Set by an App Admin.</span></div><div class="seg" id="s1"></div></div>
+    <div class="row"><div class="label-stack"><span class="label" style="flex:none">On this Scenario</span><span class="cap muted">One Scenario. Set in the Share Scenario dialog.</span></div><div class="seg" id="s2"></div></div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:16px 32px;padding:16px;border-top:1px solid #E7E0EA;background:#FCFBFD">
+    <div style="flex:1 1 260px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;font-weight:600;letter-spacing:.03em;color:#6B6270">EFFECTIVE SCENARIO PERMISSION</span><b id="eff" style="font-size:28px;color:#4E2A5F"></b><span id="why" style="font-size:15px;line-height:1.55"></span></div>
+    <div id="acts" style="flex:1 1 220px;display:flex;flex-direction:column;gap:4px;font-size:15px"></div>
+  </div>
+  <div class="try"><p>Change any of the three levels to see the effective permission ↑</p><span class="r"><button id="try">➤ Try It</button></span></div>
+</div>
+<script src="demo.js"></script>
+<script>
+var A=[["View, download, compare",0],["Create a Scenario from it *",0],["Update data",1],["Run actions",1],["Sync from parent",1],["Commit changes into parent",1],["Share scenario",2],["Rename, delete",2]];
+var LV=["Read Only","Read Write","Admin"],PRIV=["Full Studio Access","App Read Write","App Read Only"],APP=["Admin","Read Write","Read Only"],GR=["Admin","Read Write","Read Only","Created it","Not shared"];
+var st={priv:0,app:1,grant:3},$=function(id){return document.getElementById(id)};
+function render(){
+ seg($("s0"),PRIV,st.priv,function(i){st.priv=i;render()});seg($("s1"),APP,st.app,function(i){st.app=i;render()});seg($("s2"),GR,st.grant,function(i){st.grant=i;render()});
+ var privCap=[2,1,0][st.priv],privScenCap=[2,2,0][st.priv],appSel=[2,1,0][st.app],appEff=Math.min(appSel,privCap),lvl,why;
+ if(appEff===2){lvl=2;why="App Admins are Admin on every Scenario in the Application.";}
+ else if(st.grant===4){lvl=-1;why="The Scenario is not shared with you, so it does not appear.";}
+ else if(st.grant===3&&appEff<1){lvl=-1;why="You need Read Write or Admin app permission to create a Scenario.";}
+ else{var g=st.grant===3?2:[2,1,0][st.grant],appCap=appEff===0?0:2;lvl=Math.min(g,privScenCap,appCap);
+  why=lvl===g?(st.grant===3?"Creators are Admin on the Scenarios they create.":"Your grant on this Scenario applies in full."):(lvl===appCap&&appCap<privScenCap?"Capped by your Read Only app permission.":"Capped by your "+PRIV[st.priv]+" privilege.");}
+ if(appSel>privCap)why="Your "+PRIV[st.priv]+" privilege cannot hold "+APP[st.app]+" app permission, so it counts as "+LV[appEff]+". "+why;
+ $("eff").textContent=lvl<0?"No access":LV[lvl];$("why").textContent=why;
+ $("acts").innerHTML=A.map(function(a,i){var ok=lvl>=a[1]&&!(i===1&&appEff<1);return '<span style="color:'+(ok?"#2E7D4F":"#B7ABBD")+'">'+(ok?"✓ ":"✗ ")+a[0]+'</span>'}).join("")+'<span class="muted" style="font-size:13px;margin-top:4px">* Read Only users need Read Write app permission to create a child.</span>';}
+$("try").onclick=function(){st.priv=(st.priv+1)%3;render()};render();
+</script></body></html>

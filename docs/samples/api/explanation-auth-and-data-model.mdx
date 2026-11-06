@@ -1,0 +1,57 @@
+---
+title: "Authentication, datasets, rows and pagination"
+description: "How API keys, datasets, rows, pages and exports fit together in the Meridian External API, and when to use the API instead of a connector."
+sidebar_position: 4
+keywords:
+  - API keys
+  - data model
+  - cursor pagination
+  - exports
+  - connectors
+---
+
+# Authentication, datasets, rows and pagination
+
+<span className="vp-label">Original sample, re-created for a fictional product. Not runnable.</span>
+
+The Meridian External API is a read API over the planning data in Meridian Studio. This page explains the ideas behind it and the trade-offs they encode.
+
+## API keys are scoped, not personal
+
+Each key belongs to one workspace and has one permission: read. There are no scopes to choose and no tokens to refresh. A key cannot see datasets outside its workspace, and a request for one returns `404` rather than `403`, so the API never confirms that a dataset exists elsewhere.
+
+Who may read what is decided in Meridian Studio, where admins already manage workspaces. The API only checks that the key belongs to the workspace that owns the dataset.
+
+A key is shown once, when you create it, because the API stores a hash rather than the key. Create one key per integration, so that revoking a leaked key in a report does not break a pipeline.
+
+## Datasets are tables with a stable schema
+
+A dataset is a table that a planning run in Meridian Studio writes to, such as the demand forecast or inventory positions. Each has a machine-readable `name`, a `displayName` for people, and a `datasetId` that never changes, even when the dataset is renamed.
+
+`GET /datasets/{datasetId}` returns the fields, each with a type and whether it may be null. The schema changes only when the planning model changes, so you can cache it. Rows change on every planning run, and `updatedAt` tells you when that last happened.
+
+## Rows come in pages, and pages use cursors
+
+`POST /datasets/{datasetId}/query` returns the rows that match all of your filters, one page at a time. Each response carries a `nextPageToken`, which you send back as `pageToken` to get the following page. The token is an opaque cursor that records where the previous page ended, not an offset.
+
+Cursors cost you one thing: you cannot jump to page 40. In return, pages stay consistent while a planning run rewrites the dataset underneath you, because the cursor points at a key rather than a position, and every page costs the same because the server never skips rows.
+
+## Query, or export?
+
+The query endpoint and the export endpoints read the same rows but optimize for different things.
+
+| Use the query endpoint when | Use an export when |
+|---|---|
+| You need a slice: one location, one week, a few SKUs. | You need every row, or a large share of them. |
+| Latency matters and the answer fits in a few pages. | You can wait a minute and want a file. |
+| A program consumes the rows. | A BI tool, data lake or spreadsheet consumes the file. |
+
+An export runs in the background. You create it, poll `GET /exports/{exportId}` until `status` is `complete`, and download the file from a signed `downloadUrl` that expires 24 hours later. The signature in the URL is the credential for the download, so never send `X-Meridian-Key` to that host.
+
+## API, or connector?
+
+Meridian Studio also ships connectors that push datasets to a warehouse or a BI service on a schedule. Choose by who should own that schedule.
+
+Use a **connector** when the destination is a supported warehouse and the planning team can decide when data lands. The connector handles retries, schema changes and credentials for you.
+
+Use the **API** when you control the timing, such as starting a report the moment a planning run finishes, or when you need a filtered slice rather than a whole table. You get more control and become responsible for retries and secrets.

@@ -1,0 +1,128 @@
+---
+title: "Query rows"
+description: "Reference for POST /datasets/{datasetId}/query, which returns filtered, paginated rows from a Meridian Studio dataset."
+sidebar_position: 3
+keywords:
+  - query rows
+  - filters
+  - pagination
+  - API reference
+  - error codes
+---
+
+# Query rows
+
+<span className="vp-label">Original sample, re-created for a fictional product. Not runnable.</span>
+
+`POST /datasets/{datasetId}/query`
+
+Returns the rows of a dataset that match every filter in the request. Rows are returned in the dataset key order unless you set `orderBy`. Send `nextPageToken` from each response as `pageToken` until `nextPageToken` is `null`.
+
+| | |
+|---|---|
+| Base URL | `https://{tenant}.meridian.example/api/v1` |
+| Authentication | API key in the `X-Meridian-Key` header |
+| Content type | `application/json` for request and response |
+
+## Path parameters
+
+| Name | Type | Required | Description |
+|---|---|---|---|
+| `datasetId` | string | Yes | The dataset ID, as returned by List datasets. Pattern `^ds_[a-z0-9]{6}$`. Example: `ds_2b7f9c`. |
+
+## Request body
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `fields` | array of string | No | Fields to return. Omit to return every field. |
+| `filters` | array of Filter | No | Conditions a row must meet. All filters must match. Maximum 20. |
+| `orderBy` | OrderBy | No | Field and direction to sort by. |
+| `pageSize` | integer | No | Rows per page, 1 to 1000. Default `100`. |
+| `pageToken` | string | No | The `nextPageToken` from the previous page. Omit for the first page. |
+
+### Filter
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `field` | string | Yes | A field name from the dataset. |
+| `op` | string | Yes | One of `eq`, `neq`, `gt`, `gte`, `lt`, `lte`, `in`. |
+| `value` | string, number, boolean or array | Yes | The value to compare. With `in`, an array of up to 500 strings or numbers. Dates and timestamps are ISO 8601 strings. |
+
+### OrderBy
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `field` | string | Yes | The field to sort by. |
+| `direction` | string | No | `asc` or `desc`. Default `asc`. |
+
+## Example request
+
+```bash
+curl "https://demo.meridian.example/api/v1/datasets/ds_2b7f9c/query" \
+  -H "X-Meridian-Key: $MERIDIAN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fields": ["sku", "location", "week_start", "forecast_units"],
+    "filters": [
+      { "field": "location", "op": "eq", "value": "DC-NORTH" },
+      { "field": "week_start", "op": "gte", "value": "2026-11-02" }
+    ],
+    "pageSize": 2
+  }'
+```
+
+## Response
+
+`200 OK`
+
+| Field | Type | Description |
+|---|---|---|
+| `datasetId` | string | The dataset that was queried. |
+| `rows` | array of object | One object per row, keyed by field name. |
+| `nextPageToken` | string or null | Send as `pageToken` to get the next page. `null` on the last page. |
+
+```json
+{
+  "datasetId": "ds_2b7f9c",
+  "rows": [
+    { "sku": "SKU-10442", "location": "DC-NORTH", "week_start": "2026-11-02", "forecast_units": 1280 },
+    { "sku": "SKU-10443", "location": "DC-NORTH", "week_start": "2026-11-02", "forecast_units": 315.5 }
+  ],
+  "nextPageToken": "eyJrIjoiU0tVLTEwNDQzIn0"
+}
+```
+
+## Errors
+
+Errors share one shape. `field` is present when one request field caused the error.
+
+| Status | Code | When |
+|---|---|---|
+| `400` | `INVALID_ARGUMENT` | A value is out of range, or the query changed between pages so `pageToken` no longer applies. |
+| `400` | `INVALID_FILTER` | A `field` in `filters` or `orderBy` does not exist, or `op` is not valid for its type. |
+| `401` | `UNAUTHENTICATED` | The `X-Meridian-Key` header is missing, or the key is invalid or revoked. |
+| `404` | `NOT_FOUND` | The dataset does not exist, or the key cannot read it. |
+| `429` | `RATE_LIMITED` | The key exceeded 60 requests per minute. Wait the number of seconds in the `Retry-After` header. |
+| Other | `INTERNAL` | An unexpected error. Retry with exponential backoff. |
+
+```json
+{
+  "error": {
+    "code": "INVALID_FILTER",
+    "message": "Field 'region' does not exist in dataset ds_2b7f9c.",
+    "field": "filters[0].field"
+  }
+}
+```
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| Requests per key | 60 per minute |
+| `pageSize` | 1 to 1000, default 100 |
+| `filters` per request | 20 |
+| Values in an `in` filter | 500 |
+| Request timeout | 30 seconds |
+
+A query that exceeds the timeout returns `INTERNAL`. Narrow it with filters, or create an export instead.
