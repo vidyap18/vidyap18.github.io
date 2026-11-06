@@ -1,17 +1,28 @@
 ---
-title: "The Release Hub: what changes for customers, a week ahead"
-description: A pre-release preview sorted by what customers must do, published about eight days before each release, with the taxonomy, tools and automation behind it.
-sidebar_position: 5
+title: "Preparing customers for releases: the Release Hub"
+description: A preview of each release sorted by what customers have to do, drafted from Jira and reviewed by a writer, with a pre-release briefing for Customer Success.
+sidebar_position: 3
 sidebar_label: Release Hub
 ---
 
-# The Release Hub: what changes for customers, a week ahead
+# Preparing customers for releases: the Release Hub
 
 <span className="vp-eyebrow">Release communication · in use since July 2026</span>
 
+A feature list tells Customer Success what's shipping. They also need to know which customers will have to change how they work, what to tell them, and when. I built the Release Hub around those questions, and a briefing where product managers walk Customer Success through it before each release.
+
 ![Release Hub board, shown with fictional release data](/img/work/release-hub.png)
 
-**What.** A preview of the next release for customer success, published every Friday about eight days before release. Each change goes into one of four groups:
+*The Release Hub, shown with fictional release data.*
+
+## The problem
+
+Customer Success had no single place to see what was coming in a release, or whether a customer had to act. Without that, they could not prepare a customer for a change in how they work before it shipped.
+
+## What I did
+
+- **Proposed it.** In a product meeting in July 2026 I proposed a preview split into what customers must do and what they may notice. Product adopted it.
+- **Sorted every change by what customers have to do.** Four groups, plus one rule for borderline cases: if a change moves a customer's steps, it is flagged, even when nothing breaks.
 
 | Group | Meaning |
 | --- | --- |
@@ -20,22 +31,11 @@ sidebar_label: Release Hub
 | Visible change | Customers will notice it; no action needed. |
 | Optional enhancement | Available if they want it; no action needed. |
 
-Each change also carries what customers need to know, what they should do, what customer success should do, release confidence, owner and date. One rule decides the borderline cases: if a change moves a customer's steps, it is flagged, even when nothing breaks.
+- **Built the board.** Each change carries what customers need to know, what they should do, what Customer Success should do, release confidence, an owner and a date. Tabs cover the internal briefing, what to share with customers, features that moved between releases, and release history. In August I merged three overlapping dashboards into it.
+- **Built the tooling with Claude Code.** A drafter turns a Jira ticket and its dependencies into a proposed entry, and a writer decides what customers need to know or do. A daily job logs changes, drafts customer-ready paragraphs that stay drafts until I review them, and reminds owners when a date is missing.
+- **Set up the pre-release briefing.** Product managers walk Customer Success through the Hub before each release, and I follow up on what changes.
 
-**Why it mattered.** Customer success had no single place to see what was coming or whether a customer had to act. Now a pre-release session with product managers runs before each release, using the Hub.
-
-> "This is incredible. It addresses one of our top focus areas." Senior Director, Customer Success
-
-> "The Release Hub is a life saver." Customer Success Business Partner
-
-## My part
-
-- **Proposed it** in a product meeting in July 2026 as a "must do / may see" split. Product adopted it.
-- **Designed the four groups** and the borderline rule.
-- **Built the board**: an HTML page that reads a release tracker, with tabs for the internal briefing, what to share with customers, features that moved between releases, and release history. In August I proposed merging three overlapping dashboards into it, and we did.
-- **Built the tooling** with Claude Code. A drafter turns a Jira ticket and its dependencies into a proposed row. A daily job logs changes, drafts customer-ready paragraphs for rows that need action, and reminds owners when a date is missing. A release-note converter checks that the internal announcement covers every item.
-
-## What the drafter does, and what it leaves to a writer
+### What the drafter does, and what the writer decides
 
 *Illustrative example with a fictional ticket.*
 
@@ -43,10 +43,13 @@ Each change also carries what customers need to know, what they should do, what 
 | --- | --- | --- |
 | PLN-1042: require one approver before a plan goes live. Drafts still save as before. | Impact: heads up, the old way still works but the steps changed. Customers need to know: plans now need one approver. Customer action: choose an approver for each plan. | Heads up or immediate action? Drafts still save, so heads up. Add the date the approver must be set by, after checking it with the product manager. |
 
-## Scale
+## What changed
 
-47 features previewed across five releases in the first three months, from six product managers.
+- Customer Success sees what changes for customers about eight days before each release, sorted by whether a customer has to act.
+- In its first three months the Hub previewed 47 features across five releases, from six product managers.
 
-## What this shows
+> "This is incredible. It addresses one of our top focus areas." Senior Director, Customer Success
 
-Product thinking applied to communication: a classification people can act on, lead time, owners, and a session where it gets used.
+> "The Release Hub is a life saver." Customer Success Business Partner
+
+For how one release went from the Hub to customers, see [the development and production rollout](./release-notes.md).

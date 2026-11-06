@@ -1,41 +1,35 @@
 ---
-title: "Release notes and release videos, every two weeks since February 2025"
-description: One rollout from internal preview to publication, and the release communication I run every two weeks.
-sidebar_position: 6
-sidebar_label: Release notes
+title: "Preparing customers for releases: one rollout, end to end"
+description: How the move to separate development and production environments reached customers in two cohorts, and the release communication I run every two weeks.
+sidebar_position: 4
+sidebar_label: Release rollout
 ---
 
-# Release notes and release videos, every two weeks since February 2025
+# Preparing customers for releases: one rollout, end to end
 
-<span className="vp-eyebrow">Release communication · every release since February 2025</span>
+<span className="vp-eyebrow">Release communication · September 2026</span>
 
-## One rollout, end to end
+In September 2026 every customer moved to separate development and production environments, a change to how they build and publish their work. Customers needed to know what would change on their rollout day and what to do about it, before it happened. I coordinated the communication for both rollout cohorts, from the internal briefing to the walkthrough video.
 
-In September 2026 every customer moved to separate development and production environments. I owned the communication for it.
+## What went out, and when
 
 | When | What went out | My part |
 | --- | --- | --- |
-| About a week before | An internal preview in the [Release Hub](./release-hub.md), sorted by what customers must do | Built the Hub and wrote the entry |
-| Before rollout | A briefing for customer success, through seven drafts, and the customer email | Wrote both |
-| Rollout | A customer briefing: the change in one minute, what changes on rollout day, a five-step migration, what stays editable in production, and an FAQ | Wrote it |
-| Release day | The release note and a 3:38 walkthrough video presented by the product manager | Wrote the note and the video brief, and produced the video |
+| About a week before | An entry in the [Release Hub](./release-hub.md), sorted by what customers must do | Built the Hub and wrote the entry |
+| Before rollout | A briefing for Customer Success, and the customer email | Wrote both |
+| Rollout, in two cohorts | A customer briefing: the change in one minute, what changes on rollout day, a five-step migration, what stays editable in production, and an FAQ | Wrote it |
+| Release day | The release note, a company announcement, and a 3:38 walkthrough video presented by the product leader | Wrote the note and the video brief, and set up and recorded the video |
 
-**Result.** Customers had the email and the briefing before rollout day. The release note and the video went out with the release.
+The first cohort moved on 19 September and everyone else on 26 September. Customer Success was briefed before the first cohort, and customers had the email and the briefing before their rollout day.
 
-A re-creation of this package for a fictional product is in the [release communication sample](/samples/release-comms). The walkthrough video is on the [videos page](/videos).
+[Read the published release](/writing/release-notes) in its original layout, and [watch the walkthrough](/videos). A re-creation of the customer briefing for a fictional product is in the [release communication sample](/samples/release-comms).
 
 ## Every release
 
-I own release communication. Between February 2025 and October 2026 that was more than 40 releases, roughly one every two weeks. For each one I wrote the company-wide announcement and wrote or edited the release notes on the docs site.
+I run release communication on a two-week cadence. Between February 2025 and October 2026 that was more than 40 releases. For each one I wrote the company-wide announcement and wrote or edited the release notes on the docs site.
 
-![Redesigned release notes page](/img/work/release-notes-redesign.png)
+Along the way I introduced three formats:
 
-## Formats I introduced
-
-- **Video release notes**, from April 2026, after the CEO asked for them: the first walkthrough presented by a product manager, plus an interactive demo. I wrote the brief: a four-beat structure, a questionnaire for the presenter, tone rules and edit notes. 16 releases now have walkthrough videos.
-- **A two-host podcast** for major releases, from March 2025: scripted with AI and voiced synthetically. [First episode](https://lyric.wistia.com/medias/lwy45h61u4).
-- **A redesigned release-notes page**, September 2026: a highlights panel, navigation and filters by release, and a top-five section for each release.
-
-## What this shows
-
-Release writing on a fixed cadence, and the production work behind change communication: briefings, email and video.
+- **Video release notes**, from April 2026: walkthroughs presented by the product team, from a brief I wrote with a four-beat structure, a presenter questionnaire, tone rules and edit notes. 16 releases now have walkthrough videos.
+- **A two-host release podcast** for major releases, from March 2025, scripted with AI and voiced synthetically.
+- **A redesigned release notes page**, September 2026: a highlights panel, filters by category, and a top-five section for each release, so readers scan first and open only what they need.

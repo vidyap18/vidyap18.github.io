@@ -1,38 +1,38 @@
 ---
-title: "Moving four documentation spaces to docs-as-code"
-description: Migrating product documentation from GitBook to a Docusaurus site with pull-request review, previews and CI, live June 2026.
+title: "A docs platform we could evolve"
+description: Moving four documentation spaces from GitBook to Docusaurus, with a new information architecture, a pull-request workflow anyone can contribute through, and search analytics.
 sidebar_position: 1
-sidebar_label: Docs as code
+sidebar_label: Docs platform
 ---
 
-# Moving four documentation spaces to docs-as-code
+# A docs platform we could evolve
 
-<span className="vp-eyebrow">Docs platform · shipped June 2026</span>
+<span className="vp-eyebrow">Docs platform · live June 2026</span>
 
-![Role-based navigation prototype](/img/prototypes/role-based-ia.png)
+Readers needed to find the right page quickly. Writers needed to review each other's work before it went live. Engineers needed a way to document their own releases. Our old platform allowed none of that, so I moved four documentation spaces to a docs-as-code site the whole company can contribute to.
 
-**What.** Four documentation spaces (product guide, science notes, predictions, release notes) moved from GitBook to a Docusaurus site. Live on 20 June 2026; GitBook retired on 10 July.
+![Navigation-by-role prototype for the new docs site](/img/prototypes/role-based-ia.png)
 
-**Why GitBook had to go.** Two requirements it could not meet. Science notes ship on independent version lines, and GitBook could not keep a version of the docs per note. And there was no review step: no pull requests, no preview links, so engineers could not propose changes and writers could not review each other's work before it went live.
+*The navigation-by-role prototype I built before the new structure was agreed. [Open it live](pathname:///prototypes/role-navigation/).*
 
-**Why it mattered.** Engineers and data scientists now document their own releases through pull requests, and the docs are ready on the day of each production release.
+## The problem
 
-## My part
+The product guide, analytics notes, predictions and release notes lived in GitBook, which could not do two things we needed:
 
-I owned the audit, the information architecture, the tool choice and the contribution workflow. Engineering built the site infrastructure and the deployment pipeline.
+- **Versions per component.** Each analytics note ships on its own version line, and GitBook could only version a whole space.
+- **Review before publishing.** There were no pull requests and no preview links, so engineers could not propose a change and writers could not review each other's work before it went live.
 
-- **Audit.** Classified all 321 pages in GitBook as current or legacy, by product area and priority, with a plan to convert ten legacy pages a month.
-- **Information architecture.** An eight-section outline for the product guide, mapped page by page to existing content. Later, an entry point by role (data scientist, supply chain engineer, planner, admin), which I prototyped as a standalone site first. Product leadership adopted the role-based approach.
-- **Tool choice and plan.** Compared docs-as-code tools with engineering, chose Docusaurus, co-owned the 16-week migration plan, ran the stakeholder kickoff, and got the decision approved by product management in June 2025.
-- **Contribution workflow.** One Jira ticket per change, a branch per ticket, a draft pull request against staging with a preview link, required front matter, and a pull-request template with a checklist by page type.
-- **My own pull requests.** 37 merged in the first four months after go-live, including a 161-file cleanup of legacy pages; a CI workflow that keeps a last-updated date on every page, applied to 2,966 pages; search keywords on 227 pages for terms readers searched for but pages did not use; and search analytics.
-- **Versioning design.** A proposal to engineering for per-note versioning, with an interactive prototype. Scheduled for build in December 2026. A generic re-creation is in the [design sample](/samples/design/per-note-doc-versioning-proposal).
+## What I did
 
-## Scale
+- **Audited the content.** I classified all 321 pages as current or legacy, by product area and priority, with a plan to convert ten legacy pages a month.
+- **Designed the information architecture.** An eight-section outline for the product guide, mapped page by page to existing content. Then an entry point by role (data scientist, supply chain engineer, planner, admin), which I prototyped as a standalone site first. Product leadership adopted the role-based approach.
+- **Chose the platform and ran the plan.** I compared docs-as-code tools with engineering, chose Docusaurus, co-owned the 16-week migration plan, ran the stakeholder kickoff and got the decision approved in June 2025. Engineering built the site infrastructure and deployment pipeline.
+- **Set up the contribution workflow.** One Jira ticket per change, a branch per ticket, a draft pull request with a preview link, required front matter, and a pull-request template with a checklist for each page type.
+- **Kept improving it after launch.** 37 of my own pull requests merged in the first four months, including a 161-file cleanup of legacy pages, a CI workflow that keeps a last-updated date on 2,966 pages, search keywords on 227 pages for the words readers actually type, and search analytics to see where readers come up empty.
+- **Proposed versioning per component.** A proposal and an [interactive prototype](pathname:///prototypes/doc-versioning/) so readers can find instructions for the version of an analytics note they actually run. Scheduled for build in December 2026. A generic re-creation of the proposal is in the [design sample](/samples/design/per-note-doc-versioning-proposal).
 
-- **Contributors:** 18 people merged documentation changes in the five months after go-live. 14 of them are outside the writing team.
-- **Pages:** the 321 audited pages were the current pages in GitBook. The new site holds about 3,000 pages. Most of the difference is science-note pages, now kept once for each released version, plus new product-guide pages written since the migration.
+## What changed
 
-## What this shows
-
-Information architecture, docs-as-code, and getting engineers to contribute, while still shipping a share of the work myself.
+- **The new site went live on 20 June 2026**, and GitBook was retired on 10 July.
+- **The docs became a shared responsibility.** 18 people merged documentation changes in the first five months, and 14 of them were outside the writing team. Engineers and data scientists now document their own releases through pull requests, so the docs are ready on the day of each production release.
+- **The site can grow.** It now holds about 3,000 pages, mostly because each released version of an analytics note keeps its own pages.
