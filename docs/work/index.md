@@ -1,32 +1,66 @@
 ---
-title: Work
-description: Six projects from two years as head of documentation at Lyric, with my part in each and whether it shipped, is in use, or is a proposal.
+title: Selected work
+description: Product documentation at Lyric, starting from what someone needs to know to make their next decision.
 sidebar_position: 0
+sidebar_label: Work
 slug: /work
+hide_table_of_contents: true
 ---
 
-# Work
+# Selected work
 
-Six projects from the last two years at Lyric, an AI supply chain planning platform. Each page says what my part was and where the work stands. Numbers come from the records I kept; where something was not measured, the page says so.
+<p className="wk-lede">I lead Product Documentation at Lyric, an AI supply chain planning platform. My work starts with a practical question: what does someone need to know to make their next decision? That might be a customer planning for a change, a Product team deciding what to ship, or a writer checking how a feature actually works.</p>
 
-| | Project | Status | Why it mattered |
-| --- | --- | --- | --- |
-| 1 | [Moving four documentation spaces to docs-as-code](./docs-as-code.md) | Shipped June 2026 | Engineers now document their own releases through pull requests. |
-| 2 | [I prototype it before anyone builds it](./prototypes.mdx) | 2025 to 2026 | Navigation, versioning, landing pages and search were decided on a clickable prototype. Four of six shipped or were adopted. |
-| 3 | [Docs readers can try](./try-it-docs.md) | Shipped 2026 | Readers check their own case in a calculator instead of reading a matrix. |
-| 4 | [Ask AI: making the docs answerable by an assistant](./ask-ai.md) | Live since August 2026 | Fully correct answers rose from about four in ten to two in three between evaluation rounds. |
-| 5 | [The Release Hub](./release-hub.md) | In use since July 2026 | Customer success sees what changes for customers about eight days before each release. |
-| 6 | [Release notes and release videos](./release-notes.md) | Every release since February 2025 | More than 40 releases, with a video and podcast format I introduced. |
+## Featured work
 
-## More work
+<div className="wk-case">
+<a className="wk-case__img" href="./roadmap"><img src="/img/work/roadmap-dashboard.png" alt="Roadmap dashboard, shown with fictional epics" loading="lazy" /></a>
+<div className="wk-case__body">
 
-- [Deciding what to document next from the data](./docs-analytics.md): a support-ticket analysis, search analytics and a screenshot audit. October 2026.
-- [A roadmap leadership can read](./roadmap.md): a Jira-fed roadmap dashboard in plain English. In use since September 2026.
-- [Help inside the product](./in-product-help.md): guided tours, beacons and tooltips. Running since June 2025.
-- [Videos](/videos): release walkthroughs, feature explainers and a release podcast.
+### One roadmap for two audiences
+
+Product needed to track what each team was building. Customers needed to see what was coming for the decisions they make about demand, supply, inventory, and transportation. I built two views from the same Jira-fed data: an internal roadmap organized by team and a customer-facing version organized by supply chain decision, with internal updates and ticket IDs removed. Leadership uses the internal view in its weekly update, and Sales has used the customer view in a roadmap presentation.
+
+<p className="wk-links"><a className="pg-link" href="./roadmap">Read the case study</a><a className="pg-link" href="/program-management">How the roadmap runs</a></p>
+</div>
+</div>
+
+<div className="wk-case">
+<a className="wk-case__img" href="./release-hub"><img src="/img/work/release-hub.png" alt="Release Hub board, shown with fictional release data" loading="lazy" /></a>
+<div className="wk-case__body">
+
+### Preparing customers for releases
+
+A feature list tells Customer Success what’s shipping. They also need to know which customers will have to change how they work, what to tell them, and when. I built the Release Hub around those questions and set up sprint checkpoints and pre-release briefings with Product and Customer Success. When we introduced separate development and production environments, I coordinated communications for two rollout cohorts, from the internal briefing through the customer email, release note, and walkthrough.
+
+<p className="wk-links"><a className="pg-link" href="./release-hub">The Release Hub</a><a className="pg-link" href="./release-notes">The rollout</a></p>
+</div>
+</div>
+
+<div className="wk-case">
+<a className="wk-case__img" href="./docs-as-code"><img src="/img/prototypes/role-based-ia.png" alt="Role-based navigation prototype for the new docs site" loading="lazy" /></a>
+<div className="wk-case__body">
+
+### A docs platform we could evolve
+
+Moving four documentation spaces from GitBook to Docusaurus gave us control over how readers find content and how we build and publish it. I led the content audit and information architecture, prototyped navigation around user roles, and added search analytics to see where readers came up empty. I also proposed versioning docs for individual analytics components, so readers could find instructions for the version they actually run.
+
+<p className="wk-links"><a className="pg-link" href="./docs-as-code">Read the case study</a><a className="pg-link" href="./prototypes">See the prototypes</a></p>
+</div>
+</div>
+
+<div className="wk-case">
+<a className="wk-case__img" href="/ai"><img src="/img/work/note-popup.png" alt="In-product help pop-up for a pre-built analytics note" loading="lazy" /></a>
+<div className="wk-case__body">
+
+### Using AI to ship better docs
+
+I set up a workflow that uses engineering pull requests and Jira tickets to investigate product changes and draft documentation with Claude. Writers review the draft and verify the behavior before it goes out. I also use Claude Code to build prototypes and submit changes to in-product help. The same approach powers a release-preview tool I built: it drafts what changed from a Jira ticket, and a writer decides what customers need to know or do.
+
+<p className="wk-links"><a className="pg-link" href="/ai">See the AI work</a><a className="pg-link" href="./ask-ai">The assistant evaluation</a></p>
+</div>
+</div>
 
 ## Leading the team
 
-I run hiring for the documentation team: about 20 technical-writer interviews between March 2025 and April 2026. I wrote the team's operating model, built a first-30-days onboarding path with a sign-off tracker, and set the review chain every page goes through before release: the writer tests it, a subject-matter expert checks it, and the product manager signs it off.
-
-Before Lyric: documentation manager at Aera Technology (Confluence to Document360 migration, standards and templates), API and SDK documentation at SnapLogic, and product documentation at Talentica and Siemens. Details on the [CV](/cv).
+I lead hiring, built a 30-day onboarding plan for new writers, and set clear responsibilities for release reviews. Writers test the instructions in the product, subject-matter experts check technical accuracy, and product managers sign off. New writers know what they’re expected to learn and deliver, and everyone knows who checks what before we publish.

@@ -629,3 +629,38 @@ h3 { font-size: 1.15rem; line-height: 1.3; letter-spacing: -0.01em; }
 .pg-out td:first-child { white-space: nowrap; }
 .pg-clip { display: block; width: 100%; border: 1px solid var(--vp-rule); border-radius: 12px; box-shadow: var(--vp-shadow); background: #fff; }
 .rn-media--m { max-width: 420px; }
+
+/* ---------- /work ---------- */
+.wk-lede { font-size: 1.18rem; line-height: 1.6; color: var(--vp-ink-2); max-width: 46rem; margin-bottom: 1.8rem; }
+.wk-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.9rem; margin: 0 0 2.6rem; }
+.wk-stat { border: 1px solid var(--vp-rule); border-top: 3px solid var(--vp-accent); border-radius: 10px; background: var(--vp-card); padding: 1rem 1rem 1.05rem; }
+.wk-stat strong { display: block; font-family: var(--vp-display); font-size: 1.9rem; line-height: 1.1; letter-spacing: -0.02em; color: var(--vp-ink); margin-bottom: 0.4rem; }
+.wk-stat span { display: block; font-size: 0.84rem; line-height: 1.45; color: var(--vp-ink-2); }
+.wk-team { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem; margin: 0 0 2.6rem; }
+.wk-team > div { border-left: 2px solid var(--vp-accent); padding: 0.1rem 0 0 0.9rem; }
+.wk-team p { font-size: 0.92rem; color: var(--vp-ink-2); margin: 0.35rem 0 0; }
+.wk-k, .wk-meta { font: 500 0.68rem/1.3 var(--vp-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--vp-ink-3); }
+.wk-case { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 1.8rem; align-items: start; border: 1px solid var(--vp-rule); border-radius: 14px; background: var(--vp-card); padding: 1.4rem; margin: 0 0 1.4rem; box-shadow: var(--vp-shadow); }
+.wk-case__img { display: block; border: 1px solid var(--vp-rule); border-radius: 10px; overflow: hidden; background: #fff; aspect-ratio: 4 / 3; }
+.wk-case__img img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; transition: transform 300ms ease; }
+.wk-case__img:hover img { transform: scale(1.02); }
+.wk-case__body { font-size: 0.93rem; }
+.wk-case__body h3 { margin: 0.35rem 0 0.5rem; font-size: 1.25rem; }
+.wk-out { font-family: var(--vp-display); font-size: 1.08rem; line-height: 1.45; color: var(--vp-ink); font-weight: 500; margin-bottom: 0.9rem; }
+.wk-case__body ul { padding-left: 1.1rem; margin: 0.3rem 0 0.9rem; }
+.wk-case__body li { margin-bottom: 0.3rem; color: var(--vp-ink-2); }
+.wk-case__body p { margin-bottom: 0.8rem; }
+.wk-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
+.wk-chips span { font-size: 0.74rem; color: var(--vp-ink-2); background: var(--vp-paper); border: 1px solid var(--vp-rule); border-radius: 999px; padding: 0.22rem 0.6rem; }
+.wk-quote { margin: 0.4rem 0 0.9rem; padding: 0.6rem 0.9rem; border-left: 3px solid var(--vp-accent); background: var(--vp-accent-soft); font-family: var(--vp-serif); font-size: 1.05rem; }
+.wk-quote span { display: block; font-family: var(--vp-sans); font-size: 0.76rem; color: var(--vp-ink-3); margin-top: 0.2rem; }
+.wk-more { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem; margin: 0 0 2.4rem; }
+.wk-more a { display: block; border: 1px solid var(--vp-rule); border-radius: 10px; background: var(--vp-card); padding: 0.95rem 1rem; color: inherit; transition: border-color 200ms, transform 200ms; }
+.wk-more a:hover { text-decoration: none; border-color: var(--vp-accent); transform: translateY(-2px); }
+.wk-more strong { display: block; color: var(--vp-accent); margin-bottom: 0.3rem; }
+.wk-more span { display: block; font-size: 0.86rem; color: var(--vp-ink-2); line-height: 1.45; }
+.wk-end { border-top: 1px solid var(--vp-rule); padding-top: 1.2rem; color: var(--vp-ink-2); }
+@media (max-width: 996px) { .wk-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .wk-case { grid-template-columns: 1fr; } .wk-more { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .wk-team, .wk-more { grid-template-columns: 1fr; } .wk-stat strong { font-size: 1.6rem; } }
+@media (min-width: 997px) { .wk-case__img { position: sticky; top: 84px; } }
+.wk-case__body h3 { margin-top: 0.2rem; } .wk-links { margin: 0.4rem 0 0; }

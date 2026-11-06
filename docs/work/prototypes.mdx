@@ -1,44 +1,50 @@
 ---
-title: "I prototype it before anyone builds it"
-description: Clickable prototypes for documentation navigation, versioning, landing pages and search, used to get decisions before engineering time is spent.
+title: "I prototype my plans before I build them"
+description: Working prototypes of changes to the documentation, built so stakeholders can see and react to a plan before I implement it.
 sidebar_position: 2
 sidebar_label: Prototypes
 ---
 
-# I prototype it before anyone builds it
+# I prototype my plans before I build them
 
 <span className="vp-eyebrow">Design prototypes · 2025 to 2026</span>
 
-**What.** Before I ask engineering to build a change to the documentation site, I build a clickable prototype of it: a working page with real content that people can click through, not a slide or a written proposal.
+**What.** When I plan a change to the documentation, such as a new navigation, versioning or a landing page, I build a working prototype of it first: a page with real content that people can click through, not a slide or a written description.
 
-**Why.** A prototype settles questions that a document leaves open. Stakeholders react to what they see, not to what they imagine from a description. Engineering can estimate from something concrete. And when the idea is wrong, I find out in a review meeting instead of after a sprint.
+**Why.** A plan in a document leaves people to imagine the result, and everyone imagines something different. A prototype shows stakeholders exactly what I intend, so they react to the same thing, raise concerns early, and agree before I start. Once the plan is agreed, I go ahead with the implementation.
 
-**How.** I build them myself in HTML, CSS and JavaScript, mostly with Claude Code, using real product content so the review is about the actual reading experience. Each one answers one question. I show it to the people who will use or build it, and change it until the decision is clear.
+**How.** I build them myself in HTML, CSS and JavaScript, mostly with Claude Code, using real product content so the review is about the actual reading experience. Each one answers one question. I walk the people affected through it, and change it until the decision is clear.
 
 ## Selected prototypes
 
 <div className="vp-gallery">
 
 <figure>
-  <img src="/img/prototypes/versioning.png" alt="Prototype of a science note page with a version picker, version-specific pages in the sidebar and new-in-version badges" loading="lazy" />
+  <a href="/prototypes/doc-versioning/" target="_blank" rel="noopener"><img src="/img/prototypes/versioning.png" alt="Prototype of a note page with a version picker, version-specific pages in the sidebar and new-in-version badges" loading="lazy" /></a>
   <figcaption>
     <span className="vp-status">Proposal</span>
     <strong>Per-note documentation versioning</strong>
-    Question: how do readers see the docs for the version of a note they actually run, when each note ships on its own version line? A version picker on every note, pages that exist only in some versions, and "new in this version" badges, presented to engineering with a written design proposal.
+    Question: how do readers see the docs for the version of a note they actually run, when each note ships on its own version line? A version picker on every note, pages that exist only in some versions, and "new in this version" badges, presented with a written design proposal. <a href="/prototypes/doc-versioning/" target="_blank" rel="noopener">Open the prototype</a>.
   </figcaption>
 </figure>
 
 <figure>
-  <img src="/img/prototypes/role-based-ia.png" alt="Prototype of documentation navigation organised by role: business user, data scientist, supply chain engineer" loading="lazy" />
+  <a href="/prototypes/role-navigation/" target="_blank" rel="noopener"><img src="/img/prototypes/role-based-ia.png" alt="Prototype of documentation navigation organised by role: business user, data scientist, supply chain engineer" loading="lazy" /></a>
   <figcaption>
     <span className="vp-status">Adopted</span>
     <strong>Navigation by role</strong>
-    Question: can each reader start from who they are instead of from the product's structure? A prototype site with separate paths for data scientists, supply chain engineers, planners and admins, each a complete home for that role's work.
+    Question: can each reader start from who they are instead of from the product's structure? A prototype site with separate paths for data scientists, supply chain engineers, planners and admins, each a complete home for that role's work. <a href="/prototypes/role-navigation/" target="_blank" rel="noopener">Open the prototype</a>.
   </figcaption>
 </figure>
 
 <figure>
-  <img src="/img/prototypes/new-ia.png" alt="Prototype of a new information architecture for the product guide, starting with role overviews and a quick start" loading="lazy" />
+  <div className="vp-gallery__text">
+    <span>Role overviews</span>
+    <span>→</span>
+    <span>Quick start</span>
+    <span>→</span>
+    <span>Task sections</span>
+  </div>
   <figcaption>
     <span className="vp-status">Adopted</span>
     <strong>A new information architecture</strong>
@@ -47,16 +53,28 @@ sidebar_label: Prototypes
 </figure>
 
 <figure>
-  <img src="/img/prototypes/notes-landing.png" alt="Prototype of the Science Notes landing page introducing pre-built algorithms and their categories" loading="lazy" />
+  <div className="vp-gallery__text">
+    <span>What they are</span>
+    <span>→</span>
+    <span>What's different</span>
+    <span>→</span>
+    <span>How they combine</span>
+  </div>
   <figcaption>
     <span className="vp-status">Shipped</span>
-    <strong>Science Notes landing page</strong>
+    <strong>Landing page for pre-built algorithms</strong>
     Question: how do you introduce a catalogue of pre-built supply chain algorithms to someone seeing it for the first time? What they are, what makes them different, and how they combine.
   </figcaption>
 </figure>
 
 <figure>
-  <img src="/img/prototypes/data-scientist-page.png" alt="Prototype of a role landing page for data scientists comparing work before and with the platform" loading="lazy" />
+  <div className="vp-gallery__text">
+    <span>Before</span>
+    <span>→</span>
+    <span>After</span>
+    <span>→</span>
+    <span>Build, release, reuse</span>
+  </div>
   <figcaption>
     <span className="vp-status">Shipped</span>
     <strong>A landing page for data scientists</strong>
@@ -83,4 +101,4 @@ sidebar_label: Prototypes
 
 ## What this shows
 
-Design thinking applied to documentation: framing the question, making it concrete, and getting a decision before anyone spends engineering time. Five of these six shipped or were adopted.
+Design thinking applied to documentation: framing the question, making the plan concrete, and getting stakeholders to agree on what they can see before I build it.

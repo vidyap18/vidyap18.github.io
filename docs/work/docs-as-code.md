@@ -9,7 +9,7 @@ sidebar_label: Docs as code
 
 <span className="vp-eyebrow">Docs platform · shipped June 2026</span>
 
-![Persona-led information architecture prototype](/img/work/persona-led-ia-prototype.png)
+![Role-based navigation prototype](/img/prototypes/role-based-ia.png)
 
 **What.** Four documentation spaces (product guide, science notes, predictions, release notes) moved from GitBook to a Docusaurus site. Live on 20 June 2026; GitBook retired on 10 July.
 
