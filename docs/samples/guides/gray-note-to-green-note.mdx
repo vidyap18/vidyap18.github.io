@@ -1,0 +1,363 @@
+---
+title: "Gray Note to Green Note"
+description: "How a Custom Note (Green Note) moves from a Draft Note (Gray Note) to a Green Note (released) in the Note Catalog, what a release freezes, and how branch runs differ from version runs."
+sidebar_position: 1
+keywords:
+  - gray note
+  - grey note
+  - green note
+  - custom note release
+  - release lifecycle
+  - draft note
+  - note versions
+---
+# Gray Note to Green Note
+
+<span className="vp-label">Real page from a user guide I own. Product name, people and other identifying details are masked.</span>
+
+A **Custom Note** (**Green Note**) is the same Note in two states:
+
+* **Draft Note (Gray Note)**: an unreleased **branch** you edit and test in the Note Workspace.
+* **Green Note** (released): a **version** frozen at a point in time, listed under **Custom Notes** in the Note Catalog, ready to add to a Sequence.
+
+Releasing does not turn the branch into something else. The branch stays a **Draft Note (Gray Note)** you can keep editing, and the release adds a new version next to it.
+
+In the Note Catalog, filter to **Custom Notes** and turn on **Show Draft Notes** to see **Draft Notes (Gray Notes)** still in development. They carry a **draft** tag. After you release, the same Note appears as a versioned **Green Note** with a release-type tag instead.
+
+<img src="/img/samples/guides/gray-notes.png" alt="Note Catalog with Custom Notes selected, Show Draft Notes enabled, and draft Custom Notes listed with draft tags" data-size="xl" />
+
+## From Gray Note to Green Note
+
+:::info
+
+**A version never changes. A branch always can.** Once `v1.2.0` is released, nothing done on the branch afterwards reaches it, no matter how many times it runs. To ship a change, release a new version.
+
+:::
+
+Use this table to find the right tool for the task:
+
+| I want to... | Use |
+| --- | --- |
+| Change code, dependencies, schema, or parameters | A branch |
+| Try the change against real data before anyone depends on it | Run the branch |
+| Give other people something stable to build on | Release a version |
+| Ship a fix to a Sequence already in use | Release a new version, then [upgrade the Note in the Sequence](#move-a-sequence-to-the-new-version) |
+| See what changed between two branches or versions | Compare Branches and Versions |
+
+***
+
+Every new Note starts with one branch, `draft`. It has no special behavior beyond being first.
+
+<Tabs defaultValue="compare">
+<TabsList>
+<TabsTrigger value="compare">Draft Note (Gray Note) compared to a Green Note</TabsTrigger>
+<TabsTrigger value="why">Why release before production</TabsTrigger>
+</TabsList>
+
+<TabsContent value="compare">
+
+| Attribute | Draft Note (Gray Note) | Green Note (released) |
+| --- | --- | --- |
+| **Editable** | Yes. Code, settings, schema, and every other tab. | No. Read-only. Only its release type can change, through Retag Note. |
+| **In the Note Catalog** | No | Yes, ready to add to Sequences and Applications |
+| **Use it for** | Developing logic, adding or bumping a dependency, reshaping tables, adding parameters, testing on sample data | Any Sequence other people run, especially in production |
+| **Environment** | Set up from scratch on every run | Built once, at release |
+| **Execution** | Always a single container | Can use Parallel Runs for distributed execution |
+
+</TabsContent>
+
+<TabsContent value="why">
+
+<span id="why-release-before-production" />
+
+A **Draft Note (Gray Note)** is the right place to build and test, but not to run anything other people depend on. A released version gives them:
+
+* **Stability.** A version never changes, so a Sequence runs the same code every time until someone upgrades it. A branch changes under a Sequence the moment someone edits it.
+* **A faster start.** A version's environment is built once, at release. A branch installs its full dependency list on every run.
+* **Scale.** Distributed execution across multiple workers is available only to a released version.
+* **Reproducibility.** Your code and your packages are frozen into the version, so they cannot drift between runs.
+* **A clear signal.** The version appears in the Note Catalog with a **Stable**, **Beta**, or **Legacy** tag, so everyone knows how much to trust it.
+
+</TabsContent>
+</Tabs>
+
+***
+
+## The Gray Note to Green Note Process
+
+Follow these four steps to take a change from a branch to a released version:
+
+<Stepper>
+<Step>
+
+**Create a branch.** In the Note Workspace, click the branch or version chip in the toolbar, then click **+ Create New Branch** at the bottom of the **Switch branches/versions** panel. Choose the branch it starts from, and enter a name using letters, digits, `-`, and `_`; other characters are rejected.
+
+Create branches in the Note Workspace rather than from the command line. A branch pushed from your terminal is created, but its schema and settings are not copied until you approve it. See Creating and Syncing Local Branches.
+
+</Step>
+<Step>
+
+**Make your changes on the branch.** Edit Code, Settings, Dependencies, Schema, Run Configuration, and Secrets. Pin exact dependency versions as you go.
+
+</Step>
+<Step>
+
+**Run the branch on real data** until the output is right. See Test Your Note, and [How Branch Runs Differ from Version Runs](#how-branch-runs-differ-from-version-runs) for what to expect.
+
+</Step>
+<Step>
+
+**Release a version.** Click **Release Note**, select the branch, pick a release type (**Stable**, **Beta**, or **Legacy**), enter a version name, and click **Release to Catalog**. Version names follow the same character rules as branch names. See Release Note.
+
+</Step>
+</Stepper>
+
+When the release finishes, the new version is in the Note Catalog, ready to add to a Sequence.
+
+***
+
+## After You Release
+
+* **Your branch is unchanged.** Releasing does not lock or reset the **Draft Note (Gray Note)**. Keep editing it exactly as before.
+* **The version is frozen.** Later edits on the branch never reach it. Release again to ship them.
+* **Existing Sequences stay where they are.** Releasing does not move any Sequence onto the new version. Moving one is a separate step, described next.
+
+### Move a Sequence to the New Version {#move-a-sequence-to-the-new-version}
+
+To run the new version in a Sequence that already uses the Note, right-click the Note in the Sequence, choose **Upgrade Note**, and select the new version. See Upgrade Note.
+
+Before you upgrade, check the comparison for removed tables, columns, and parameters. These break the Sequence's mappings, and the upgrade screen lists them before you commit.
+
+:::warning
+
+Renaming a table or column on a branch is a breaking change for anyone who later upgrades to a version built from it. The upgrade screen shows a rename as **REMOVED** plus **ADDED**, not as a rename. This affects only the upgrade flow, not someone adding the Note fresh from the Note Catalog.
+
+:::
+
+***
+
+## What a Release Freezes
+
+A release copies the branch onto the new version, builds its container with the dependencies installed, and scans it for vulnerabilities unless you choose **Skip vulnerability scan**. The tabs below cover what a release freezes and what stays editable or changes on its own.
+
+<Tabs defaultValue="frozen">
+<TabsList>
+<TabsTrigger value="frozen">What is frozen</TabsTrigger>
+<TabsTrigger value="not-frozen">What is not frozen</TabsTrigger>
+</TabsList>
+
+<TabsContent value="frozen">
+
+Everything below is editable on a branch and read-only on the released version:
+
+| Surface | What it holds | At release |
+| --- | --- | --- |
+| **Code** | Files and the entrypoint's `run(inputs, parameters, configs)` function | Frozen |
+| **Dependencies** | Package list, by name and version, from PyPI, a Git repository, a wheel, or a private repository | Frozen and installed into the version's container |
+| **Schema** | Input and output tables, columns, and types | Frozen |
+| **Parameters** | Runtime values, their types, defaults, and cascades | Frozen |
+| **Settings** | Framework, Python version, entrypoint file and function, report names, lazy load, execution summary | Frozen |
+| **Artifacts** | Declared input and output artifacts | Frozen |
+| **Secrets** | Which secrets the Note requires | The list of required secrets is copied. Secret values are not. |
+
+</TabsContent>
+
+<TabsContent value="not-frozen">
+
+These stay editable or change independently of the release:
+
+* **The release type.** Change it anytime through Retag Note.
+* **Which Sequences use the version.** Sequences move only when someone [upgrades](#move-a-sequence-to-the-new-version) them.
+* **Meridian's own platform libraries.** These are refreshed when the Note starts. A released version pins your code and your packages, not Meridian's.
+
+</TabsContent>
+</Tabs>
+
+***
+
+## How Branch Runs Differ from Version Runs {#how-branch-runs-differ-from-version-runs}
+
+A released version runs from a container built once, at release. A branch has no container of its own, so before a branch run executes your code, it sets up the environment and installs your entire dependency list. This happens on every branch run, even when nothing has changed.
+
+* **Branch runs start slower.** The setup time grows with how many packages the Note declares and how loosely they are pinned. A few pure-Python packages add a short delay; large scientific or solver packages add a substantial one. A released version skips this setup.
+* **A branch run can fail on dependencies even when nothing in the Note changed.** The list is resolved fresh each run, so an unpinned package that published a new release overnight is picked up overnight.
+* **A setup failure produces no output from your code.** The failure is in the environment, before your entrypoint is reached.
+* **A branch is not a performance test.** A branch run always executes in a single container. Distributed execution across multiple workers applies only to a released version, so branch timings do not describe the released Note.
+* **Runs stay with their branch.** Each run executes exactly one branch or one version. Switching branches in the Note Workspace does not stop a run in progress, and you can run several branches at the same time.
+
+:::tip
+
+Pin your dependencies before you release. An unpinned package is resolved again at release time, so two versions released a week apart from identical code can contain different packages.
+
+:::
+
+***
+
+## Best Practices
+
+Each row pairs a practice with the mistake it avoids.
+
+<Tabs defaultValue="before">
+<TabsList>
+<TabsTrigger value="before">Before you release</TabsTrigger>
+<TabsTrigger value="releasing">Release</TabsTrigger>
+<TabsTrigger value="branches">Branches and Sequences</TabsTrigger>
+</TabsList>
+
+<TabsContent value="before">
+
+| Do | Don't |
+| --- | --- |
+| Pin exact dependency versions, and click **Save & Validate All** on Dependencies before releasing | Leave a package unpinned because it worked yesterday. A branch resolves it again on every run. |
+| Run the branch end to end on real data before releasing | Release to "test it properly". A bad version is visible to everyone in the Note Catalog. |
+
+</TabsContent>
+
+<TabsContent value="releasing">
+
+| Do | Don't |
+| --- | --- |
+| Release a new version to ship a fix | Overwrite a released version to ship a fix. See the warning below. |
+| Release as **Beta** first, then retag to **Stable** once a real Sequence has used it | Release straight to **Stable** and discover the schema change downstream |
+| Give versions names that sort and read, such as `v1.4.0` or `2026-q3`. See Reading a Version Number for the recommended format. | Reuse names like `latest`, `final`, or `new`. The Catalog shows the name and nothing else. |
+
+There is no minimum time a version must spend as **Beta** before you retag it to **Stable**. Promote it when you are confident in it.
+
+:::warning
+
+**Overwrite an existing version** replaces that version's content in place, under the same name. Every Sequence pointing at it gets the new content at its next run, and the previous content cannot be recovered. Reserve it for urgently correcting a release that was wrong.
+
+:::
+
+</TabsContent>
+
+<TabsContent value="branches">
+
+| Do | Don't |
+| --- | --- |
+| Point production Sequences at a released version | Point a production Sequence at a branch. The next run picks up whatever the branch contains at that moment. |
+| Keep a branch short-lived and release from it | Accumulate months of unreleased change on one branch, so every upgrade is a breaking one |
+| Compare against the previous version before upgrading a Sequence | Upgrade and find out from the run |
+| Create branches in the Note Workspace | Push a branch from the command line and skip the approval step. The branch is created, but its schema and settings are not copied until you approve it. See Creating and Syncing Local Branches. |
+
+</TabsContent>
+</Tabs>
+
+### Develop Locally for Large Refactors
+
+For big changes, clone the Note's repository, iterate locally with downloaded data and parameters, then push back to the branch. Local runs skip Studio's environment, so the branch run in Studio is still the test that counts.
+
+If someone else changed the branch in Studio while you were working locally, Git rejects your push, just as it would for any remote branch that has moved on. Rebase onto their changes, or force push if you intend to replace them.
+
+***
+
+## Limitations
+
+* A branch always runs in a single container. Multi-worker distributed execution applies only to released versions, so scaling behavior cannot be measured on a branch.
+* Overwriting a version is not reversible. There is no copy of the replaced content.
+* A Note's sharing and permissions apply to the whole Note. They cannot be set per branch.
+* Studio has no merge action for bringing one branch's changes into another. To bring over parameters, table schema, and other metadata, use Import Metadata. To bring over code, merge it with Git in a local clone.
+
+## Troubleshooting
+
+Find the problem you see and expand it for the cause and fix. Problems are grouped by where they show up.
+
+### Releases and Sequences
+
+<details>
+<summary><strong>You fixed it and released, but the Sequence still runs the old logic</strong> <span className="text-muted-foreground">Sequence on the previous version</span></summary>
+
+**Cause:** The Sequence still points at the previous version.
+
+**Fix:** [Upgrade the Note](#move-a-sequence-to-the-new-version) in the Sequence to the new version.
+
+</details>
+
+<details>
+<summary><strong>You changed the code, but the version's output is identical</strong> <span className="text-muted-foreground">The version is frozen</span></summary>
+
+**Cause:** Edits land on the branch; the version is frozen.
+
+**Fix:** Release a new version from the branch.
+
+</details>
+
+<details>
+<summary><strong>Someone else's Sequence broke after your release</strong> <span className="text-muted-foreground">A version in use was overwritten</span></summary>
+
+**Cause:** The release overwrote a version already in use.
+
+**Fix:** Release under a new version name, and tell the affected owners which version to move to.
+
+</details>
+
+### Branch Runs and Dependencies
+
+<details>
+<summary><strong>A branch run takes minutes before the first log line</strong> <span className="text-muted-foreground">Dependencies install on every branch run</span></summary>
+
+**Cause:** Dependencies are installed on every branch run.
+
+**Fix:** Expected on a branch. Pin versions to keep setup short. A released version starts without this setup.
+
+</details>
+
+<details>
+<summary><strong>The branch failed today, and nothing changed since yesterday</strong> <span className="text-muted-foreground">Unpinned dependency moved</span></summary>
+
+**Cause:** An unpinned dependency resolved to a newer release.
+
+**Fix:** Pin the package to the version that worked, then run again.
+
+</details>
+
+<details>
+<summary><strong>Dependency install fails only in Studio, not locally</strong> <span className="text-muted-foreground">Local cache hides the problem</span></summary>
+
+**Cause:** Your local environment already has the package cached; Studio resolves from scratch.
+
+**Fix:** Reproduce in a clean local environment, then fix the pin or the source.
+
+</details>
+
+<details>
+<summary><strong>Two versions built from the same code behave differently</strong> <span className="text-muted-foreground">Unpinned at one release</span></summary>
+
+**Cause:** Dependencies were unpinned at one of the two releases.
+
+**Fix:** Compare the two versions' dependencies, then pin and release again.
+
+</details>
+
+### Branches, Code, and Schema
+
+<details>
+<summary><strong>The Code tab is greyed out</strong> <span className="text-muted-foreground">Viewing a version</span></summary>
+
+**Cause:** You are viewing a version, not a branch.
+
+**Fix:** Switch to a branch in the toolbar chip, or create one.
+
+</details>
+
+<details>
+<summary><strong>The output tables do not match your code</strong> <span className="text-muted-foreground">Names differ from the Schema tab</span></summary>
+
+**Cause:** Your code uses table or column names that differ from the Schema tab's identifiers.
+
+**Fix:** Align your code with the Schema tab's **Name** fields. Display names are labels only. See Naming Conventions.
+
+</details>
+
+<details>
+<summary><strong>A branch pushed from your terminal has no schema or parameters</strong> <span className="text-muted-foreground">Not yet approved in Studio</span></summary>
+
+**Cause:** The branch has not been approved in Studio yet.
+
+**Fix:** Approve it under **More Options (⋯) > Build Info**. See Creating and Syncing Local Branches.
+
+</details>
+
+***
+
+Ready to ship? Go to Release Note for the release dialog, or Branches and Versions to switch, create, and compare branches.

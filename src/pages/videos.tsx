@@ -40,7 +40,7 @@ export default function Videos(): ReactNode {
               <h2>{g.title}</h2>
               <p>{g.intro}</p>
             </div>
-            <div className={g.items.length === 2 ? 'pg-videos pg-videos--two' : 'pg-videos'}>
+            <div className={g.items.length % 2 === 0 ? 'pg-videos pg-videos--two' : 'pg-videos'}>
               {g.items.map((m) => (
                 <a key={m.id + g.title} className="pg-video" href={url(m.id)} target="_blank" rel="noreferrer">
                   <div className="pg-video__thumb">

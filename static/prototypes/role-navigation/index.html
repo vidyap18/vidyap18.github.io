@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meridian Studio Docs — Persona-Led IA Prototype</title>
+  <link rel="stylesheet" href="/prototypes/role-navigation/styles.css" />
+</head>
+<body>
+  <div class="proto-banner">
+    🧪 <b>IA PROTOTYPE</b> — proposed persona-led navigation for review only. Not the real Meridian Studio docs site. Pages marked <span class="badge-pill badge-new badge-sm">NEW</span> don't exist in the current docs.
+  </div>
+
+  <nav class="navbar">
+    <div class="navbar__brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 12L9 4H15L20 12L15 20H9L4 12Z" stroke="currentColor" stroke-width="1.8"/></svg>
+      Meridian
+    </div>
+    <div class="navbar__items">
+      <a class="navbar__link navbar__link--active" href="#/platform-overview" onclick="navigate('platform-overview')">Meridian Studio</a>
+      <a class="navbar__link" href="#" onclick="return false;">Science Notes</a>
+      <a class="navbar__link" href="#" onclick="return false;">Predictions</a>
+      <a class="navbar__link" href="#" onclick="return false;">Release Notes</a>
+    </div>
+    <div class="navbar__search">🔍 Search docs...</div>
+    <button class="theme-toggle" onclick="toggleTheme()"><span id="theme-icon">🌙</span></button>
+    <button class="mobile-toggle" onclick="toggleMobileSidebar()">☰</button>
+  </nav>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="content-with-toc">
+      <main class="main" id="main-content"></main>
+      <div class="toc-rail" id="toc-rail"></div>
+    </div>
+  </div>
+
+  <script src="/prototypes/role-navigation/content.js"></script>
+  <script src="/prototypes/role-navigation/app.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 ---
 title: "Program management"
-description: "One platform rollout end to end, sprint checkpoints for product managers, Product and Customer Success alignment before each release, and the Customer Success Top Ten."
+description: "One platform rollout end to end, the platform roadmap process and dashboard, sprint checkpoints for product managers, Product and Customer Success alignment before each release, and the Customer Success Top Ten."
 ---
 
 <div className="pg">
@@ -9,7 +9,7 @@ description: "One platform rollout end to end, sprint checkpoints for product ma
 
 <h1 className="pg-title">I run the release program around the docs</h1>
 
-<p className="pg-lede">What ships, who signs off, and what customers hear before it lands. This page is about the decisions I drove, the handoffs I set up, and the people I coordinated.</p>
+<p className="pg-lede">What ships, what is coming next, who signs off, and what customers hear before it lands. This page is about the decisions I drove, the handoffs I set up, and the people I coordinated.</p>
 
 <section className="pg-section">
 <div className="pg-sectionhead">
@@ -46,6 +46,44 @@ description: "One platform rollout end to end, sprint checkpoints for product ma
 </div>
 
 <p className="pg-note">Re-created from the real rollout: customers, colleagues and internal dates other than the two rollout dates are left out. The customer briefing format is in the <a href="/samples/release-comms">release communication sample</a>.</p>
+</section>
+
+<section className="pg-section">
+<div className="pg-sectionhead">
+<h2>The platform roadmap</h2>
+<p>Leadership, sales and Customer Success all needed one answer to "what is coming, and when" across three product areas. I rebuilt the roadmap from scratch: the process product managers follow, the automation that keeps it current, and the dashboard everyone reads.</p>
+</div>
+
+<figure className="pg-figure">
+<img src="/img/work/roadmap-dashboard.png" alt="Roadmap dashboard with Now, Next and Earlier tabs, quarter filters, product areas and epics with status and a plain-English update" loading="lazy" />
+<figcaption>The roadmap dashboard, shown with fictional epics.</figcaption>
+</figure>
+
+<div className="pg-grid-3" style={{marginTop: '1.8rem'}}>
+<div className="pg-card">
+<span className="pg-tag">Process</span>
+
+<h3>Four fields, set by the people who own the work</h3>
+
+Only epics go on the roadmap, and a product manager puts one there by setting four Jira fields: a yes/no switch for whether it belongs on the roadmap, the quarter it is planned for, a roadmap status that is separate from the engineering workflow status, and a one-line update in plain English. An optional customer summary line in the description is what sales and Customer Success see. I wrote the rules, sent them to every product manager, and chase the updates each month and at every quarter close.
+</div>
+
+<div className="pg-card">
+<span className="pg-tag">Automation</span>
+
+<h3>Live from Jira, checked every morning</h3>
+
+The dashboard reads the Jira-fed sheets every time it opens, so there is no manual refresh and no copy that goes stale. Every weekday morning a Claude job compares the sheets with Jira field by field, lists epics that were added or dropped, and sends me what disagrees. One command brings the sheets back in line.
+</div>
+
+<div className="pg-card">
+<span className="pg-tag">Dashboard</span>
+
+<h3>One view for three product areas</h3>
+
+Now, Next and Earlier tabs, the current and next quarter as one-click filters, product areas down the side, a status badge and the plain-English update on every row, and search by key or name. There is a separate customer-facing version for sales. Leadership uses the internal view in its weekly report, and the sales team has presented from it at a customer's site.
+</div>
+</div>
 </section>
 
 <section className="pg-section">

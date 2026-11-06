@@ -1,7 +1,9 @@
 ---
 title: "Release notes"
-description: "Customer-facing release notes from plain to playful, and how a release is compressed into an internal announcement."
+description: "A real release, shown in the layout it was published in, and how a release is compressed into an internal announcement."
 ---
+
+import {ReleasePage, ReleaseHero, ReleaseGrid, ReleaseCard, ReleaseClip, RnLink as L, Admonition} from '@site/src/components/release';
 
 <div className="pg">
 
@@ -9,122 +11,308 @@ description: "Customer-facing release notes from plain to playful, and how a rel
 
 <h1 className="pg-title">Release notes</h1>
 
-<p className="pg-lede">Customer-facing release notes for a planning platform, every two weeks since February 2025. A breaking change gets a calm, plain explanation. A small convenience can carry some personality. These are real entries, with the product name masked.</p>
+<p className="pg-lede">Customer-facing release notes for a planning platform, published every two weeks since February 2025. Below is one real release, the one that moved every customer to separate development and production environments, in the layout it was published in. Open the cards, filter by category, and try the theme preview inside one of them.</p>
 
-<section className="pg-section">
-<div className="pg-sectionhead">
-<h2>Plain and structured</h2>
-<p>For changes people need to understand quickly or act on: the problem first, then exactly what is new, with a link to the full guide.</p>
+<div className="pg-annot">
+<div><strong>Highlights first</strong>The biggest changes sit in a numbered box at the top. Each one jumps to its card.</div>
+<div><strong>Scan, then open</strong>Every card is a title and one line. The full write-up opens only if you want it.</div>
+<div><strong>Problem before feature</strong>Each entry starts with what used to go wrong, then what is new, then where to read more.</div>
+<div><strong>Show, then let them try</strong>Short clips for anything that moves, and live HTML previews readers can use in the page.</div>
 </div>
 
-<div className="pg-grid-3">
-<div className="pg-card">
-<span className="pg-tag">Plain</span>
+<ReleasePage title="Release Notes Q3 2026">
 
-<h3>Sequence freshness</h3>
+<div className="rn-date">September 26</div>
 
-<p className="pg-note">For solution builders running long chains of notes. Shows which steps are working from stale data.</p>
+<ReleaseHero
+  title="Just Shipped"
+  subtitle="Loaded, sealed, and on its way. Tap one open."
+  items={[
+    {title: 'Build and deploy Applications with Development and Production', target: 'rn-dev-prod'},
+    {title: 'Note Actions and Controls: Stop Running the Whole Thing Every Time', target: 'rn-note-actions'},
+    {title: 'Meet Inspect: The Pre-Flight Check for Your Sequence and Data', target: 'rn-inspect'},
+    {title: 'Optimize Network - Version 4.3.0', target: 'rn-optimize-network'},
+  ]}
+/>
 
-<blockquote className="pg-quote">
+<ReleaseGrid intro="Everything below just came off the dock. Expand a card for the full story.">
+
+<ReleaseCard id="rn-note-actions" category="General" tag="New Feature" title="Note Actions and Controls: Run It Your Way, Pause It When It Matters" teaser="One Note can now offer several named ways to run it, hold for a person when a decision matters, and show each audience only the runs meant for them.">
+
+Most Notes only know one trick: same steps, same order, every time. Need a quick data check before the real run? Full run. Want to stop before the solver rather than after it? Full run. And if someone needed to weigh in halfway through, there was nowhere for them to do it.
+
+Now a single Note can be broken into **Stages**, combined into several named **Note Actions** so it runs different ways for different situations, and given a **Control** on any Stage that pauses the run for a person, like an approval gate. Build it once on the Note, and everyone downstream just picks the path and responds to the checkpoints.
+
+**Build It, Bundle It, Run It**
+
+<Stepper>
+<Step>
+
+**Note Developer**
+
+* Turn on Note Actions from the **Run Configuration** tab, add <L>Stages</L> in order, attach <L>Controls</L> where they matter, then combine Stages into <L>named Note Actions</L>. A Note Action always runs its Stages in order from the first one; it can't skip a Stage in the middle. This is a one-time setup on the Note.
+* Or skip the clicking entirely and define stages, controls, and note actions in a single <L>JSON file</L> and upload it at once.
+* For Meridian-built Notes such as Optimize Network and Plan Supply, Meridian does this configuration instead.
+
+<img src="/img/release/note-actions-config.png" alt="Run Configuration tab on a Note, showing the Note Actions panel, the stage canvas from Load Data through Report, and the Controls panel" loading="lazy" />
+
+</Step>
+<Step>
+
+**App Builder**
+
+* Bundle Notes into a <L>Tailored Action</L>: name the bundle, pick each Note's action, and set parameter values scoped to it.
+* **You can step into a run now**. Pick which Note Action to run, then trigger Controls while the Note is still executing. Earlier, once a run started, there was no way to interact with an execution until it finished.
+* In <L>Application Settings &gt; Actions tab</L>, choose exactly which Note Actions and Controls reach the app.
+
+<ReleaseClip size="m" src="/img/release/tailored-actions.mp4" alt="A run pausing at a Control so the user can pick a resolution and approve it" />
+
+</Step>
+<Step>
+
+**App User**
+
+* From the Production Application, the **Run Actions** panel shows only the Note Actions and Controls the App Builder enabled, not every path the Note is capable of.
+* Watches stage progress as the run proceeds, and responds to a Control the moment the run pauses for it.
+
+</Step>
+</Stepper>
+
+<Admonition title="Good to Know">
+
+* **Simple Notes carry on exactly as before**. Single step Notes like <L>Geocode</L> need no changes at all; <L>Parameters</L> are still the simpler choice. Reach for Actions and Controls when a Note has multiple stages, multiple run paths, or mid-run interactions.
+* **A Control only exists while the run does.** End the run and a pending Control disappears with it.
+* **Two Note Actions can't cover the exact same Stages.** Try it and the **Note Actions** panel nudges you to change one or delete it before you move on.
+
+</Admonition>
+
+</ReleaseCard>
+
+<ReleaseCard id="rn-inspect" category="General" tag="New Feature" title="Meet Inspect: The Pre-Flight Check for Your Sequence and Data" teaser="Check your Sequence and Data for configuration issues before you run or deploy, with every finding graded by severity.">
+
+You deploy, and a chart comes back empty. Somewhere upstream a table was deleted, a mandatory column never got mapped, or a Note was never run. The app was always going to break. You just found out at the worst possible moment.
+
+<L>Inspect</L> moves that discovery earlier. Run it whenever you like, and it tells you what is wrong, how bad it is, and who fixes it.
+
+**What's New**
+
+* **One button, two places**: Inspect sits in the bottom panel of every Sequence, and in Data. Click **Inspect** &gt; **Run now** and it checks your Notes, data maps, and executions.
+* **Findings graded by severity**: **Critical** means something your Application depends on no longer works. **Warning** means something is incomplete but still runs.
+* **Every finding says who fixes it**: **Fix in sequence** means it is yours to correct. **Needs Meridian Support** means it is ours, so raise a ticket and move on.
+* **Detail when you want it**: **Show technical details** opens the underlying JSON. **Download Report** gives you a .txt file naming each finding and the table it sits on, which beats reading logs.
+
+<ReleaseClip src="/img/release/inspect.mp4" alt="Running Inspect from the bottom bar of a Sequence" />
+
+Want the steps? The <L>Inspect</L> guide walks through both flows.
+
+</ReleaseCard>
+
+<ReleaseCard id="rn-freshness" category="General" tag="New Feature" title="Sequence Freshness: Spot the Stale Notes Before Anyone Else Does" teaser="See which Notes in a Sequence are current and which are behind, and re-run the stale ones from a single panel.">
 
 An upstream Note reruns with new data. Somewhere downstream, a few Notes are still working from the old run, and nothing on the canvas tells you which ones. Until now, the only way to find out was to open Notes one at a time.
 
-- **Four statuses**: **Current** means the Note reflects the latest upstream data. **Behind** means an upstream Note has newer data than this Note last ran with.
+**What's New**
 
-</blockquote>
+* **Freshness for the whole Sequence**: Click the **Show Sequence Freshness** icon in the canvas toolbar. A panel opens showing how much of the Sequence is current, then lists every Note that needs attention.
+* **Four statuses**: **Current** means the Note reflects the latest upstream data. **Behind** means an upstream Note has newer data than this Note last ran with. **Updating** means the Note is pending or running. **Review** means it failed, was cancelled, hit an upstream failure, or has never run.
+* **A reason for every flag**: Each Note in the list says why it needs attention, for example, "Optimize Routes has a newer run." When more than one issue applies, the most relevant one shows first, with a count of the rest.
+* **Re-run right from the panel**: Click **Re-run** next to a Note to bring it up to date, or click its name to jump to it on the canvas.
+
+<ReleaseClip src="/img/release/sequence-freshness.mp4" alt="Turning on Sequence Freshness and reviewing the Notes that need attention" />
+
+Want the full tour? See <L>Sequence Freshness</L>.
+
+</ReleaseCard>
+
+<ReleaseCard id="rn-dev-prod" category="Next-Gen Applications" tag="New Feature" title="Build in Development, Deploy to Production" teaser="Creators can build and test changes in Development, then deploy a stable version for Consumers when it is ready.">
+
+Until now, every change a Creator saved to an Application went live instantly, in front of everyone using it. Next-Gen Applications now have separate **Development** and **Production** versions, so you can build in one and keep the other steady.
+
+<div className="rn-embed"><iframe src="https://fast.wistia.net/embed/iframe/nh4bb7rchx" title="Development and Production walkthrough" allow="autoplay; fullscreen" loading="lazy" allowFullScreen></iframe></div>
+
+**What happens to your existing Applications**
+
+Every existing Application automatically becomes its **Development** version. Its URL, Scenarios, data, and user access remain unchanged, so your team can continue using it as it does today.
+
+An Application is not automatically deployed to Production. You decide which Applications to deploy and when, and there is no need to move everything at once.
+
+<ReleaseClip src="/img/release/dev-prod-dropdown.mp4" alt="The version dropdown in the Canvas Toolbar, showing Development and Production" />
+
+**Development and Production**
+
+| Development | Production |
+| --- | --- |
+| Available automatically for every existing Application | Created when a Creator deploys the Application for the first time |
+| Used to build, configure, and test changes | Provides <L>Consumers</L> with a stable version |
+| Continues using the existing Application URL | Has a separate URL to share with Consumers |
+| Can continue changing as Creators work | Changes only when a Creator deploys an update |
+
+When deciding which Applications to deploy to Production, we recommend starting with stable Applications that Consumers rely on regularly. Other Applications can remain in Development until they are ready.
+
+<Admonition title="Two Things to Know Before You Deploy">
+
+* **Next-Gen only.** This change applies to Next-Gen Applications. Classic Applications are not affected.
+* **One-way switch.** Deploying an Application to Production permanently converts it to a Next-Gen Application. You cannot switch it back to Classic mode.
+
+</Admonition>
+
+**Build, inspect, and deploy**
+
+* **Build:** Creators configure the Application in <L>Edit Mode, then switch to User Mode</L> to preview what Consumers will see.
+* **Inspect:** Happens automatically when a Creator clicks Deploy. Meridian Studio runs <L>pre-deployment checks</L> and stops the deployment if it finds a critical issue, so nothing blocking reaches Production.
+* **Deploy:** The <L>Deployment Panel</L> creates the Production version and, after the first deployment, publishes subsequent changes.
+
+**Find Development and Production Applications**
+
+The **Applications** page shows Development Applications by default. Use the <L>**Deployment Status**</L> filter to view Applications that have been deployed to Production.
+
+<img src="/img/release/applications-page.png" alt="Applications page with Deployment Status set to Development" loading="lazy" />
+
+**What Consumers experience**
+
+Consumers can continue accessing an Application through its existing Development URL until you are ready to move them to Production. After the first deployment, <L>share the new Production URL</L> with them.
+
+New to all this? The <L>Development and Production FAQs</L> answer the questions we hear most.
+
+</ReleaseCard>
+
+<ReleaseCard id="rn-validation-copy" category="Next-Gen Applications" tag="Enhancement" title="Validation Rules Now Copy With Your Application" teaser="Semantic Model validation rules carry over when you copy an Application.">
+
+Copying an Application used to be a move where one box never made it onto the truck. Your entities, attributes, measures, and relations arrived safely, but the validation rules stayed behind, and you had to rebuild every one by hand.
+
+Now they ride along. Open the entity in your copied Application, check its **Validations** tab, and your rules are already unpacked.
+
+See <L>Validation Rules in Copied Applications</L>.
+
+</ReleaseCard>
+
+<ReleaseCard id="rn-pivot" category="Next-Gen Applications" tag="Enhancement" title="No Row, No Edit: Pivot Cells Now Follow the Source Table" teaser="Pivot cells without a matching row in the source table are now disabled, so every edit saves to a real row.">
+
+A Pivot shows a cell for every combination of the fields in **Rows** and **Columns**, whether or not that combination exists in your data. That's great for layout, but it made every cell look editable, even the ones with nothing behind them.
+
+Now the source table has the final say. You can edit a cell only if the source table already has a row for that exact combination. If there's no row, the cell is disabled, so no typing and no pasting.
+
+**Example:** A Pivot on the Demand Forecast table has product in **Rows**, location in **Columns**, and `forecast_qty` in **Values**. Product P003 has rows only for L002 and L004.
+
+| product | L001 | L002 | L003 | L004 |
+| --- | --- | --- | --- | --- |
+| P003 | Disabled (no row) | Editable | Disabled (no row) | Editable |
+
+<ReleaseClip src="/img/release/pivot-cells.mp4" alt="A Pivot where cells without a source row are disabled and cells with a row can be edited" />
+
+Need to edit a disabled cell? <L>Which Pivot Cells Are Editable</L> shows you how.
+
+</ReleaseCard>
+
+<ReleaseCard id="rn-blocked" category="Next-Gen Applications" tag="Enhancement" title="Blocked Actions Finally Explain Themselves" teaser="When Save, Reset, Scenario creation, or an Action run is blocked, the error now names the reason and the fix.">
+
+**Save unavailable, the Data configuration needs to be updated before the data can be saved.** No reason, no next step. So you clicked **Update Changes** until you gave up and called support.
+
+Now, when your Application's tables no longer match the Semantic Layer, **Save**, **Reset**, Scenario creation, and Action runs are blocked with an error that names the reason and the fix:
+
+| Reason | How to fix it |
+| --- | --- |
+| **Table schemas changed:** A column in the Sequence was added, removed, or changed type. | Click **Update Changes** in the Semantic Layer. |
+| **Tables were deleted:** A table the Application uses was deleted from the Sequence. | Click **Update Changes** in the Semantic Layer. |
+| **Tables aren't Storage Class 2:** A table the Application uses is Live or Storage Class 1. | Convert it to Storage Class 2 in the Sequence. |
+
+Several reasons at once? Each gets its own bullet in the same notification.
+
+</ReleaseCard>
+
+<ReleaseCard id="rn-filters" category="Next-Gen Applications" tag="Enhancement" title="Stretch the Filters Pane Width While You Build" teaser="Drag the left edge of the Filters panel to set a default width that carries through to Production.">
+
+The **Filters** panel used to sit at a fixed width. Too narrow for long filter names, too wide when you wanted more room for widgets.
+
+Now drag the left edge of the **Filters** panel to set the width you want.
+
+<img src="/img/release/filters-resize.png" alt="The Filters panel with its left edge dragged to a wider width" loading="lazy" />
+
+* **Enforced limits:** Width is capped at 250 px minimum and 30% of the screen width maximum.
+* **Default while building:** The width you set in Development becomes the application default and is retained when you deploy to Production.
+* **Personal in Production:** In Production, each user can resize the panel independently.
+
+</ReleaseCard>
+
+<ReleaseCard id="rn-theme" category="Next-Gen Applications" tag="Enhancement" title="Meridian Primary Is Now the Default Color Theme" teaser="New Applications now start on Meridian Primary. Existing Applications keep their current theme until you change it.">
+
+Meridian Studio has new brand colors, but new Next-Gen Applications still started on the old default. Not anymore. Every new Application now starts on **Meridian Primary**, so it matches the rest of Studio from the start.
+
+<div className="rn-demo">
+<AutoHeightIframe src="/demos/release/color-theme-setting.html" title="Color Theme and App Style live preview" messageType="theme-preview-height" initialHeight={620} />
 </div>
 
-<div className="pg-card">
-<span className="pg-tag">Plain</span>
+**What's New**
 
-<h3>Data type changes</h3>
+* **Meridian Primary is the default:** It carries the **Default** badge and sits first in the **Color Theme** gallery. **Reset to default** now brings you back to it.
+* **More colors to work with:** Meridian Primary has a wider brand palette, so charts and widgets have more colors to draw from.
 
-<p className="pg-note">For everyone with data in the platform. A breaking-looking change that needs no action, explained so nobody panics.</p>
+**What Stays the Same**
 
-<blockquote className="pg-quote">
+Your existing Applications don't change. An Application on any other theme keeps that theme until you switch it.
 
-We have cleaned up the data types available in Meridian to make sure the data you put in comes back exactly the way you expect. No surprises, no silent errors. Your existing data is perfectly safe.
+</ReleaseCard>
 
-`Byte`, `Short`, and `Long` are consolidated into the `Integer` data type, while `Binary` is consolidated into `String`. The good news? You don't need to do a thing.
+<ReleaseCard id="rn-predict-demand" category="Science Notes" tag="New Feature" title="Predict Demand - Version 1.5.0" teaser="Adds Telescopic Modelling: XGBoost forecasts the validated near term, and a stable continuation covers the rest.">
 
-</blockquote>
-</div>
+The <L>Predict Demand</L> Note trains on prepared data and produces the final forecast through experimentation, training, and prediction.
 
-<div className="pg-card">
-<span className="pg-tag">Plain</span>
+This release adds Telescopic Modelling, which trains the Global Model only up to the Model Selection Horizon and extends the rest of the forecast with a naive continuation. Runs finish faster, and extended rows are marked `forecast_source = telescopic_tail` in the output.
 
-<h3>Rolling filters</h3>
+<Expandables>
+<ExpandableItem title="Expand for details">
 
-<p className="pg-note">For data engineers loading from a warehouse. A small feature in a few lines.</p>
+**What's New**
 
-<blockquote className="pg-quote">
+* **Telescopic Modelling**: With Telescopic Modelling on, XGBoost forecasts only up to the Model Selection Horizon, and a blended naive continuation (seasonal pattern plus recent level) forecasts the rest. The continuation starts from the champion's own near-term forecast, so the two segments join smoothly. For example, with a Forecast Horizon of 24 and a Model Selection Horizon of `0,1,2,3,4,5`, XGBoost forecasts periods 1 to 6 and the continuation forecasts periods 7 to 24.
+* **Turning it on**: In Prepare Demand, go to **Parameters &gt; Prepare Time Series**, set Model Selection Horizon to fewer steps than Forecast Horizon, and turn on **Run Telescopic Model**. Off by default.
 
-You can now pick a rolling window as the filter value in the Snowflake source Bridge, and it updates itself each time the Bridge runs.
+**Limitations**
 
-- *Preset windows:* Pick Last Day, Last 7 Days, or Last 30 Days. No math required.
-- *Smart anchoring:* `date` columns anchor to the sync's current date; `datetime` columns anchor to the current timestamp. You don't have to think about it.
+* Applies to Global (XGBoost) champions only. Local / Statistical and Foundation forecasts are unchanged.
+* Can't be used together with Quantile Forecast. A run with both turned on is rejected before it starts.
 
-</blockquote>
-</div>
-</div>
-</section>
+</ExpandableItem>
+</Expandables>
 
-<section className="pg-section">
-<div className="pg-sectionhead">
-<h2>With some personality</h2>
-<p>For features people will enjoy. A clear before-and-after, a reason up front, and a voice readers remember.</p>
-</div>
+</ReleaseCard>
 
-<div className="pg-grid-3">
-<div className="pg-card">
-<span className="pg-tag">Light</span>
+<ReleaseCard id="rn-optimize-network" category="Science Notes" tag="Enhancement" title="Optimize Network - Version 4.3.0" teaser="Four Note Actions replace the single run, and two mid-run Controls let you check the best plan or stop the search early.">
 
-<h3>Nested filters</h3>
+This release changes how you run the Note. Four Note Actions replace the single run, so you can stop after checking your data, after checking the model, or go all the way to a plan, and a full optimization now exposes two mid-run Controls that let you read the current best plan and end the search without losing it.
 
-<p className="pg-note">For builders using the visual transform tool, who used to fall back to SQL.</p>
+<Expandables>
+<ExpandableItem title="Expand for details">
 
-<blockquote className="pg-quote">
+**What's New**
 
-Your filters used to have one rule: everyone shares the same AND/OR, no exceptions. Need to mix logic? Your only option was SQL. Not anymore.
+* **Note Actions.** Four named ways to run the Note: **Validate Data**, **Validate Model**, **Run Full Optimization** (the default), and **Solve with Decomposition**.
+* **Controls: Fetch KPIs and Stop Solve.** During **Model Solve**, **Fetch KPIs** publishes 17 KPIs of the best solution found so far to a new **Live KPIs** panel, and **Stop Solve** ends the search, keeps that solution, and continues to Report Generation.
 
-Filter conditions now support nested groups, with independent AND/OR logic at every level. More power, less clutter.
+**Required Steps When Upgrading**
 
-</blockquote>
-</div>
+| What changed | What to do |
+| --- | --- |
+| **Model Decomposition runs only under Solve with Decomposition.** Under Run Full Optimization the `Model Decomposition` parameter is ignored and the monolithic model is solved | Select **Solve with Decomposition** for runs that should decompose, and keep the strategy set in the parameter |
 
-<div className="pg-card">
-<span className="pg-tag">Light</span>
+</ExpandableItem>
+</Expandables>
 
-<h3>Application-first</h3>
+</ReleaseCard>
 
-<p className="pg-note">For every builder. A structural change, with the reason before the details.</p>
+<ReleaseCard id="rn-bugs" category="Bug Fixes" title="Bug Fixes" teaser="Deleting a widget now asks you to confirm, and names the right thing in the prompt.">
 
-<blockquote className="pg-quote">
+* **Deleting a widget skipped confirmation and showed the wrong prompt:** A widget disappeared the moment you clicked **Delete**, with nothing to confirm. And if it was the last one in a Container, you got the **Delete Container** prompt asking what to do with the Container, not the widget you were actually deleting.
 
-*Plot twist*: Sequences are moving under Applications. Why? Because you are not just building bits and pieces anymore. You are building *actual* solutions.
+  Now you get a **Delete Widget** confirmation, and when it's the last widget in a Container, it tells you the Container goes with it.
 
-Your existing Sequences are perfectly safe. They are not going anywhere. We just gave them a better home.
+</ReleaseCard>
 
-</blockquote>
-</div>
+</ReleaseGrid>
 
-<div className="pg-card">
-<span className="pg-tag">Playful</span>
+</ReleasePage>
 
-<h3>Upsert load behavior</h3>
-
-<p className="pg-note">For data engineers choosing how new data lands in a table.</p>
-
-<blockquote className="pg-quote">
-
-Tired of choosing between *"nuke everything and start fresh"* or *"just pile it on top"*? We were too, guilty as charged! Say hello to **Upsert**, the Goldilocks of data loading that's just right.
-
-Unlike its siblings Overwrite (the bulldozer) and Append (the hoarder), Upsert is the diplomatic one that actually thinks before acting.
-
-</blockquote>
-</div>
-</div>
-</section>
+<p className="pg-note">The published release, with the product and company names masked and 12 of its 25 entries kept. Links to the full guides are shown but not followed, because the docs site is private.</p>
 
 <section className="pg-section">
 <div className="pg-sectionhead">
@@ -174,7 +362,5 @@ Available now in Data Source, Science, and Transform Notes.
 </div>
 </div>
 </section>
-
-<p className="pg-note">Real entries from the published release notes and a real internal post, with the product name masked.</p>
 
 </div>

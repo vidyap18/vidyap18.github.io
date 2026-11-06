@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <meta name="color-scheme" content="light">
+  <style>
+    html{color-scheme:light;}
+    body{margin:0;}
+    a{color:#2424F5;}
+    a:hover{color:#1a1ac2;}
+    @keyframes omTryPulse{0%{box-shadow:0 0 0 0 rgba(36,36,245,0.5);}70%{box-shadow:0 0 0 34px rgba(36,36,245,0);}100%{box-shadow:0 0 0 0 rgba(36,36,245,0);}}
+    @keyframes omTryNudge{0%,100%{transform:translateY(0);}50%{transform:translateY(4px);}}
+  </style>
+</helmet>
+<div style="display:flex;flex-wrap:wrap;align-items:stretch;background:{{ pageBg }};font-family:'Inter',sans-serif;color:{{ textDefault }};box-sizing:border-box;">
+
+  <div style="flex:1 1 660px;min-width:min(100%,660px);padding:28px 40px;max-width:900px;box-sizing:border-box;">
+
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:{{ textSubtle }};margin-bottom:6px;">
+      <span>Settings</span><span>&gt;</span>
+      <span style="width:14px;height:14px;border-radius:4px;background:{{ accent }};display:inline-block;"></span>
+      <span style="color:{{ textDefault }};font-weight:600;">Appearance</span>
+    </div>
+
+    <div style="display:flex;gap:24px;border-bottom:1px solid {{ borderDefault }};margin-bottom:28px;">
+      <div style="padding:10px 2px;font-size:14px;font-weight:600;color:{{ textDefault }};border-bottom:2px solid {{ accent }};">Theming</div>
+    </div>
+
+    <div style="margin-bottom:8px;font-size:16px;font-weight:700;">Color Theme</div>
+    <div style="font-size:13px;color:{{ textSubtle }};margin-bottom:16px;">Sets the colors used by widgets across every page.</div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:28px;max-width:714px;">
+      <sc-for list="{{ themes }}" as="item" hint-placeholder-count="6">
+        <div data-key="{{ item.key }}" onClick="{{ selectTheme }}" style="{{ item.cardStyle }}">
+          <div style="width:36px;height:36px;border-radius:50%;flex-shrink:0;background:{{ item.swatch }};"></div>
+          <div style="min-width:0;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-size:13px;font-weight:600;color:{{ textDefault }};white-space:nowrap;">{{ item.name }}</div>
+              <sc-if value="{{ item.inUse }}" hint-placeholder-val="{{ true }}">
+                <div style="font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:#E5F2E8;color:#2F7D4F;white-space:nowrap;">In use</div>
+              </sc-if>
+            </div>
+            <sc-if value="{{ item.badge }}" hint-placeholder-val="{{ true }}">
+              <div style="display:inline-block;margin-top:4px;font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:{{ item.badgeBg }};color:{{ item.badgeColor }};">{{ item.badge }}</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:14px;background:{{ advBg }};border:1px solid {{ borderDefault }};border-radius:8px;padding:14px 18px;margin-bottom:28px;flex-wrap:wrap;">
+      <div style="flex-shrink:0;width:20px;height:20px;border-radius:50%;border:1.5px solid {{ textSubtle }};color:{{ textSubtle }};font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;box-sizing:border-box;">i</div>
+      <div style="flex:1 1 200px;min-width:0;">
+        <div style="font-size:14px;font-weight:700;">This theme won't apply to widgets with custom colors</div>
+        <div style="font-size:13px;color:{{ textSubtle }};margin-top:2px;">4 widgets across 3 pages have custom colors set on them.</div>
+      </div>
+      <div onClick="{{ openResetModal }}" style="flex-shrink:0;font-size:13px;font-weight:600;padding:9px 16px;border:1px solid {{ borderDefault }};border-radius:6px;background:{{ cardBg }};cursor:pointer;">Reset Custom Colors</div>
+    </div>
+
+    <div style="margin-bottom:8px;font-size:16px;font-weight:700;">App Style</div>
+    <div style="font-size:13px;color:{{ textSubtle }};margin-bottom:16px;">Sets the look of every page. Each style applies your theme differently.</div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:24px;max-width:594px;">
+      <sc-for list="{{ styles }}" as="item" hint-placeholder-count="3">
+        <div data-key="{{ item.key }}" onClick="{{ selectStyle }}" style="{{ item.cardStyle }}">
+          <div style="width:100%;max-width:100%;height:70px;flex-shrink:0;border-radius:4px;background:{{ inputBg }};position:relative;overflow:hidden;margin-bottom:10px;box-sizing:border-box;{{ item.thumbBg }}">
+            <div style="position:absolute;top:6px;right:6px;width:14px;height:5px;border-radius:2px;background:{{ accent }};"></div>
+            <div style="{{ item.thumbBar }}"></div>
+            <div style="position:absolute;left:22px;top:10px;right:8px;height:5px;border-radius:2px;background:#DEE0E4;"></div>
+            <div style="position:absolute;left:22px;top:22px;width:40%;height:4px;border-radius:2px;background:#E7E8EB;"></div>
+            <div style="position:absolute;left:22px;top:32px;width:55%;height:4px;border-radius:2px;background:#E7E8EB;"></div>
+            <div style="position:absolute;left:22px;top:42px;width:30%;height:4px;border-radius:2px;background:#E7E8EB;"></div>
+          </div>
+          <div style="font-size:13px;font-weight:600;color:{{ textDefault }};">{{ item.name }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+
+  </div>
+
+  <div style="flex:1 1 560px;min-width:0;background:{{ panelBg }};border-left:1px solid {{ borderDefault }};padding:24px;box-sizing:border-box;">
+
+    <div style="display:flex;gap:10px;background:#FFF8E6;border:1px solid #F5D98B;border-radius:6px;padding:10px 12px;margin-bottom:16px;font-size:12px;line-height:1.5;color:#7A5900;">
+      <div style="flex-shrink:0;width:16px;height:16px;border-radius:50%;background:#F5D98B;color:#7A5900;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;">!</div>
+      <div>This is a sample app layout for illustration and shows only the color theme changes. Clicking the "Preview App" button shows your widget and sidebar colors. Navigation rail and header styling appears once you publish the app.</div>
+    </div>
+
+    <div style="border:1px solid #E0E1E5;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+
+      <div style="{{ headerStyle }}">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+          <div style="font-weight:700;font-size:13px;color:{{ headerLogoColor }};">Meridian</div>
+          <div style="width:1px;height:14px;background:currentColor;opacity:0.2;"></div>
+          <div style="font-size:11px;opacity:0.85;white-space:nowrap;">Your App&nbsp;/&nbsp;Overview</div>
+          <div style="font-size:10px;padding:3px 8px;border-radius:4px;background:rgba(127,127,127,0.15);white-space:nowrap;">Scenarios</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <div style="font-size:10px;opacity:0.85;">Filters</div>
+          <div style="width:20px;height:20px;border-radius:4px;background:rgba(127,127,127,0.15);"></div>
+          <div style="width:20px;height:20px;border-radius:4px;background:rgba(127,127,127,0.15);"></div>
+          <div style="padding:5px 10px;border-radius:4px;font-size:10px;font-weight:600;white-space:nowrap;background:{{ actionsBtnBg }};color:{{ actionsBtnColor }};border:{{ actionsBtnBorder }};">Actions</div>
+          <div style="width:20px;height:20px;border-radius:50%;background:{{ accent }};color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">U</div>
+        </div>
+      </div>
+
+      <div style="display:flex;">
+        <div style="{{ sidebarStyle }}">
+          <sc-for list="{{ navIcons }}" as="ic" hint-placeholder-count="4">
+            <div style="width:20px;height:20px;border-radius:5px;background:{{ ic.bg }};"></div>
+          </sc-for>
+        </div>
+
+        <div style="flex:1;min-width:0;padding:14px;display:flex;flex-direction:column;gap:12px;background:#FAFBFC;">
+
+          <div style="display:grid;grid-template-columns:1fr 1.5fr 0.9fr;gap:12px;">
+            <div style="background:{{ searchPanelBg }};border:1px solid #EDEEF1;border-radius:6px;padding:10px;">
+              <div style="height:22px;border-radius:4px;background:rgba(255,255,255,0.75);border:1px solid #E7E8EB;box-sizing:border-box;margin-bottom:8px;display:flex;align-items:center;padding:0 8px;font-size:9px;color:#9AA0A6;">Search</div>
+              <sc-for list="{{ skeletonRows }}" as="row" hint-placeholder-count="4">
+                <div style="height:7px;border-radius:3px;background:#EEF0F2;margin-bottom:6px;width:{{ row.w }};"></div>
+              </sc-for>
+            </div>
+
+            <div style="background:#fff;border:1px solid #EDEEF1;border-radius:6px;position:relative;height:140px;overflow:hidden;">
+              <sc-for list="{{ worldDots }}" as="wd" hint-placeholder-count="80">
+                <div style="position:absolute;width:2.5px;height:2.5px;border-radius:50%;top:{{ wd.y }}%;left:{{ wd.x }}%;background:#D7DADF;"></div>
+              </sc-for>
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;">
+                <path d="M66,26 Q45,10 20,26" fill="none" stroke="{{ chart0 }}" stroke-width="0.6" stroke-dasharray="2 1.3" opacity="0.6"></path>
+                <path d="M47,20 Q60,5 72,40" fill="none" stroke="{{ chart1 }}" stroke-width="0.6" stroke-dasharray="2 1.3" opacity="0.6"></path>
+                <path d="M26,60 Q55,80 80,58" fill="none" stroke="{{ chart2 }}" stroke-width="0.6" stroke-dasharray="2 1.3" opacity="0.6"></path>
+              </svg>
+              <sc-for list="{{ hubs }}" as="h" hint-placeholder-count="6">
+                <div style="position:absolute;width:6px;height:6px;border-radius:50%;top:{{ h.y }}%;left:{{ h.x }}%;background:{{ h.color }};box-shadow:0 0 0 3px rgba(255,255,255,0.6);"></div>
+              </sc-for>
+            </div>
+
+            <div style="background:#fff;border:1px solid #EDEEF1;border-radius:6px;padding:10px;display:flex;flex-direction:column;">
+              <div style="font-size:9px;color:#9AA0A6;margin-bottom:4px;">Metric</div>
+              <div style="font-size:20px;font-weight:700;color:#2C2D30;margin-bottom:4px;">128.4K</div>
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+                <span style="display:inline-flex;align-items:center;gap:2px;font-size:9px;font-weight:700;color:#2F9959;background:#E7F5EC;border-radius:3px;padding:2px 5px;">&#9650; 4.2%</span>
+                <span style="font-size:8.5px;color:#9AA0A6;">vs last period</span>
+              </div>
+              <svg viewBox="0 0 100 34" style="width:100%;height:34px;margin-top:auto;">
+                <path d="M0,25 L15,20 L30,22 L45,12 L60,16 L75,8 L90,10 L100,5 L100,34 L0,34 Z" fill="{{ accent }}" opacity="0.12"></path>
+                <polyline points="0,25 15,20 30,22 45,12 60,16 75,8 90,10 100,5" fill="none" stroke="{{ accent }}" stroke-width="2"></polyline>
+                <circle cx="100" cy="5" r="2.2" fill="{{ accent }}"></circle>
+              </svg>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div style="background:#fff;border:1px solid #EDEEF1;border-radius:6px;padding:10px;height:110px;display:flex;align-items:flex-end;gap:6px;">
+              <sc-for list="{{ bars }}" as="b" hint-placeholder-count="7">
+                <div style="flex:1;height:{{ b.h }}%;background:{{ b.color }};border-radius:2px 2px 0 0;"></div>
+              </sc-for>
+            </div>
+            <div style="background:#fff;border:1px solid #EDEEF1;border-radius:6px;padding:10px;height:110px;">
+              <svg viewBox="0 0 200 80" style="width:100%;height:100%;">
+                <polyline points="0,60 30,45 60,55 90,30 120,40 150,20 180,28 200,15" fill="none" stroke="{{ chart0 }}" stroke-width="1.5"></polyline>
+                <polyline points="0,70 30,65 60,50 90,58 120,45 150,50 180,38 200,42" fill="none" stroke="{{ chart2 }}" stroke-width="1.5"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #EDEEF1;border-radius:6px;padding:10px;">
+            <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:3px;">
+              <sc-for list="{{ heatCells }}" as="hc" hint-placeholder-count="32">
+                <div style="height:13px;border-radius:2px;background:{{ accent }};opacity:{{ hc.o }};"></div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #EDEEF1;border-radius:6px;height:80px;position:relative;overflow:hidden;">
+            <div style="position:absolute;left:-5%;right:-5%;top:8px;height:26px;border-radius:50%;background:linear-gradient(90deg,{{ chart0 }},{{ chart2 }});opacity:0.45;transform:rotate(-2deg);"></div>
+            <div style="position:absolute;left:-5%;right:-5%;top:28px;height:26px;border-radius:50%;background:linear-gradient(90deg,{{ chart1 }},{{ chart3 }});opacity:0.45;transform:rotate(1deg);"></div>
+            <div style="position:absolute;left:-5%;right:-5%;top:46px;height:26px;border-radius:50%;background:linear-gradient(90deg,{{ chart2 }},{{ chart4 }});opacity:0.45;transform:rotate(-1deg);"></div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #EDEEF1;border-radius:6px;overflow:hidden;">
+            <table style="width:100%;border-collapse:collapse;font-size:9.5px;">
+              <thead>
+                <tr style="background:{{ accentLight }};">
+                  <th style="text-align:left;padding:5px 6px;font-weight:600;">Region</th>
+                  <th style="text-align:left;padding:5px 6px;font-weight:600;">Product</th>
+                  <th style="text-align:left;padding:5px 6px;font-weight:600;">Measure</th>
+                  <th style="text-align:right;padding:5px 6px;font-weight:600;">W1</th>
+                  <th style="text-align:right;padding:5px 6px;font-weight:600;">W2</th>
+                  <th style="text-align:right;padding:5px 6px;font-weight:600;">W3</th>
+                  <th style="text-align:right;padding:5px 6px;font-weight:600;">W4</th>
+                  <th style="text-align:right;padding:5px 6px;font-weight:600;">Total Q1</th>
+                  <th style="text-align:right;padding:5px 6px;font-weight:600;">Total Q2</th>
+                  <th style="text-align:right;padding:5px 6px;font-weight:600;">Grand Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{ tableRows }}" as="r" hint-placeholder-count="5">
+                  <tr style="border-top:1px solid #F2F3F5;">
+                    <td style="padding:5px 6px;color:#2C2D30;">{{ r.region }}</td>
+                    <td style="padding:5px 6px;padding-left:14px;color:#2C2D30;">{{ r.product }}</td>
+                    <td style="padding:5px 6px;padding-left:22px;color:#4B5058;">{{ r.measure }}</td>
+                    <td style="text-align:right;padding:5px 6px;">{{ r.w1 }}</td>
+                    <td style="text-align:right;padding:5px 6px;">{{ r.w2 }}</td>
+                    <td style="text-align:right;padding:5px 6px;">{{ r.w3 }}</td>
+                    <td style="text-align:right;padding:5px 6px;">{{ r.w4 }}</td>
+                    <td style="text-align:right;padding:5px 6px;font-weight:600;">{{ r.q1 }}</td>
+                    <td style="text-align:right;padding:5px 6px;font-weight:600;">{{ r.q2 }}</td>
+                    <td style="text-align:right;padding:5px 6px;font-weight:700;">{{ r.grand }}</td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="background:{{ pageBg }};border-top:1px solid {{ borderDefault }};padding:14px 40px;display:flex;align-items:center;justify-content:space-between;font-family:'Inter',sans-serif;">
+  <div style="display:flex;align-items:center;gap:20px;">
+    <div onClick="{{ resetDefaults }}" style="font-size:13px;font-weight:600;color:{{ textDefault }};cursor:pointer;">Reset to default</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div onClick="{{ resetDefaults }}" style="font-size:13px;font-weight:600;color:{{ textDefault }};cursor:pointer;padding:9px 16px;">Discard Changes</div>
+    <div onClick="{{ applyChanges }}" style="font-size:13px;font-weight:600;color:#fff;cursor:pointer;padding:9px 20px;border-radius:6px;background:{{ accent }};">Apply Changes</div>
+  </div>
+</div>
+
+<sc-if value="{{ showToast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;bottom:70px;right:40px;background:#2C2D30;color:#fff;font-size:13px;font-weight:600;padding:10px 16px;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.2);font-family:'Inter',sans-serif;">{{ toastMsg }}</div>
+</sc-if>
+
+<sc-if value="{{ resetModalOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeResetModal }}" style="position:fixed;inset:0;background:rgba(28,29,33,0.45);z-index:60;"></div>
+  <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;max-width:calc(100vw - 48px);background:{{ cardBg }};border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.25);z-index:61;font-family:'Inter',sans-serif;color:{{ textDefault }};box-sizing:border-box;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0 24px;gap:12px;">
+      <div style="font-size:17px;font-weight:700;">Reset custom colors to {{ themeName }}</div>
+      <div onClick="{{ closeResetModal }}" style="cursor:pointer;font-size:16px;line-height:1;color:{{ textSubtle }};padding:4px;flex-shrink:0;">&#10005;</div>
+    </div>
+    <div style="padding:16px 24px 24px 24px;">
+      <div style="font-size:13.5px;line-height:1.6;margin-bottom:16px;">Select the pages where you want to reset custom colors to the <b>{{ themeName }}</b> theme. Conditional formatting colors are not affected.</div>
+      <div style="border:1px solid {{ borderDefault }};border-radius:6px;overflow:hidden;margin-bottom:16px;">
+        <div data-page="all" onClick="{{ toggleResetPage }}" style="display:flex;align-items:center;gap:14px;padding:12px 14px;background:{{ paletteRowBg }};cursor:pointer;">
+          <div style="{{ selectAllBoxStyle }}"><svg width="11" height="11" viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3" stroke="{{ selectAllCheckStroke }}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="font-size:13.5px;font-weight:600;">Select all pages</div>
+        </div>
+        <sc-for list="{{ resetPageRows }}" as="pg" hint-placeholder-count="3">
+          <div data-page="{{ pg.key }}" onClick="{{ toggleResetPage }}" style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-top:1px solid {{ borderDefault }};cursor:pointer;">
+            <div style="{{ pg.boxStyle }}"><svg width="11" height="11" viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3" stroke="{{ pg.checkStroke }}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+            <div style="font-size:13.5px;flex:1;">{{ pg.label }}</div>
+            <div style="font-size:11px;font-weight:600;color:{{ textSubtle }};background:{{ paletteRowBg }};border-radius:10px;padding:3px 10px;flex-shrink:0;">{{ pg.widgets }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:12px;background:#FDECEC;border-radius:8px;padding:14px 16px;margin-bottom:20px;">
+        <div style="flex-shrink:0;width:26px;height:26px;border-radius:50%;background:#F8D2D2;color:#C0392B;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">!</div>
+        <div>
+          <div style="font-size:13.5px;font-weight:700;color:#C43A31;margin-bottom:2px;">This can't be undone</div>
+          <div style="font-size:13px;color:#5A2B26;">Once you reset, these custom colors can't be recovered.</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:12px;">
+        <div onClick="{{ closeResetModal }}" style="font-size:13px;font-weight:600;padding:9px 18px;border:1px solid {{ borderDefault }};border-radius:6px;cursor:pointer;">Cancel</div>
+        <div onClick="{{ confirmReset }}" style="font-size:13px;font-weight:600;padding:9px 18px;border-radius:6px;cursor:pointer;background:#764E7E;color:#fff;" style-hover="background:#5F3E65;">Reset Custom Colors</div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<div style="background:{{ pageBg }};padding:14px 40px 34px;display:flex;flex-direction:column;align-items:center;gap:8px;font-family:'Inter',sans-serif;">
+  <div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:500;color:{{ textSubtle }};text-align:center;text-wrap:pretty;">
+    <span>Click to preview. Choose a color theme or app style to see how the change will look</span>
+    <svg width="15" height="15" viewBox="0 0 12 12" style="animation:omTryNudge 1.4s ease-in-out infinite;flex-shrink:0;"><path d="M6 1.5 V9 M2.8 6 L6 9.4 L9.2 6" stroke="{{ textSubtle }}" stroke-width="1.4" fill="none" stroke-linecap="round"></path></svg>
+  </div>
+  <div onClick="{{ tryIt }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#2424F5;color:#FFFFFF;font-size:13px;font-weight:600;padding:9px 22px;border-radius:6px;cursor:pointer;animation:omTryPulse 2.2s ease-out infinite;" style-hover="background:#1A1AC2;">
+    <svg width="14" height="14" viewBox="0 0 16 16"><path d="M5 2.5 L5 11 L7.3 8.9 L8.9 12.8 L10.7 12 L9.1 8.2 L12.2 7.9 Z" fill="#FFFFFF"></path></svg>
+    <span>Try It</span>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const THEMES = [
+  { key:'primary', name:'Meridian Primary', badge:'Default', badgeBg:'#E7EBFA', badgeColor:'#2424F5',
+    swatch:'radial-gradient(circle at 32% 30%, #CFA6E6 0%, #AC61C8 52%, #AE32A4 100%)',
+    accent:'#785288', accentDark:'#3D2944', accentLight:'#F3EEF3',
+    chart:['#3D2944','#5A3D65','#785288','#9D81A9','#D8C9DE'] },
+  { key:'aurora', name:'Aurora', badge:null,
+    swatch:'radial-gradient(circle at 32% 30%, #8DA1FF 0%, #2424F5 55%, #14139A 100%)',
+    accent:'#2424F5', accentDark:'#151099', accentLight:'#E8EAFE',
+    chart:['#2424F5','#FF8A3D','#33C2B8','#8B5CF6','#FFC53D'] },
+  { key:'classical', name:'Classical', badge:null,
+    swatch:'conic-gradient(from 200deg at 40% 40%, #7FDBFF, #2424F5 35%, #FFB03D 75%, #7FDBFF 100%)',
+    accent:'#2E6BE6', accentDark:'#173E96', accentLight:'#E7EEFC',
+    chart:['#2E6BE6','#F5A623','#34C6B0','#F76E6E','#8B5CF6'] },
+  { key:'indie', name:'Indie', badge:null,
+    swatch:'radial-gradient(circle at 32% 30%, #8FB4F5 0%, #3B6FE0 60%, #1E3E8C 100%)',
+    accent:'#3B6FE0', accentDark:'#1E3E8C', accentLight:'#E8EEFC',
+    chart:['#1E3A8A','#3B6FE0','#7DA3EE','#B9CDF7','#DCE6FB'] },
+  { key:'soul', name:'Soul', badge:null,
+    swatch:'radial-gradient(circle at 32% 30%, #FFB199 0%, #D3452B 55%, #7A1F0F 100%)',
+    accent:'#D3452B', accentDark:'#7A1F0F', accentLight:'#FBE7E2',
+    chart:['#8C1D0F','#D3452B','#F0784F','#F7A98A','#FBD3C0'] },
+  { key:'sage', name:'Sage', badge:null,
+    swatch:'radial-gradient(circle at 32% 30%, #D8ED9B 0%, #4C9A5D 55%, #1F4A29 100%)',
+    accent:'#3E7D4C', accentDark:'#1F4A29', accentLight:'#E5F2E8',
+    chart:['#1F4A29','#3E7D4C','#6FAE7B','#A4CFAC','#D2E9D6'] },
+];
+
+const STYLES = [
+  { key:'minimal', name:'Minimal' },
+  { key:'solid', name:'Solid' },
+  { key:'gradient', name:'Gradient' },
+];
+
+const TABLE_ROWS = [
+  { region:'Region 1', product:'Product A', measure:'Measure A', w1:'15,762', w2:'13,960', w3:'14,350', w4:'17,899', q1:'61,971', q2:'56,471', grand:'118,442' },
+  { region:'', product:'', measure:'Measure B', w1:'6,747', w2:'12,575', w3:'8,023', w4:'8,175', q1:'35,520', q2:'38,646', grand:'74,166' },
+  { region:'', product:'Product B', measure:'Measure A', w1:'13,713', w2:'12,733', w3:'14,979', w4:'17,632', q1:'59,057', q2:'58,216', grand:'117,273' },
+  { region:'', product:'', measure:'Measure B', w1:'8,417', w2:'9,045', w3:'9,962', w4:'12,204', q1:'39,628', q2:'29,908', grand:'69,536' },
+  { region:'', product:'Product C', measure:'Measure A', w1:'12,621', w2:'17,059', w3:'13,510', w4:'16,011', q1:'59,201', q2:'55,558', grand:'114,759' },
+];
+
+const BAR_DEF = [ {h:45,c:0},{h:70,c:1},{h:55,c:0},{h:85,c:1},{h:50,c:0},{h:75,c:1},{h:60,c:0} ];
+const HEAT_OPACITIES = [0.9,0.4,0.6,0.3,0.7,0.5,0.2,0.8, 0.3,0.9,0.4,0.6,0.2,0.7,0.5,0.4, 0.6,0.3,0.8,0.5,0.4,0.2,0.9,0.3, 0.5,0.6,0.3,0.7,0.4,0.8,0.2,0.6];
+const SKELETON_WIDTHS = ['85%','65%','75%','50%'];
+
+const HUB_DEF = [ {x:20,y:26}, {x:47,y:20}, {x:66,y:26}, {x:72,y:40}, {x:26,y:60}, {x:80,y:58} ];
+
+const RESET_PAGES = [
+  { key: 'overview', label: 'Overview', widgets: '2 widgets' },
+  { key: 'demand', label: 'Demand Planning', widgets: '1 widget' },
+  { key: 'customBar', label: 'Custom Bar', widgets: '1 widget' },
+];
+
+const ROLE_OPTIONS = [
+  { key:'primary', label:'Primary' },
+  { key:'secondary', label:'Secondary' },
+  { key:'accent', label:'Accent' },
+  { key:'neutral', label:'Default (Neutral)' },
+  { key:'custom', label:'Custom color' },
+];
+
+function shade(hex, amt) {
+  const c = hex.replace('#','');
+  const num = parseInt(c.length === 3 ? c.split('').map(ch => ch + ch).join('') : c, 16);
+  let r = (num >> 16) & 0xff, g = (num >> 8) & 0xff, b = num & 0xff;
+  r = Math.max(0, Math.round(r * (1 - amt)));
+  g = Math.max(0, Math.round(g * (1 - amt)));
+  b = Math.max(0, Math.round(b * (1 - amt)));
+  return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+}
+
+function roleColorValue(role, custom, primary, secondary, accentRole, neutral) {
+  if (role === 'primary') return primary;
+  if (role === 'secondary') return secondary;
+  if (role === 'accent') return accentRole;
+  if (role === 'neutral') return neutral;
+  return custom || primary;
+}
+
+function hexToRgba(hex, alpha) {
+  const c = hex.replace('#', '');
+  const num = parseInt(c.length === 3 ? c.split('').map(ch => ch + ch).join('') : c, 16);
+  const r = (num >> 16) & 0xff, g = (num >> 8) & 0xff, b = num & 0xff;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function makeWorldDots() {
+  const blobs = [
+    {cx:20,cy:24,rx:9,ry:10}, {cx:26,cy:58,rx:6,ry:14}, {cx:47,cy:19,rx:5,ry:6},
+    {cx:49,cy:42,rx:7,ry:16}, {cx:66,cy:22,rx:14,ry:10}, {cx:72,cy:38,rx:10,ry:8}, {cx:80,cy:58,rx:5,ry:5},
+  ];
+  const pts = [];
+  for (const b of blobs) {
+    for (let dx = -b.rx; dx <= b.rx; dx += 3.2) {
+      for (let dy = -b.ry; dy <= b.ry; dy += 3.2) {
+        const nx = dx / b.rx, ny = dy / b.ry;
+        if (nx * nx + ny * ny <= 1) {
+          const h = Math.abs(Math.sin((b.cx + dx) * 12.9898 + (b.cy + dy) * 78.233) * 43758.5453) % 1;
+          if (h > 0.22) pts.push({ x: b.cx + dx, y: b.cy + dy });
+        }
+      }
+    }
+  }
+  return pts;
+}
+const WORLD_DOTS = makeWorldDots();
+
+class Component extends DCLogic {
+  state = {
+    theme: 'primary', style: 'minimal', showToast: false, darkMode: false,
+    toastMsg: 'Changes applied',
+    resetModalOpen: false,
+    resetSelected: { overview: true, demand: true, customBar: true },
+    advancedOpen: true,
+    roles: { navHeader: 'primary', sidebar: 'primary', buttons: 'primary' },
+    customColors: { navHeader: '#2424F5', sidebar: '#2424F5', buttons: '#2424F5' },
+    openDropdown: null,
+  };
+
+  isDarkHtml = (html) => !!html && (html.getAttribute('data-theme') === 'dark' || html.classList.contains('dark'));
+
+  getOuterHtmlEl = () => {
+    try {
+      if (window.parent && window.parent !== window && window.parent.document) return window.parent.document.documentElement;
+    } catch (e) { /* cross-origin, ignore */ }
+    return null;
+  };
+
+  detectDark = () => this.isDarkHtml(document.documentElement) || this.isDarkHtml(this.getOuterHtmlEl());
+
+  componentDidMount() {
+    this.setState({ darkMode: this.detectDark() });
+    const onChange = () => this.setState({ darkMode: this.detectDark() });
+    this._observer = new MutationObserver(onChange);
+    this._observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+    const outerHtml = this.getOuterHtmlEl();
+    if (outerHtml) {
+      this._outerObserver = new MutationObserver(onChange);
+      this._outerObserver.observe(outerHtml, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+    }
+  }
+
+  componentWillUnmount() {
+    if (this._observer) this._observer.disconnect();
+    if (this._outerObserver) this._outerObserver.disconnect();
+  }
+
+  selectTheme = (e) => { this.setState({ theme: e.currentTarget.dataset.key }); };
+  selectStyle = (e) => { this.setState({ style: e.currentTarget.dataset.key }); };
+  resetDefaults = () => {
+    this.setState({
+      theme: 'primary', style: 'minimal',
+      roles: { navHeader: 'primary', sidebar: 'primary', buttons: 'primary' },
+      customColors: { navHeader: '#2424F5', sidebar: '#2424F5', buttons: '#2424F5' },
+      openDropdown: null,
+    });
+  };
+  applyChanges = () => {
+    this.setState({ showToast: true, toastMsg: 'Changes applied' });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ showToast: false }), 2000);
+  };
+
+  toggleAdvanced = () => { this.setState(s => ({ advancedOpen: !s.advancedOpen })); };
+  tryIt = () => { this.setState(s => ({ style: s.style === 'solid' ? 'gradient' : 'solid' })); };
+  openResetModal = () => { this.setState({ resetModalOpen: true }); };
+  closeResetModal = () => { this.setState({ resetModalOpen: false }); };
+  toggleResetPage = (e) => {
+    const p = e.currentTarget.dataset.page;
+    this.setState(s => {
+      if (p === 'all') {
+        const allOn = RESET_PAGES.every(pg => s.resetSelected[pg.key]);
+        const next = {};
+        RESET_PAGES.forEach(pg => { next[pg.key] = !allOn; });
+        return { resetSelected: next };
+      }
+      return { resetSelected: { ...s.resetSelected, [p]: !s.resetSelected[p] } };
+    });
+  };
+  confirmReset = () => {
+    this.setState({ resetModalOpen: false, showToast: true, toastMsg: 'Custom colors reset' });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ showToast: false }), 2000);
+  };
+  toggleDropdownRow = (e) => {
+    const row = e.currentTarget.dataset.row;
+    this.setState(s => ({ openDropdown: s.openDropdown === row ? null : row }));
+  };
+  selectRole = (e) => {
+    const row = e.currentTarget.dataset.row, role = e.currentTarget.dataset.role;
+    this.setState(s => ({ roles: { ...s.roles, [row]: role }, openDropdown: null }));
+  };
+  closeDropdown = () => { this.setState({ openDropdown: null }); };
+  setCustomColor = (e) => {
+    const row = e.currentTarget.dataset.row, val = e.target.value;
+    this.setState(s => ({ customColors: { ...s.customColors, [row]: val } }));
+  };
+
+  renderVals() {
+    const theme = THEMES.find(t => t.key === this.state.theme) || THEMES[0];
+    const style = this.state.style;
+    const accent = theme.accent, accentDark = theme.accentDark, accentLight = theme.accentLight;
+    const chart = theme.chart;
+
+    const dark = this.state.darkMode;
+    const pageBg = dark ? '#1C1D21' : '#FFFFFF';
+    const panelBg = dark ? '#232428' : '#F7F8FA';
+    const cardBg = dark ? '#2A2B30' : '#FFFFFF';
+    const inputBg = dark ? '#333438' : '#F2F3F5';
+    const borderDefault = dark ? '#3B3C40' : '#E0E1E5';
+    const textDefault = dark ? '#F2F3F5' : '#2C2D30';
+    const textSubtle = dark ? '#9AA0A6' : '#8A8F98';
+
+    const primary = accent, secondary = chart[2], accentRoleColor = chart[1];
+    const neutralColor = dark ? '#6B7280' : '#8A8F98';
+    const advBg = dark ? '#232428' : '#F7F8FA';
+    const paletteRowBg = dark ? '#2A2B30' : '#EFF0F3';
+    const advDivider = dark ? '#3B3C40' : '#E4E5E9';
+    const iconBorder = dark ? '#55565C' : '#B8BCC4';
+    const iconFill = dark ? '#8B8F96' : '#8A8F98';
+    const highlightBg = dark ? '#33343A' : '#EEF0FF';
+
+    const roleColor = (role, custom) => roleColorValue(role, custom, primary, secondary, accentRoleColor, neutralColor);
+    const roleLabel = (role) => (ROLE_OPTIONS.find(o => o.key === role) || ROLE_OPTIONS[0]).label;
+    const buildOptions = (currentRole) => ROLE_OPTIONS.map(o => {
+      const selected = o.key === currentRole;
+      const swatch = o.key === 'custom'
+        ? 'conic-gradient(from 0deg,#F5A623,#D3452B,#8B5CF6,#2E6BE6,#33C2B8,#F5A623)'
+        : roleColorValue(o.key, null, primary, secondary, accentRoleColor, neutralColor);
+      return {
+        key: o.key, label: o.label,
+        style: `display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:13px;cursor:pointer;color:${selected ? primary : textDefault};background:${selected ? highlightBg : 'transparent'};`,
+        swatchStyle: `width:14px;height:14px;border-radius:3px;flex-shrink:0;background:${swatch};${o.key === 'neutral' ? `border:1px solid ${borderDefault};` : ''}`,
+      };
+    });
+
+    const checkboxStyle = (checked) => `flex-shrink:0;width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;${checked ? 'background:#764E7E;' : `background:${cardBg};border:1.5px solid ${iconBorder};`}`;
+    const allPagesSelected = RESET_PAGES.every(pg => this.state.resetSelected[pg.key]);
+
+    const navColor = roleColor(this.state.roles.navHeader, this.state.customColors.navHeader);
+    const sidebarColor = roleColor(this.state.roles.sidebar, this.state.customColors.sidebar);
+    const buttonsColor = roleColor(this.state.roles.buttons, this.state.customColors.buttons);
+
+    const themes = THEMES.map(t => {
+      const selected = t.key === theme.key;
+      return {
+        key: t.key, name: t.name, badge: t.badge, inUse: selected ? 'In use' : null, badgeBg: t.badgeBg || paletteRowBg, badgeColor: t.badgeColor || textSubtle, swatch: t.swatch,
+        cardStyle: `display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:6px;cursor:pointer;background:${cardBg};width:100%;min-width:0;box-sizing:border-box;overflow:hidden;border:${selected ? `2px solid ${t.accent}` : `1px solid ${borderDefault}`};`,
+      };
+    });
+
+    const isGradient = style === 'gradient', isSolid = style === 'solid';
+    const showNavRow = isSolid, showSidebarRow = isSolid;
+    const styles = STYLES.map(s => {
+      const selected = s.key === style;
+      let thumbBg = '', thumbBar = 'display:none;';
+      if (s.key === 'gradient') thumbBg = `background:linear-gradient(135deg, ${hexToRgba(accent,0.30)} 0%, ${hexToRgba(accent,0.06)} 45%, rgba(255,255,255,0) 65%), ${inputBg};`;
+      if (s.key === 'solid') thumbBar = `position:absolute;left:0;top:0;bottom:0;width:6px;background:${accent};`;
+      return {
+        key: s.key, name: s.name,
+        cardStyle: `display:flex;flex-direction:column;padding:12px;border-radius:6px;cursor:pointer;background:${cardBg};width:100%;min-width:0;box-sizing:border-box;overflow:hidden;border:1px solid ${selected ? accent : borderDefault};box-shadow:${selected ? `inset 0 0 0 1px ${accent}` : 'none'};`,
+        thumbBg, thumbBar,
+      };
+    });
+
+    const headerBg = isSolid ? navColor : (isGradient ? `linear-gradient(110deg, ${hexToRgba(primary,0.30)} 0%, ${hexToRgba(primary,0.08)} 45%, rgba(255,255,255,0) 72%)` : '#FFFFFF');
+    const headerTextColor = isSolid ? '#FFFFFF' : '#2C2D30';
+    const headerLogoColor = isSolid ? '#FFFFFF' : primary;
+    const headerStyle = `height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;box-sizing:border-box;background:${headerBg};color:${headerTextColor};`;
+
+    const sidebarBg = isSolid ? navColor : (isGradient ? `linear-gradient(180deg, ${hexToRgba(primary,0.22)}, ${hexToRgba(primary,0.04)})` : '#FFFFFF');
+    const sidebarStyle = `width:44px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px 0;box-sizing:border-box;background:${sidebarBg};border-right:1px solid rgba(0,0,0,0.06);`;
+    const navIcons = [0,1,2,3].map(i => ({
+      bg: isSolid ? (i === 0 ? 'rgba(255,255,255,0.30)' : 'rgba(255,255,255,0.12)')
+        : isGradient ? (i === 0 ? hexToRgba(primary,0.30) : hexToRgba(primary,0.10))
+        : (i === 0 ? accentLight : '#F2F3F5'),
+    }));
+
+    const searchPanelBg = isSolid ? hexToRgba(sidebarColor, 0.13) : '#FFFFFF';
+
+    const actionsBtnBg = isSolid ? 'rgba(255,255,255,0.22)' : (isGradient ? buttonsColor : '#FFFFFF');
+    const actionsBtnColor = (isSolid || isGradient) ? '#FFFFFF' : buttonsColor;
+    const actionsBtnBorder = (!isSolid && !isGradient) ? `1px solid ${buttonsColor}` : 'none';
+
+    return {
+      themes, styles, accent, accentLight, showNavRow, showSidebarRow,
+      pageBg, panelBg, cardBg, inputBg, borderDefault, textDefault, textSubtle,
+      chart0: chart[0], chart1: chart[1], chart2: chart[2], chart3: chart[3], chart4: chart[4],
+      selectTheme: this.selectTheme, selectStyle: this.selectStyle,
+      headerStyle, headerLogoColor, sidebarStyle, navIcons,
+      actionsBtnBg, actionsBtnColor, actionsBtnBorder,
+      skeletonRows: SKELETON_WIDTHS.map(w => ({ w })),
+      worldDots: WORLD_DOTS,
+      hubs: HUB_DEF.map((h, i) => ({ x: h.x, y: h.y, color: chart[i % chart.length] })),
+      bars: BAR_DEF.map(b => ({ h: b.h, color: chart[b.c] })),
+      heatCells: HEAT_OPACITIES.map(o => ({ o })),
+      tableRows: TABLE_ROWS,
+      resetDefaults: this.resetDefaults, applyChanges: this.applyChanges, showToast: this.state.showToast,
+      toastMsg: this.state.toastMsg, searchPanelBg, tryIt: this.tryIt,
+      resetModalOpen: this.state.resetModalOpen, openResetModal: this.openResetModal, closeResetModal: this.closeResetModal,
+      toggleResetPage: this.toggleResetPage, confirmReset: this.confirmReset,
+      selectAllBoxStyle: checkboxStyle(allPagesSelected),
+      selectAllCheckStroke: allPagesSelected ? '#FFFFFF' : 'transparent',
+      resetPageRows: RESET_PAGES.map(pg => ({
+        key: pg.key, label: pg.label, widgets: pg.widgets,
+        boxStyle: checkboxStyle(this.state.resetSelected[pg.key]),
+        checkStroke: this.state.resetSelected[pg.key] ? '#FFFFFF' : 'transparent',
+      })),
+
+      advancedOpen: this.state.advancedOpen, toggleAdvanced: this.toggleAdvanced,
+      chevronRotate: this.state.advancedOpen ? 'rotate(0deg)' : 'rotate(-90deg)',
+      themeName: theme.name, themeSwatch: theme.swatch,
+      primaryColor: primary, secondaryColor: secondary, accentRoleColor,
+      advBg, paletteRowBg, advDivider, iconBorder, iconFill,
+      triggerStyle: `display:flex;align-items:center;gap:8px;width:200px;padding:9px 12px;border:1px solid ${borderDefault};border-radius:6px;background:${cardBg};font-size:13px;color:${textDefault};cursor:pointer;box-sizing:border-box;`,
+      dropdownPanelStyle: `position:absolute;top:calc(100% + 6px);left:0;width:220px;background:${cardBg};border:1px solid ${borderDefault};border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.14);z-index:50;overflow:hidden;padding:4px 0;`,
+      toggleDropdownRow: this.toggleDropdownRow, selectRole: this.selectRole, closeDropdown: this.closeDropdown, setCustomColor: this.setCustomColor,
+      anyDropdownOpen: this.state.openDropdown !== null,
+
+      navSwatch: navColor, navRoleLabel: roleLabel(this.state.roles.navHeader), navOpen: this.state.openDropdown === 'navHeader',
+      navOptions: buildOptions(this.state.roles.navHeader), navIsCustom: this.state.roles.navHeader === 'custom', navCustomColor: this.state.customColors.navHeader,
+
+      sidebarSwatch: sidebarColor, sidebarRoleLabel: roleLabel(this.state.roles.sidebar), sidebarOpen: this.state.openDropdown === 'sidebar',
+      sidebarOptions: buildOptions(this.state.roles.sidebar), sidebarIsCustom: this.state.roles.sidebar === 'custom', sidebarCustomColor: this.state.customColors.sidebar,
+
+      buttonsSwatch: buttonsColor, buttonsRoleLabel: roleLabel(this.state.roles.buttons), buttonsOpen: this.state.openDropdown === 'buttons',
+      buttonsOptions: buildOptions(this.state.roles.buttons), buttonsIsCustom: this.state.roles.buttons === 'custom', buttonsCustomColor: this.state.customColors.buttons,
+    };
+  }
+}
+
+</script>
+<script>window.__DC_HEIGHT_MESSAGE__ = "theme-preview-height";</script>
+</body>
+</html>

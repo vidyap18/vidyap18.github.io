@@ -1,32 +1,29 @@
 ---
 title: "Ask AI: making the docs answerable by an assistant"
-description: How I evaluated a documentation assistant, decided whether a wrong answer was a docs or a system problem, and how my team now uses AI to ship documentation and product changes.
+description: How I set up, evaluated and improved a documentation assistant, and the rule that decides whether a wrong answer is a docs problem or a system problem.
 sidebar_position: 4
 sidebar_label: Ask AI
 ---
 
 # Ask AI: making the docs answerable by an assistant
 
-<span className="vp-eyebrow">AI assistant · live since August 2026</span>
+<span className="vp-eyebrow">AI assistant · live for every customer since August 2026</span>
 
-Our documentation assistant answers product questions from the docs, on the docs site and inside the product, in every customer environment since 17 August 2026. I designed how we judge it, and the check that decides whether a wrong answer is the docs' fault or the system's.
+Customers can ask our documentation assistant a product question and get an answer from the docs, on the docs site and inside the product. I shaped what it needed to be, designed how we test it, and wrote the check that tells us, for any wrong answer, whether to fix the page or fix the system.
 
-## The evaluation
+## The problem
 
-126 real questions, graded by 22 reviewers in two rounds. Reviewers graded correctness, completeness and the cited source separately, with written instructions and ten questions each.
+An assistant that answers from the docs is only as good as two things: the pages it reads, and the way it finds the right piece of a page. When an answer was wrong, nobody could tell which of the two had failed, so writers could end up rewriting pages that were fine while engineers tuned retrieval for questions the docs never answered. The off-the-shelf chatbot we started with gave us no way to correct a wrong answer at all.
 
-| | Round one | Round two |
-| --- | --- | --- |
-| Reviewers | 6, internal | 16, customer success and professional services |
-| Fully correct | 15 of 39 (about 4 in 10) | 58 of 87 (2 in 3) |
-| Incorrect | 13 of 39 (1 in 3) | 11 of 87 (about 1 in 8) |
-| Correct source cited | about half | about 4 in 5 |
+## What I did
 
-The questions and reviewers differed between rounds, and retrieval changes landed alongside the docs fixes, so this is a direction, not a controlled result.
+**Set the requirements.** In November 2025 I wrote the requirements with product and engineering, and argued for building our own retrieval pipeline instead of keeping the off-the-shelf chatbot, because only our own pipeline would let us see and fix why an answer went wrong. Engineering built it.
 
-## Docs problem or system problem?
+**Tested it with real questions.** I designed two rounds of evaluation: 126 real questions, graded by 22 reviewers. Each reviewer had written instructions and ten questions, and graded three things separately: was the answer correct, was it complete, and did it cite the right page.
 
-I traced what the assistant actually receives from a page: only the title, the breadcrumb, the heading path and the body, split into chunks by heading and length. Front-matter keywords are ignored. From that, I wrote seven checks a writer runs on any page, draft or failed answer:
+**Found out what the assistant actually reads.** I traced what reaches the assistant from a page: only the title, the breadcrumb, the heading path and the body, cut into pieces by heading and length. Keywords in the page's metadata never reach it. That ruled out the obvious fix, adding keywords to pages, which would have changed nothing.
+
+**Turned it into a check anyone can run.** From that, I wrote seven checks a writer runs on any page, before it ships or after a wrong answer:
 
 1. Does the page name the thing the reader asked about, including abbreviations?
 2. Does each section make sense on its own, without the rest of the page?
@@ -36,21 +33,23 @@ I traced what the assistant actually receives from a page: only the title, the b
 6. Is each term used in one way?
 7. Do two pages contradict each other?
 
-If the page passes all seven, the writer does not edit it. The question goes to engineering as a retrieval problem. That rule stopped the obvious fix that changes nothing: stuffing keywords into a page the assistant never reads them from. It is the last check before any page ships. The full method is in [Writing documentation an AI assistant can answer from](/samples/method/retrieval-ready-docs).
+I built a Claude skill that runs the checks and reports each finding with where it is, why it matters and what to change. It is now the last check before any page ships.
 
-## My part
+**Built a way to watch it.** A review dashboard of usage and answer quality per customer account, so we see where the assistant struggles instead of waiting for complaints.
 
-- **Wrote** the requirements with product and engineering in November 2025, and argued for building our own retrieval pipeline over an off-the-shelf chatbot, because the chatbot gave us no way to correct a wrong answer. Engineering built the pipeline.
-- **Designed and ran** both evaluation rounds.
-- **Wrote** the seven checks and **built** the tool that applies them, with Claude Code.
-- **Built** a review dashboard of usage and answer quality per account.
-- **Prototyped** a docs-grounded agent for the company's agent platform. Not merged.
+## The rule that came out of it
 
-## How the team writes with AI now
+If the page behind a wrong answer passes all seven checks, the writer does not touch it. The question goes to engineering as a retrieval problem. Writers fix pages that need fixing, and engineering gets the cases that are really theirs, grouped into retrieval, chunking and consistency problems.
 
-- **Drafts from pull requests.** Drafts are generated from engineers' pull requests. A writer edits the draft, checks it with the engineer, and the product manager signs it off. A drafting assistant I built adds front matter, suggests links from the real content tree, and flags pages that the latest release notes may have made stale.
-- **Writers change the product.** I led my writers into shipping in-product help directly in the product's frontend code: info tips, a close control for the chat widget, and removing coach marks that had outlived their use. Six changes merged since September 2026, three more in review, including native info pop-ups that replace a third-party in-app help tool.
-- **Search and the assistant, split.** I built a working branch of the docs site that separates keyword search from the assistant, so a typed question goes to the assistant instead of returning no results. Engineering shipped the approach in their merged change.
-- **Docs-site code.** I built search analytics, a CI workflow that keeps a last-updated date on about 3,000 pages, and a fullscreen control for embedded video.
+## Results
 
-I do not automate decisions about what a customer needs to know, writes to shared records without a person reviewing them, or anything that reaches a customer unreviewed.
+| | Round one | Round two |
+| --- | --- | --- |
+| Reviewers | 6, internal | 16, customer success and professional services |
+| Fully correct | 15 of 39 (about 4 in 10) | 58 of 87 (2 in 3) |
+| Incorrect | 13 of 39 (1 in 3) | 11 of 87 (about 1 in 8) |
+| Correct page cited | about half | about 4 in 5 |
+
+The questions and reviewers differed between rounds, and retrieval improved at the same time as the docs, so read this as a direction, not a controlled result.
+
+The full method is in [Writing documentation an AI assistant can answer from](/samples/method/retrieval-ready-docs).

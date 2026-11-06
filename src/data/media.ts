@@ -14,17 +14,10 @@ export const featured = {
 
 export const groups: Group[] = [
   {
-    title: 'Release walkthroughs',
-    intro: 'Short videos that go out with a release: what changed, why, and where to find it.',
+    title: 'Release highlights and product explainers',
+    intro: 'A whole release in a minute, and how a feature works in two to four minutes.',
     items: [
-      {id: 'prrybl0ws7', title: 'Unified application view', length: '1:54', text: 'The first release walkthrough presented by a product manager, from a four-beat brief I wrote.', thumb: T + '6803631e51643036e608dc638ac44ead.jpg'},
       {id: 'b7rydgtgyf', title: 'October 2026 release highlights', length: '1:15', text: 'A whole release in a minute, with links into the docs. It opens the docs site home page.', thumb: T + '8d202701850672fe5690386beb382664.jpg'},
-    ],
-  },
-  {
-    title: 'Product explainers',
-    intro: 'How a feature works, in two to four minutes.',
-    items: [
       {id: 'a9vkvljckd', title: 'The new Science Notes interface', length: '4:26', text: 'A tour of the redesigned interface for the platform’s pre-built analytics notes.', thumb: T + '114cb44bf686230ef7d605f179293c68c11aa22a.jpg'},
       {id: 'knohl2w7z5', title: 'Semantic model introduction', length: '1:58', text: 'An introduction to the semantic model, presented by a synthetic presenter.', thumb: T + 'd01b9c33bad3ce4b47ad85197667f3a24c2398e3.jpg'},
       {id: 'rfbmiks1bb', title: 'Adding notes inline', length: '1:43', text: 'A how-to in under two minutes.', thumb: T + '60fd335c4ea21d64d9136eb0b957353a6eaa3383.jpg'},

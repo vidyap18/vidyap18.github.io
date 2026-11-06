@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Science Note Versioning — Prototype</title>
+<style>
+/* ============================================================================
+   ENGINEERING NOTES (not shown in the UI — this prototype is hosted on the
+   Prototype Hub, so the visible banner is deliberately short and
+   non-technical; all implementation detail lives in comments like this one).
+   ----------------------------------------------------------------------------
+   This mock reuses the docs-ui repo's real design tokens (colors, font,
+   spacing, from src/css/custom.css) so it reads as "this site".
+
+   ROUTING:
+   Each version (4.1 / 4.0 / 3.8), the 4.1-only "Tax Duty" page, and search
+   are FIVE SEPARATE, FULLY-BAKED page sections below (search for
+   `id="page-`), not one page with text nodes swapped by JS. Navigating
+   between them changes a URL hash and supports the browser's real
+   back/forward buttons — this is a single-file stand-in for what would
+   really be separate static routes generated per version at build time
+   (see "Recommended architecture" in the written proposal: a prebuild
+   script materializes _shared/ + _versions/<id>/ into real, separate pages
+   per version). There is no client-side router in production — Docusaurus's
+   own static routing replaces this entire <script> block.
+
+   FALLBACK / "PAGE DOESN'T EXIST IN THIS VERSION" SCENARIO:
+   "Tax Duty" only exists in 4.1 (_versions/4.1/inputs/specialized-tables/
+   tax-duty.md — added that release). Switching versions while on that page
+   to 4.0 or 3.8 does NOT try to render a missing page: it navigates to that
+   version's Note overview and shows a one-line notice (`.fallback-notice`)
+   explaining the redirect. In production this is the VersionSwitcher
+   component checking the target version's build-time route manifest before
+   navigating — see "what happens if that page does not exist" in the
+   proposal. The notice is separate from `.archived-banner` (which is about
+   version status, not about this specific redirect) — both can be visible
+   at once, e.g. redirecting into 3.8, which is both missing the page AND
+   archived.
+
+   Search "MAPS TO:" and "ENGINEERING:" for component-level annotations.
+   ========================================================================= */
+
+:root {
+  --font-sans: "PP Mori", Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  --color-background: #ffffff;
+  --color-foreground: #1c1e21;
+  --color-primary: #2424f5;
+  --muted: #f7f8fa;
+  --muted-hover: #0000000d;
+  --muted-foreground: #5e6066;
+  --muted-foreground-light: #9c9ea3;
+  --border: hsl(330 0% 90%);
+  --navbar-background: #f7f8fa;
+
+  --admonition-warning-background: #fff7e3;
+  --admonition-warning-foreground: #ab7e15;
+  --admonition-warning-border: #f7b819;
+
+  --tag-info-background: #e8eefc;
+  --tag-info-foreground: #2122ac;
+  --tag-info-border: #9fb6fc;
+
+  --tag-neutral-background: #f2f3f5;
+  --tag-neutral-foreground: #5e6066;
+  --tag-neutral-border: #e0e1e5;
+
+  --tag-tip-background: #e4fae1;
+  --tag-tip-foreground: #0d5b37;
+  --tag-tip-border: #21db8a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-foreground);
+  background: var(--color-background);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* ---------------------------------------------------------------------------
+   Visible prototype banner — kept short and non-technical for the
+   Prototype Hub audience. No mention of hash routing, routers, or files;
+   just what this is and a light "you're on a different page now" cue.
+------------------------------------------------------------------------- */
+.proto-banner {
+  background: #1d1e21;
+  color: #e3e3e3;
+  font-size: 13px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+.proto-banner strong { color: #fff; }
+.proto-banner .proto-url {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  background: #2c2d30;
+  padding: 3px 10px;
+  border-radius: 999px;
+  color: #a0d9ff;
+  font-size: 12px;
+}
+
+/* MAPS TO: src/theme/Navbar — simplified, out of scope for this exercise */
+.navbar {
+  height: 56px;
+  background: var(--navbar-background);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 24px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.navbar .brand { color: var(--color-primary); }
+.navbar .navitem { color: var(--muted-foreground); font-weight: 500; cursor: pointer; background: none; border: none; font: inherit; }
+.navbar .navitem.active { color: var(--color-foreground); }
+.navbar .spacer { flex: 1; }
+.navbar .search-entry {
+  font-size: 13px;
+  color: var(--muted-foreground);
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+/* Each PAGE is a fully separate, independently-routable view. Only one is
+   visible at a time — this is the mechanism that stands in for "these are
+   really different static pages/URLs in production." */
+.page { display: none; }
+.page.active { display: block; }
+
+.doc-root { display: flex; max-width: 1200px; margin: 0 auto; }
+
+/* MAPS TO: src/theme/DocSidebar (Desktop)
+   ENGINEERING: baked separately into each version's page below — in
+   production this is a named, per-version autogenerated sidebar (see
+   sidebars/science-notes.ts + utils/index.ts:sidebarItemsGenerator), not a
+   shared DOM node whose contents get rewritten. Baking it per-page here is
+   deliberate: it's the more accurate representation of "each version is its
+   own generated sidebar tree." */
+.sidebar { width: 260px; flex-shrink: 0; padding: 24px 12px 24px 20px; border-right: 1px solid var(--border); font-size: 14px; }
+.sidebar .sb-category { font-weight: 600; margin: 4px 0 2px; padding: 6px 8px; border-radius: 6px; }
+.sidebar .sb-category.active-note { background: var(--tag-info-background); color: var(--tag-info-foreground); display: flex; align-items: center; }
+.sidebar .sb-link { display: block; padding: 6px 8px 6px 20px; border-radius: 6px; color: var(--muted-foreground); text-decoration: none; }
+.sidebar .sb-link:hover { background: var(--muted-hover); }
+.sidebar .sb-link.current { color: var(--color-primary); background: var(--tag-info-background); font-weight: 600; }
+.sidebar .sb-sub { margin: 2px 0 10px; border-left: 1px solid var(--border); margin-left: 12px; }
+.sidebar .sb-note-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted-foreground-light); padding: 14px 8px 4px; }
+.sidebar .sb-version-chip { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 999px; background: var(--tag-info-background); color: var(--tag-info-foreground); border: 1px solid var(--tag-info-border); margin-left: 6px; }
+.sidebar .sb-version-chip.archived { background: var(--tag-neutral-background); color: var(--tag-neutral-foreground); border-color: var(--tag-neutral-border); }
+
+.doc-main { flex: 1; min-width: 0; padding: 32px 40px 60px; }
+
+/* MAPS TO: src/theme/DocBreadcrumbs */
+.breadcrumbs { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 14px; }
+.breadcrumbs a { color: var(--color-primary); text-decoration: none; cursor: pointer; }
+.breadcrumbs a:hover { text-decoration: underline; }
+.breadcrumbs .sep { color: var(--muted-foreground-light); }
+
+/* MAPS TO: proposed src/components/VersionSwitcher (new)
+   Occupies the slot Docusaurus already reserves for @theme/DocVersionBadge,
+   between DocBreadcrumbs and the article content — see
+   src/theme/DocItem/Layout/index.tsx. */
+.version-switcher { position: relative; display: inline-block; margin-bottom: 18px; }
+.version-trigger { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-sans); font-size: 13px; font-weight: 600; background: var(--tag-info-background); color: var(--tag-info-foreground); border: 1px solid var(--tag-info-border); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+.version-trigger:hover { filter: brightness(0.97); }
+.version-trigger .caret { transition: transform 0.15s ease; font-size: 10px; display: inline-block; }
+.version-trigger[aria-expanded="true"] .caret { transform: rotate(180deg); }
+
+/* ENGINEERING: real implementation should use a proper dropdown-menu
+   primitive (recommend @radix-ui/react-dropdown-menu, consistent with
+   @radix-ui/react-accordion / @radix-ui/react-tooltip already used
+   elsewhere in this repo) for focus-trap/keyboard/aria — this plain
+   <div> + JS toggle is prototype-only. */
+.version-menu { position: absolute; top: calc(100% + 6px); left: 0; min-width: 210px; background: #fff; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); padding: 6px; display: none; z-index: 20; }
+.version-menu.open { display: block; }
+.version-menu .v-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 13px; color: var(--color-foreground); }
+.version-menu .v-item:hover { background: var(--muted); }
+.version-menu .v-item.selected { font-weight: 700; }
+.version-menu .v-chip { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px; white-space: nowrap; }
+.version-menu .v-chip.latest { background: var(--tag-info-background); color: var(--tag-info-foreground); border: 1px solid var(--tag-info-border); }
+.version-menu .v-chip.archived { background: var(--tag-neutral-background); color: var(--tag-neutral-foreground); border: 1px solid var(--tag-neutral-border); }
+
+/* MAPS TO: auto-injected archived-version banner. Present in markup ONLY on
+   the 3.8 page — not a shared node toggled by JS — because in production
+   this is rendered per-page from that page's own version metadata, not a
+   client-side conditional. Reuses the site's Admonition "warning" styling
+   (src/theme/Admonition/Type/Warning.tsx / --admonition-warning-* tokens). */
+.archived-banner { display: flex; align-items: flex-start; gap: 10px; background: var(--admonition-warning-background); border: 1px solid var(--admonition-warning-border); color: var(--admonition-warning-foreground); border-radius: 8px; padding: 12px 14px; font-size: 13.5px; margin-bottom: 20px; }
+.archived-banner a { color: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
+.archived-banner .icon { font-size: 16px; line-height: 1.4; }
+
+/* MAPS TO: the "equivalent page doesn't exist in this version" fallback
+   notice from the VersionSwitcher's route-existence check. Uses the info
+   (not warning) color slot — this is a neutral routing notice, not a
+   caution about content quality, and is intentionally visually distinct
+   from .archived-banner even though both can appear together. Hidden by
+   default; toggled by the router below based on how the page was reached. */
+.fallback-notice { display: none; align-items: flex-start; gap: 10px; background: var(--tag-info-background); border: 1px solid var(--tag-info-border); color: var(--tag-info-foreground); border-radius: 8px; padding: 12px 14px; font-size: 13.5px; margin-bottom: 20px; }
+.fallback-notice .icon { font-size: 16px; line-height: 1.4; }
+
+/* MAPS TO: src/theme/DocItem/Content (prose typography) */
+article h1 { font-size: 28px; margin: 0 0 10px; }
+article p { color: var(--color-foreground); }
+article .tldr { background: #e5f0fc; border: 1px solid #cfe0fb; border-radius: 8px; padding: 12px 14px; font-size: 13.5px; margin: 16px 0; }
+article table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0 20px; }
+article th, article td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
+article th { background: var(--muted); }
+article code { background: var(--muted); padding: 1px 5px; border-radius: 4px; font-size: 90%; }
+
+/* Clean, product-style "what's new" indicator — no file paths, no
+   implementation detail, just what a reader would see in a real changelog
+   or docs page. This is how version differences are made to stand out,
+   instead of an explicit "shared vs. override" callout box. */
+.new-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: var(--tag-tip-background); color: var(--tag-tip-foreground); border: 1px solid var(--tag-tip-border); margin-left: 6px; vertical-align: middle; white-space: nowrap; }
+.tag-mini { display: inline-block; font-size: 10.5px; color: var(--muted-foreground); background: var(--muted); padding: 1px 7px; border-radius: 4px; margin-left: 6px; }
+.param-list { list-style: disc; margin: 0 0 24px; padding-left: 20px; font-size: 13.5px; }
+.param-list li { margin-bottom: 7px; }
+
+.try-search-link { display: inline-block; margin-top: 24px; font-size: 13px; }
+.try-search-link a { color: var(--color-primary); cursor: pointer; }
+
+/* MAPS TO: src/theme/SearchPage — a dedicated view, not content bolted onto
+   a doc page, hence its own top-level page section rather than a footer
+   section on the Optimize Network page. */
+.search-page-inner { max-width: 760px; margin: 0 auto; padding: 40px; }
+.search-page-inner h1 { font-size: 22px; margin-bottom: 4px; }
+.search-page-inner .search-sub { color: var(--muted-foreground); font-size: 13px; margin-bottom: 24px; }
+.search-result { padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; cursor: pointer; }
+.search-result:hover { border-color: var(--tag-info-border); }
+.search-result .sr-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.search-result .sr-title { color: var(--color-primary); font-weight: 600; font-size: 14px; }
+.search-result .sr-path { color: var(--muted-foreground-light); font-size: 11.5px; margin-top: 2px; }
+.search-result .sr-chip { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
+.search-result .sr-chip.latest { background: var(--tag-info-background); color: var(--tag-info-foreground); border: 1px solid var(--tag-info-border); }
+.search-result .sr-chip.archived { background: var(--tag-neutral-background); color: var(--tag-neutral-foreground); border: 1px solid var(--tag-neutral-border); }
+.search-result .sr-match { font-size: 12px; color: var(--tag-info-foreground); margin-top: 6px; }
+
+.search-input-row { margin-bottom: 10px; }
+.search-input { width: 100%; font-family: var(--font-sans); font-size: 14px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px; }
+.search-input:focus { outline: none; border-color: var(--tag-info-border); }
+.search-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.search-chip { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--muted); border: 1px solid var(--border); color: var(--muted-foreground); cursor: pointer; }
+.search-chip:hover { background: var(--tag-info-background); color: var(--tag-info-foreground); border-color: var(--tag-info-border); }
+.search-summary { font-size: 13px; color: var(--muted-foreground); margin-bottom: 14px; min-height: 18px; }
+
+.section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground-light); font-weight: 700; margin: 24px 0 8px; }
+</style>
+</head>
+<body>
+
+<!-- Visible banner — short, non-technical, safe for the Prototype Hub -->
+<div class="proto-banner">
+  <span><strong>Prototype</strong> — Science Note version switching (Optimize Network)</span>
+  <span class="proto-url" id="fake-url">/optimize-network/4.1/</span>
+</div>
+
+<div class="navbar">
+  <span class="brand">Meridian documentation</span>
+  <span class="navitem active">Science Notes</span>
+  <span class="navitem">Predictions</span>
+  <span class="navitem">Release Notes</span>
+  <span class="spacer"></span>
+  <!-- MAPS TO: src/theme/Navbar/Search -->
+  <button class="search-entry" onclick="location.hash = ROUTES.search">🔍 Search docs…</button>
+</div>
+
+<!-- ============================================================
+     PAGE: Optimize Network — v4.1 (Latest)
+     ============================================================ -->
+<section class="page" id="page-4-1">
+  <div class="doc-root">
+    <nav class="sidebar">
+      <div class="sb-note-label">Network Science Notes</div>
+      <div class="sb-category">Analyze Greenfield</div>
+      <div class="sb-category">Cluster Locations</div>
+      <div class="sb-category">Generate Landed Cost</div>
+      <div class="sb-category active-note">Optimize Network <span class="sb-version-chip">v4.1</span></div>
+      <div class="sb-sub">
+        <a class="sb-link" href="javascript:void(0)">Overview</a>
+        <a class="sb-link" href="javascript:void(0)">Core Concepts</a>
+        <a class="sb-link current" href="javascript:void(0)">Inputs</a>
+        <a class="sb-link" href="javascript:void(0)">Outputs</a>
+        <a class="sb-link" href="javascript:void(0)">Parameters</a>
+        <!-- ENGINEERING: real link into a standalone doc page, not a JS
+             content swap — this is the page that doesn't exist pre-4.1. -->
+        <a class="sb-link" href="javascript:void(0)" onclick="location.hash = ROUTES.taxDuty">Tax Duty (new in 4.1)</a>
+        <a class="sb-link" href="javascript:void(0)">Changelog</a>
+      </div>
+      <div class="sb-category">Optimize DC Assortment</div>
+    </nav>
+
+    <main class="doc-main">
+      <div class="breadcrumbs">
+        <a href="javascript:void(0)">Science Notes</a><span class="sep">›</span>
+        <a href="javascript:void(0)">Network Science Notes</a><span class="sep">›</span>
+        <a href="javascript:void(0)">Optimize Network</a>
+      </div>
+
+      <div class="version-switcher">
+        <button class="version-trigger" aria-haspopup="true" aria-expanded="false">
+          Version: <span class="version-trigger-label">4.1</span> <span class="caret">▾</span>
+        </button>
+        <div class="version-menu">
+          <div class="v-item selected" onclick="location.hash = ROUTES['4.1']"><span>4.1</span><span class="v-chip latest">Latest</span></div>
+          <div class="v-item" onclick="location.hash = ROUTES['4.0']"><span>4.0</span><span></span></div>
+          <div class="v-item" onclick="location.hash = ROUTES['3.8']"><span>3.8</span><span class="v-chip archived">Archived</span></div>
+        </div>
+      </div>
+
+      <article>
+        <h1>Optimize Network</h1>
+        <div class="tldr">
+          The <strong>Optimize Network</strong> Note optimizes distribution networks, facility locations,
+          capacity planning, and sourcing decisions — configure inputs, the optimizer minimizes cost
+          subject to constraints, and it returns plans and KPIs.
+        </div>
+        <!-- ENGINEERING: this Overview/TL;DR block is _shared/index.md —
+             rendered byte-identical on the 4.0 and 3.8 pages too. Left
+             unlabeled deliberately; the point is that shared content just
+             looks like normal content, not a special case. -->
+
+        <div class="section-label">Inputs</div>
+        <p>The Product UoM table lets you plan in the units your business actually uses, and this version adds cross-border tax support — see the dedicated <a href="javascript:void(0)" onclick="location.hash = ROUTES.taxDuty" style="color:var(--color-primary);">Tax Duty</a> page.</p>
+        <!-- ENGINEERING: this table is _versions/4.1/inputs/structural-tables/product-uom.md -->
+        <table>
+          <thead><tr><th>Column</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>product_id</code></td><td>Unique product identifier</td></tr>
+            <tr><td><code>base_unit</code></td><td>The unit this product's demand/inventory is entered in</td></tr>
+            <tr><td><code>tax_region</code></td><td>Assigns this product/location to a tax region for duty calculation <span class="new-badge">New in 4.1</span></td></tr>
+          </tbody>
+        </table>
+
+        <div class="section-label">Parameters · Run Modes</div>
+        <!-- ENGINEERING: _versions/4.1/parameters.md -->
+        <ul class="param-list">
+          <li>Cost Minimization</li>
+          <li>Profit Maximization</li>
+          <li>Incremental Run</li>
+          <li>Multi-Unit Planning</li>
+          <li>Tariff-Aware Sourcing <span class="new-badge">New in 4.1</span></li>
+        </ul>
+
+        <div class="section-label">Outputs</div>
+        <!-- ENGINEERING: _versions/4.1/outputs/ -->
+        <ul class="param-list">
+          <li>Location Product Flow Report</li>
+          <li>Lane Aggregated Report <span class="tag-mini">incl. Asset Utilization</span></li>
+          <li>Tax Duty Report <span class="new-badge">New in 4.1</span></li>
+        </ul>
+
+        <p class="try-search-link">Try it: <a onclick="location.hash = ROUTES.search">search the docs →</a></p>
+      </article>
+    </main>
+  </div>
+</section>
+
+<!-- ============================================================
+     PAGE: Optimize Network — v4.1 — Tax Duty (new page, only in 4.1)
+     ENGINEERING: this is the page used to demonstrate the fallback
+     scenario. It only exists under _versions/4.1/ — 4.0 and 3.8 have
+     nothing at this path.
+     ============================================================ -->
+<section class="page" id="page-4-1-taxduty">
+  <div class="doc-root">
+    <nav class="sidebar">
+      <div class="sb-note-label">Network Science Notes</div>
+      <div class="sb-category">Analyze Greenfield</div>
+      <div class="sb-category">Cluster Locations</div>
+      <div class="sb-category">Generate Landed Cost</div>
+      <div class="sb-category active-note">Optimize Network <span class="sb-version-chip">v4.1</span></div>
+      <div class="sb-sub">
+        <a class="sb-link" href="javascript:void(0)" onclick="location.hash = ROUTES['4.1']">Overview</a>
+        <a class="sb-link" href="javascript:void(0)" onclick="location.hash = ROUTES['4.1']">Core Concepts</a>
+        <a class="sb-link" href="javascript:void(0)" onclick="location.hash = ROUTES['4.1']">Inputs</a>
+        <a class="sb-link" href="javascript:void(0)" onclick="location.hash = ROUTES['4.1']">Outputs</a>
+        <a class="sb-link" href="javascript:void(0)" onclick="location.hash = ROUTES['4.1']">Parameters</a>
+        <a class="sb-link current" href="javascript:void(0)">Tax Duty (new in 4.1)</a>
+        <a class="sb-link" href="javascript:void(0)" onclick="location.hash = ROUTES['4.1']">Changelog</a>
+      </div>
+      <div class="sb-category">Optimize DC Assortment</div>
+    </nav>
+
+    <main class="doc-main">
+      <div class="breadcrumbs">
+        <a href="javascript:void(0)" onclick="location.hash = ROUTES['4.1']">Science Notes</a><span class="sep">›</span>
+        <a href="javascript:void(0)" onclick="location.hash = ROUTES['4.1']">Network Science Notes</a><span class="sep">›</span>
+        <a href="javascript:void(0)" onclick="location.hash = ROUTES['4.1']">Optimize Network</a><span class="sep">›</span>
+        <a href="javascript:void(0)" onclick="location.hash = ROUTES['4.1']">Inputs</a>
+      </div>
+
+      <div class="version-switcher">
+        <button class="version-trigger" aria-haspopup="true" aria-expanded="false">
+          Version: <span class="version-trigger-label">4.1</span> <span class="caret">▾</span>
+        </button>
+        <!-- ENGINEERING: this is the interesting case. Choosing 4.0/3.8
+             here does NOT link to a same-path doc in that version — it
+             does not exist. It routes to that version's fallback (its
+             overview + a notice), simulating the VersionSwitcher's
+             route-existence check failing closed. -->
+        <div class="version-menu">
+          <div class="v-item selected" onclick="location.hash = ROUTES.taxDuty"><span>4.1</span><span class="v-chip latest">Latest</span></div>
+          <div class="v-item" onclick="location.hash = ROUTES.fallback40"><span>4.0</span><span></span></div>
+          <div class="v-item" onclick="location.hash = ROUTES.fallback38"><span>3.8</span><span class="v-chip archived">Archived</span></div>
+        </div>
+      </div>
+
+      <article>
+        <h1>Tax Duty <span class="new-badge">New in 4.1</span></h1>
+        <div class="tldr">
+          Define <strong>import tariffs and duties</strong> on material that crosses a tax-region boundary.
+          Tariffs are included in total cost, so the optimizer re-routes and re-sources to avoid high duties.
+        </div>
+        <!-- ENGINEERING: _versions/4.1/inputs/specialized-tables/tax-duty.md
+             — no equivalent file in 4.0 or 3.8. Try switching versions above. -->
+        <table>
+          <thead><tr><th>Column</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>tax_region</code></td><td>The tax region this duty rate applies to</td></tr>
+            <tr><td><code>basis</code></td><td><code>ProductOrigin</code> or <code>ShipmentLane</code></td></tr>
+            <tr><td><code>rate_type</code></td><td>Ad-valorem (% of value) or a specific per-unit charge</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </main>
+  </div>
+</section>
+
+<!-- ============================================================
+     PAGE: Optimize Network — v4.0
+     ============================================================ -->
+<section class="page" id="page-4-0">
+  <div class="doc-root">
+    <nav class="sidebar">
+      <div class="sb-note-label">Network Science Notes</div>
+      <div class="sb-category">Analyze Greenfield</div>
+      <div class="sb-category">Cluster Locations</div>
+      <div class="sb-category">Generate Landed Cost</div>
+      <div class="sb-category active-note">Optimize Network <span class="sb-version-chip">v4.0</span></div>
+      <div class="sb-sub">
+        <a class="sb-link current" href="javascript:void(0)">Overview</a>
+        <a class="sb-link" href="javascript:void(0)">Core Concepts</a>
+        <a class="sb-link" href="javascript:void(0)">Inputs</a>
+        <a class="sb-link" href="javascript:void(0)">Outputs</a>
+        <a class="sb-link" href="javascript:void(0)">Parameters</a>
+        <a class="sb-link" href="javascript:void(0)">Changelog</a>
+        <!-- Note: no "Tax Duty" entry — that page doesn't exist at this version. -->
+      </div>
+      <div class="sb-category">Optimize DC Assortment</div>
+    </nav>
+
+    <main class="doc-main">
+      <div class="breadcrumbs">
+        <a href="javascript:void(0)">Science Notes</a><span class="sep">›</span>
+        <a href="javascript:void(0)">Network Science Notes</a><span class="sep">›</span>
+        <a href="javascript:void(0)">Optimize Network</a>
+      </div>
+
+      <div class="version-switcher">
+        <button class="version-trigger" aria-haspopup="true" aria-expanded="false">
+          Version: <span class="version-trigger-label">4.0</span> <span class="caret">▾</span>
+        </button>
+        <div class="version-menu">
+          <div class="v-item" onclick="location.hash = ROUTES['4.1']"><span>4.1</span><span class="v-chip latest">Latest</span></div>
+          <div class="v-item selected" onclick="location.hash = ROUTES['4.0']"><span>4.0</span><span></span></div>
+          <div class="v-item" onclick="location.hash = ROUTES['3.8']"><span>3.8</span><span class="v-chip archived">Archived</span></div>
+        </div>
+      </div>
+
+      <!-- Fallback notice: hidden unless this page was reached because
+           Tax Duty doesn't exist here. Toggled by the router below. -->
+      <div class="fallback-notice">
+        <span class="icon">↩</span>
+        <span>This page does not exist in Optimize Network 4.0, so we have taken you to the Optimize Network 4.0 overview.</span>
+      </div>
+
+      <article>
+        <h1>Optimize Network</h1>
+        <div class="tldr">
+          The <strong>Optimize Network</strong> Note optimizes distribution networks, facility locations,
+          capacity planning, and sourcing decisions — configure inputs, the optimizer minimizes cost
+          subject to constraints, and it returns plans and KPIs.
+        </div>
+        <!-- ENGINEERING: same _shared/index.md as the 4.1 and 3.8 pages. -->
+
+        <div class="section-label">Inputs</div>
+        <p>The Product UoM table lets you plan in the units your business actually uses. No Tax Duty support yet — that's 4.1.</p>
+        <!-- ENGINEERING: _versions/4.0/inputs/structural-tables/product-uom.md — a different file from 4.1's Inputs table, on purpose. -->
+        <table>
+          <thead><tr><th>Column</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>product_id</code></td><td>Unique product identifier</td></tr>
+            <tr><td><code>base_unit</code></td><td>The unit this product's demand/inventory is entered in <span class="new-badge">New in 4.0</span></td></tr>
+          </tbody>
+        </table>
+
+        <div class="section-label">Parameters · Run Modes</div>
+        <!-- ENGINEERING: _versions/4.0/parameters.md -->
+        <ul class="param-list">
+          <li>Cost Minimization</li>
+          <li>Profit Maximization</li>
+          <li>Incremental Run</li>
+          <li>Multi-Unit Planning <span class="new-badge">New in 4.0</span></li>
+        </ul>
+
+        <div class="section-label">Outputs</div>
+        <!-- ENGINEERING: _versions/4.0/outputs/ -->
+        <ul class="param-list">
+          <li>Location Product Flow Report</li>
+          <li>Lane Aggregated Report <span class="tag-mini">incl. Asset Utilization</span> <span class="new-badge">New in 4.0</span></li>
+        </ul>
+      </article>
+    </main>
+  </div>
+</section>
+
+<!-- ============================================================
+     PAGE: Optimize Network — v3.8 (Archived)
+     ============================================================ -->
+<section class="page" id="page-3-8">
+  <div class="doc-root">
+    <nav class="sidebar">
+      <div class="sb-note-label">Network Science Notes</div>
+      <div class="sb-category">Analyze Greenfield</div>
+      <div class="sb-category">Cluster Locations</div>
+      <div class="sb-category">Generate Landed Cost</div>
+      <div class="sb-category active-note">Optimize Network <span class="sb-version-chip archived">v3.8</span></div>
+      <div class="sb-sub">
+        <a class="sb-link current" href="javascript:void(0)">Overview</a>
+        <a class="sb-link" href="javascript:void(0)">Inputs</a>
+        <a class="sb-link" href="javascript:void(0)">Outputs</a>
+        <a class="sb-link" href="javascript:void(0)">Parameters</a>
+        <a class="sb-link" href="javascript:void(0)">Changelog</a>
+      </div>
+      <!-- Note: shorter tree — no "Core Concepts" or "Tax Duty" existed yet. -->
+      <div class="sb-category">Optimize DC Assortment</div>
+    </nav>
+
+    <main class="doc-main">
+      <div class="breadcrumbs">
+        <a href="javascript:void(0)">Science Notes</a><span class="sep">›</span>
+        <a href="javascript:void(0)">Network Science Notes</a><span class="sep">›</span>
+        <a href="javascript:void(0)">Optimize Network</a>
+      </div>
+
+      <div class="version-switcher">
+        <button class="version-trigger" aria-haspopup="true" aria-expanded="false">
+          Version: <span class="version-trigger-label">3.8</span> <span class="caret">▾</span>
+        </button>
+        <div class="version-menu">
+          <div class="v-item" onclick="location.hash = ROUTES['4.1']"><span>4.1</span><span class="v-chip latest">Latest</span></div>
+          <div class="v-item" onclick="location.hash = ROUTES['4.0']"><span>4.0</span><span></span></div>
+          <div class="v-item selected" onclick="location.hash = ROUTES['3.8']"><span>3.8</span><span class="v-chip archived">Archived</span></div>
+        </div>
+      </div>
+
+      <!-- Fallback notice: hidden unless reached because Tax Duty doesn't
+           exist here. Can appear ABOVE the archived banner at the same
+           time — being redirected here and this version being archived
+           are two independent, both-true facts. -->
+      <div class="fallback-notice">
+        <span class="icon">↩</span>
+        <span>This page does not exist in Optimize Network 3.8, so we have taken you to the Optimize Network 3.8 overview.</span>
+      </div>
+
+      <div class="archived-banner">
+        <span class="icon">⚠</span>
+        <span>
+          You're viewing an <strong>archived version (3.8)</strong> of the Optimize Network Note.
+          This content is no longer updated. <a onclick="location.hash = ROUTES['4.1']">View the latest version (4.1) →</a>
+        </span>
+      </div>
+
+      <article>
+        <h1>Optimize Network</h1>
+        <div class="tldr">
+          The <strong>Optimize Network</strong> Note optimizes distribution networks, facility locations,
+          capacity planning, and sourcing decisions — configure inputs, the optimizer minimizes cost
+          subject to constraints, and it returns plans and KPIs.
+        </div>
+        <!-- ENGINEERING: still the same _shared/index.md. If a future
+             release needed 3.8's Overview to say something different
+             retroactively, that's the one case that would need a one-off
+             override file — it doesn't today. -->
+
+        <div class="section-label">Inputs</div>
+        <p>Units are a plain label on the Product table — no conversion logic yet.</p>
+        <!-- ENGINEERING: _versions/3.8/inputs/structural-tables/product.md -->
+        <table>
+          <thead><tr><th>Column</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>product_id</code></td><td>Unique product identifier</td></tr>
+            <tr><td><code>unit</code></td><td>Label only — not used in any conversion logic</td></tr>
+          </tbody>
+        </table>
+
+        <div class="section-label">Parameters · Run Modes</div>
+        <!-- ENGINEERING: _versions/3.8/parameters.md -->
+        <ul class="param-list">
+          <li>Cost Minimization</li>
+          <li>Profit Maximization</li>
+          <li>Incremental Run</li>
+        </ul>
+
+        <div class="section-label">Outputs</div>
+        <!-- ENGINEERING: _versions/3.8/outputs/ -->
+        <ul class="param-list">
+          <li>Location Product Flow Report</li>
+          <li>Lane Aggregated Report</li>
+        </ul>
+      </article>
+    </main>
+  </div>
+</section>
+
+<!-- ============================================================
+     PAGE: Search results — a dedicated view (MAPS TO: src/theme/SearchPage
+     + docusaurus-theme-search-typesense), not a section bolted onto a doc
+     page.
+     ============================================================ -->
+<section class="page" id="page-search">
+  <div class="search-page-inner">
+    <h1>Search</h1>
+    <div class="search-sub">Search the Optimize Network Note. A result only appears for a version if that version's content actually contains the term — try a few examples.</div>
+
+    <div class="search-input-row">
+      <input id="search-input" class="search-input" type="text" placeholder="Search Optimize Network docs…" oninput="renderSearchResults(this.value)" />
+    </div>
+    <div class="search-chips">
+      <button class="search-chip" onclick="setSearchQuery('tax duty')">tax duty</button>
+      <button class="search-chip" onclick="setSearchQuery('multi-unit planning')">multi-unit planning</button>
+      <button class="search-chip" onclick="setSearchQuery('asset utilization')">asset utilization</button>
+      <button class="search-chip" onclick="setSearchQuery('run modes')">run modes</button>
+    </div>
+
+    <div class="search-summary" id="search-summary"></div>
+    <div id="search-results-list"></div>
+
+    <!-- ENGINEERING: the version chip on each result is currently
+         unpopulated in production — typesense-scraper.config.json already
+         reserves a "version" facet, it just isn't filled in by anything
+         yet. The matching itself here is a tiny hardcoded keyword list
+         standing in for real Typesense relevance/indexing — the point
+         being demonstrated is "a result for a version only exists if that
+         version's build actually contains the term," not real search
+         ranking. -->
+  </div>
+</section>
+
+<script>
+/* ============================================================================
+   ROUTER — decides which single .page section is visible based on
+   location.hash, exactly like a browser decides which page to render based
+   on a URL path. The hash only exists because a single static file can't
+   have real separate URLs; production replaces this whole script with
+   nothing, since Docusaurus's own router does this for free once each
+   version is a real generated page. See the top-of-file comment for the
+   fallback-notice mechanics.
+   ========================================================================= */
+
+const ROUTES = {
+  "4.1": "#/science-notes/network-science-notes/optimize-network/4.1/",
+  "4.0": "#/science-notes/network-science-notes/optimize-network/4.0/",
+  "3.8": "#/science-notes/network-science-notes/optimize-network/3.8/",
+  "taxDuty": "#/science-notes/network-science-notes/optimize-network/4.1/inputs/specialized-tables/tax-duty/",
+  // Fallback routes: same target page as the plain version routes above,
+  // plus a marker so the router knows to reveal that page's
+  // .fallback-notice instead of landing there silently.
+  "fallback40": "#/science-notes/network-science-notes/optimize-network/4.0/?redirected-from=tax-duty",
+  "fallback38": "#/science-notes/network-science-notes/optimize-network/3.8/?redirected-from=tax-duty",
+  "search": "#/search",
+};
+
+// A small hardcoded stand-in for a real Typesense index. Each entry is one
+// page/section, tagged with the version it belongs to and the keywords it
+// actually contains — mirroring the real content differences built into
+// the 4.1/4.0/3.8 pages above (e.g. only 4.1 has anything about tax duty).
+const SEARCH_INDEX = [
+  { version: "4.1", title: "Optimize Network — Overview", path: "optimize-network / 4.1 /", route: "4.1", keywords: ["overview", "distribution", "network", "facility", "capacity"] },
+  { version: "4.1", title: "Optimize Network — Inputs", path: "optimize-network / 4.1 / inputs", route: "4.1", keywords: ["product", "uom", "base unit", "tax region"] },
+  { version: "4.1", title: "Optimize Network — Tax Duty", path: "optimize-network / 4.1 / inputs / specialized-tables", route: "taxDuty", keywords: ["tax duty", "tariff", "duty", "tax region"] },
+  { version: "4.1", title: "Optimize Network — Parameters", path: "optimize-network / 4.1 / parameters", route: "4.1", keywords: ["run modes", "cost minimization", "profit maximization", "incremental run", "multi-unit planning", "tariff-aware sourcing"] },
+  { version: "4.1", title: "Optimize Network — Outputs", path: "optimize-network / 4.1 / outputs", route: "4.1", keywords: ["location product flow report", "lane aggregated report", "asset utilization", "tax duty report"] },
+
+  { version: "4.0", title: "Optimize Network — Overview", path: "optimize-network / 4.0 /", route: "4.0", keywords: ["overview", "distribution", "network", "facility", "capacity"] },
+  { version: "4.0", title: "Optimize Network — Inputs", path: "optimize-network / 4.0 / inputs", route: "4.0", keywords: ["product", "uom", "base unit"] },
+  { version: "4.0", title: "Optimize Network — Parameters", path: "optimize-network / 4.0 / parameters", route: "4.0", keywords: ["run modes", "cost minimization", "profit maximization", "incremental run", "multi-unit planning"] },
+  { version: "4.0", title: "Optimize Network — Outputs", path: "optimize-network / 4.0 / outputs", route: "4.0", keywords: ["location product flow report", "lane aggregated report", "asset utilization"] },
+
+  { version: "3.8", title: "Optimize Network — Overview", path: "optimize-network / 3.8 /", route: "3.8", keywords: ["overview", "distribution", "network", "facility", "capacity"] },
+  { version: "3.8", title: "Optimize Network — Inputs", path: "optimize-network / 3.8 / inputs", route: "3.8", keywords: ["product", "unit"] },
+  { version: "3.8", title: "Optimize Network — Parameters", path: "optimize-network / 3.8 / parameters", route: "3.8", keywords: ["run modes", "cost minimization", "profit maximization", "incremental run"] },
+  { version: "3.8", title: "Optimize Network — Outputs", path: "optimize-network / 3.8 / outputs", route: "3.8", keywords: ["location product flow report", "lane aggregated report"] },
+];
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function versionChipHtml(version) {
+  if (version === "4.1") return `<span class="sr-chip latest">v4.1 · Latest</span>`;
+  if (version === "3.8") return `<span class="sr-chip archived">v3.8 · Archived</span>`;
+  return `<span class="sr-chip latest">v${version}</span>`;
+}
+
+function renderSearchResults(rawQuery) {
+  const summary = document.getElementById("search-summary");
+  const list = document.getElementById("search-results-list");
+  const query = rawQuery.trim().toLowerCase();
+
+  if (!query) {
+    summary.textContent = "Type a keyword above, or try one of the examples.";
+    list.innerHTML = "";
+    return;
+  }
+
+  const matches = SEARCH_INDEX
+    .map((entry) => {
+      const hit = entry.keywords.find((k) => k.includes(query));
+      return hit ? { ...entry, hit } : null;
+    })
+    .filter(Boolean);
+
+  if (matches.length === 0) {
+    summary.textContent = `No results for "${escapeHtml(rawQuery)}" in any version.`;
+    list.innerHTML = "";
+    return;
+  }
+
+  const versionsFound = [...new Set(matches.map((m) => m.version))];
+  summary.textContent =
+    `${matches.length} result${matches.length === 1 ? "" : "s"} for "${escapeHtml(rawQuery)}" — ` +
+    `found in v${versionsFound.join(", v")}.`;
+
+  list.innerHTML = matches
+    .map(
+      (m) => `
+    <div class="search-result" onclick="location.hash = ROUTES['${m.route}']">
+      <div class="sr-top">
+        <div class="sr-title">${escapeHtml(m.title)}</div>
+        ${versionChipHtml(m.version)}
+      </div>
+      <div class="sr-path">${escapeHtml(m.path)}</div>
+      <div class="sr-match">Matched: "${escapeHtml(m.hit)}"</div>
+    </div>`,
+    )
+    .join("");
+}
+
+function setSearchQuery(q) {
+  document.getElementById("search-input").value = q;
+  renderSearchResults(q);
+}
+
+// Keyed by BASE PATH ONLY (no "?query") — routeFromHash() strips the query
+// before doing this lookup (that's how the fallback routes resolve to the
+// same page as their plain counterparts). ROUTES.search carries a query
+// string ("#/search?q=tax-duty"), so its key here must be the stripped
+// base ("#/search"), not ROUTES.search verbatim — using the full string
+// with the query still attached was the bug that broke the search button.
+const PAGE_FOR_HASH = {
+  [ROUTES["4.1"]]: "page-4-1",
+  [ROUTES["4.0"]]: "page-4-0",
+  [ROUTES["3.8"]]: "page-3-8",
+  [ROUTES.taxDuty]: "page-4-1-taxduty",
+  "#/search": "page-search",
+};
+
+// Short, clean labels for the visible banner — deliberately not the raw
+// hash/query string, to keep the Prototype Hub view non-technical.
+const PAGE_BANNER_LABEL = {
+  "page-4-1": "/optimize-network/4.1/",
+  "page-4-0": "/optimize-network/4.0/",
+  "page-3-8": "/optimize-network/3.8/",
+  "page-4-1-taxduty": "/optimize-network/4.1/tax-duty/",
+  "page-search": "/search",
+};
+
+function routeFromHash() {
+  const hash = location.hash || ROUTES["4.1"];
+  const [basePath, query] = hash.split("?");
+  const pageId = PAGE_FOR_HASH[basePath] || "page-4-1";
+
+  document.querySelectorAll(".page").forEach((el) => el.classList.remove("active"));
+  const activePage = document.getElementById(pageId);
+  activePage.classList.add("active");
+
+  // Reveal the fallback notice only when this page was reached via a
+  // "redirected-from" route (i.e. the equivalent page didn't exist in the
+  // target version) — not on a normal, direct visit to this same page.
+  const arrivedViaFallback = Boolean(query) && query.includes("redirected-from");
+  activePage.querySelectorAll(".fallback-notice").forEach((el) => {
+    el.style.display = arrivedViaFallback ? "flex" : "none";
+  });
+
+  document.getElementById("fake-url").textContent = PAGE_BANNER_LABEL[pageId] || "";
+
+  document.querySelectorAll(".version-menu.open").forEach((m) => m.classList.remove("open"));
+
+  // Reset the search box each time this page is (re-)navigated to, so it
+  // never shows stale results from a previous visit.
+  if (pageId === "page-search") {
+    document.getElementById("search-input").value = "";
+    renderSearchResults("");
+  }
+}
+
+window.addEventListener("hashchange", routeFromHash);
+window.addEventListener("DOMContentLoaded", () => {
+  if (!location.hash) location.hash = ROUTES["4.1"];
+  routeFromHash();
+});
+
+/* Dropdown open/close — delegated so it works identically across every
+   duplicated version-switcher instance without needing unique IDs.
+   ENGINEERING: replace with @radix-ui/react-dropdown-menu in production. */
+document.addEventListener("click", (e) => {
+  const trigger = e.target.closest(".version-trigger");
+  if (trigger) {
+    const menu = trigger.nextElementSibling;
+    const isOpen = menu.classList.toggle("open");
+    trigger.setAttribute("aria-expanded", String(isOpen));
+    return;
+  }
+  if (!e.target.closest(".version-switcher")) {
+    document.querySelectorAll(".version-menu.open").forEach((m) => m.classList.remove("open"));
+    document.querySelectorAll(".version-trigger").forEach((t) => t.setAttribute("aria-expanded", "false"));
+  }
+});
+</script>
+
+</body>
+</html>

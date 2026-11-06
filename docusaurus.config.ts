@@ -75,7 +75,6 @@ const config: Config = {
           items: [
             {label: 'User guides', to: '/writing/user-guides'},
             {label: 'Release notes', to: '/writing/release-notes'},
-            {label: 'All writing samples', to: '/samples'},
           ],
         },
         {to: '/ai', label: 'AI', position: 'left'},
@@ -89,7 +88,7 @@ const config: Config = {
     footer: {
       style: 'light',
       links: [],
-      copyright: `Vidya Patil · Prague · ${new Date().getFullYear()} · <a href="/work">Case studies</a> · <a href="/samples">Writing samples</a> · Built with Docusaurus, deployed from GitHub`,
+      copyright: `Vidya Patil · Prague · ${new Date().getFullYear()} · <a href="/work">Case studies</a> · Built with Docusaurus, deployed from GitHub`,
     },
     prism: {theme: prismThemes.github, darkTheme: prismThemes.dracula, additionalLanguages: ['bash', 'json', 'yaml', 'python']},
     tableOfContents: {minHeadingLevel: 2, maxHeadingLevel: 4},
