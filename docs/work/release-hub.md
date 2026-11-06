@@ -35,6 +35,14 @@ Each change also carries what customers need to know, what they should do, what 
 - **Built the board**: an HTML page that reads a release tracker, with tabs for the internal briefing, what to share with customers, features that moved between releases, and release history. In August I proposed merging three overlapping dashboards into it, and we did.
 - **Built the tooling** with Claude Code. A drafter turns a Jira ticket and its dependencies into a proposed row. A daily job logs changes, drafts customer-ready paragraphs for rows that need action, and reminds owners when a date is missing. A release-note converter checks that the internal announcement covers every item.
 
+## What the drafter does, and what it leaves to a writer
+
+*Illustrative example with a fictional ticket.*
+
+| Ticket | Draft | The writer decides |
+| --- | --- | --- |
+| PLN-1042: require one approver before a plan goes live. Drafts still save as before. | Impact: heads up, the old way still works but the steps changed. Customers need to know: plans now need one approver. Customer action: choose an approver for each plan. | Heads up or immediate action? Drafts still save, so heads up. Add the date the approver must be set by, after checking it with the product manager. |
+
 ## Scale
 
 47 features previewed across five releases in the first three months, from six product managers.

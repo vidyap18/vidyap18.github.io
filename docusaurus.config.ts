@@ -70,7 +70,6 @@ const config: Config = {
       items: [
         {to: '/work', label: 'Work', position: 'left', activeBaseRegex: '^/work'},
         {to: '/samples', label: 'Writing samples', position: 'left', activeBaseRegex: '^/samples'},
-        {to: '/videos', label: 'Videos', position: 'left'},
         {to: '/cv', label: 'CV', position: 'left'},
         {href: 'https://www.linkedin.com/in/vidyapatil18', label: 'LinkedIn', position: 'right'},
         {href: 'mailto:vidyapatil123@gmail.com', label: 'Email', position: 'right'},

@@ -1,144 +1,141 @@
-export type WorkItem = {
-  slug: string;
-  kicker: string;
-  title: string;
-  why: string;
-  image: string;
-  imageAlt: string;
-};
+// Homepage content. Every claim here is backed by a case study page.
 
 export const hero = {
-  name: 'Vidya Patil · Senior technical writer and documentation lead',
-  headline: 'I write product docs and build the workflows that ship them.',
-  text:
-    'Thirteen years in enterprise software. For the last two I have headed documentation at an AI supply chain planning platform. I prototype changes before anyone builds them, then write the pages and merge the pull requests myself.',
-  facts: [
-    'Prague',
-    'Authorized to work in the Czech Republic',
-    'Open to EU remote roles or hybrid in Prague',
-    'English, Hindi, Kannada, Marathi',
-  ],
-  aside:
-    "My employer's documentation sits behind a login. The work below uses real numbers. The writing samples are real pages with identifying details masked where I can show them, and labelled re-creations where I cannot.",
+  name: 'Vidya Patil',
+  title: 'Senior Manager, Documentation at Lyric',
+  facts: ['Prague', 'Authorized to work in the Czech Republic'],
+  line: 'I write release notes and product docs, run the release process behind them, and build the prototypes and AI tools that change how my team works.',
 };
 
-// Order: the three strongest first (docs-as-code, interactive docs, AI), then release work, then measurement.
-export const work: WorkItem[] = [
-  {
-    slug: 'docs-as-code',
-    kicker: 'Docs platform · shipped June 2026',
-    title: 'Moving four documentation spaces to docs-as-code',
-    why: 'GitBook to a Docusaurus site with pull-request review, previews and CI. 14 people outside the writing team merged docs changes in the five months after go-live.',
-    image: '/img/work/persona-led-ia-prototype.png',
-    imageAlt: 'Role-based information architecture prototype for the docs site',
+// Selected work: one wide feature, then two compact rows.
+export const feature = {
+  kicker: 'Working prototype',
+  title: 'Sync or commit: see what gets overwritten before you click',
+  context:
+    "Before a sync or a commit, a planner needs to know which tables will be overwritten, theirs or a colleague's. The simulator lets them tick what changed and see the result before they touch real data.",
+  demo: '/demos/sync-commit-simulator.html',
+  demoTitle: 'Sync and commit simulator: tick what changed and see what each operation overwrites',
+  action: {label: 'Try the prototype', to: '/samples/scenarios/syncing-and-committing-scenarios'},
+  more: {label: 'See all my prototypes', to: '/work/prototypes'},
+};
+
+export const releaseWriting = {
+  kicker: 'Release writing',
+  title: 'Explaining a change that moves people’s work',
+  context: 'For planners whose models were about to split into a draft and a live version. They needed to know nothing would break, and to decide when to promote.',
+  excerpt: [
+    'Until now, every change a planner saved to a model went live the moment it was saved, in front of everyone using it. A half-finished hierarchy or a renamed measure could land mid-cycle.',
+    'Planning models now have two workspaces, Build and Live, so you can change one and keep the other steady.',
+    'Nothing is promoted automatically. You decide which models to promote and when.',
+  ],
+  label: 'Re-created for a fictional product, from a release I wrote.',
+  action: {label: 'Read the excerpt', to: '/samples/release-comms/release-note-build-and-live'},
+};
+
+export const releaseDelivery = {
+  kicker: 'Release delivery',
+  title: 'One rollout, from internal preview to publication',
+  context: 'Separate development and production environments, rolled out to every customer in September 2026. I owned the communication end to end.',
+  steps: [
+    {when: 'About a week before', what: 'Internal preview in the Release Hub, sorted by what customers must do'},
+    {when: 'Before rollout', what: 'A briefing for customer success, through seven drafts, and the customer email'},
+    {when: 'Rollout', what: 'A customer briefing with a five-step migration and an FAQ'},
+    {when: 'Release day', what: 'The release note and a 3:38 walkthrough video, which I produced'},
+  ],
+  result: 'Customers had the email and the briefing before rollout day. The release note and the video went out with the release.',
+  action: {label: 'See the rollout', to: '/work/release-notes'},
+};
+
+// AI and documentation.
+export const aiEvaluation = {
+  kicker: 'Evaluating an AI assistant',
+  title: 'Is a wrong answer the docs’ fault, or the system’s?',
+  context:
+    'Our documentation assistant answers customer questions from the docs. I designed its evaluation: 126 graded answers, 22 reviewers, and the cited source graded separately from the answer.',
+  table: [
+    {label: 'Fully correct', a: '15 of 39', b: '58 of 87'},
+    {label: 'Correct source cited', a: 'about half', b: 'about 4 in 5'},
+  ],
+  tableNote: 'Round one, July 2026, internal reviewers. Round two, July to August, customer-facing teams. Different questions in each round, so read it as a direction.',
+  checks: [
+    'Does the page name the thing the reader asked about?',
+    'Does each section make sense on its own?',
+    'Is the fact only in a table?',
+    'Are prerequisites inside the procedure?',
+    'Does the page say what the product cannot do?',
+    'Is each term used one way?',
+    'Do two pages contradict each other?',
+  ],
+  verdict: 'If the page passes all seven, the problem goes to engineering, not to the writer.',
+  action: {label: 'See the evaluation', to: '/work/ask-ai'},
+};
+
+export const aiTool = {
+  kicker: 'Building AI tools for the team',
+  title: 'A drafter that turns a ticket into a release preview',
+  context: 'I built it with Claude Code. It drafts the customer-facing row; a writer decides what customers are told.',
+  input: {
+    label: 'Ticket',
+    lines: ['PLN-1042 · Require one approver before a plan goes live', 'Drafts still save as before. Approver is set per plan.'],
   },
-  {
-    slug: 'prototypes',
-    kicker: 'Design prototypes · 2025 to 2026',
-    title: 'I prototype it before anyone builds it',
-    why: 'Clickable prototypes for navigation, versioning, landing pages and search, used to get a decision before engineering time is spent. Four of six shipped or were adopted; versioning is scheduled for build.',
-    image: '/img/prototypes/versioning.png',
-    imageAlt: 'Prototype of per-note documentation versioning with a version picker and new-in-version badges',
+  draft: {
+    label: 'Draft',
+    lines: [
+      'Impact: Heads up. The old way still works, but the steps changed.',
+      'Customers need to know: plans now need one approver before they go live.',
+      'Customer action: choose an approver for each plan.',
+    ],
   },
-  {
-    slug: 'try-it-docs',
-    kicker: 'Interactive docs · shipped 2026',
-    title: 'Docs readers can try',
-    why: 'An access calculator, a sync-and-commit simulator and live chart previews on 17 pages, so readers check their own case instead of reading a matrix.',
-    image: '/img/work/demo-access-calculator.png',
-    imageAlt: 'Scenario access calculator embedded in a documentation page',
+  writer: {
+    label: 'The writer decides',
+    lines: [
+      'Heads up or immediate action? Drafts still save, so heads up.',
+      'Add the date the approver must be set by, after checking it with the product manager.',
+    ],
   },
-  {
-    slug: 'ask-ai',
-    kicker: 'AI assistant · live since August 2026',
-    title: 'Ask AI: making the docs answerable by an assistant',
-    why: 'I set the requirements, ran a two-round evaluation with 22 reviewers, and wrote the readiness check each page passes. Fully correct answers rose from about four in ten to two in three.',
-    image: '/img/work/ask-ai-dashboard.png',
-    imageAlt: 'Ask AI usage dashboard with numbers blurred',
-  },
-  {
-    slug: 'release-hub',
-    kicker: 'Release communication · in use since July 2026',
-    title: 'The Release Hub: what changes for customers, a week ahead',
-    why: 'Every change sorted by what customers must do, published about eight days before release. 47 features previewed across five releases in three months.',
-    image: '/img/work/release-hub.png',
-    imageAlt: 'Release Hub board with fictional features grouped by customer impact',
-  },
-  {
-    slug: 'release-notes',
-    kicker: 'Release notes · since February 2025',
-    title: 'Release notes and release videos, every two weeks',
-    why: 'More than 40 releases, a rollout package for the biggest change of 2026, and a video and podcast format I introduced.',
-    image: '/img/work/release-notes-redesign.png',
-    imageAlt: 'Redesigned release notes page with highlights panel and filters',
-  },
-];
+  label: 'Illustrative example with a fictional ticket.',
+  action: {label: 'See the Release Hub', to: '/work/release-hub'},
+};
+
+export const aiShipping = {
+  kicker: 'Shipping product changes with AI',
+  title: 'Writers who change the product, not just the docs',
+  items: [
+    {
+      role: 'Led',
+      text: 'My writers ship in-product help straight into the product’s frontend code: info tips, a close control for the chat widget, and removing coach marks that had outlived their use. Six changes merged since September 2026, three more in review, including native info pop-ups that replace a third-party in-app help tool.',
+    },
+    {
+      role: 'Built',
+      text: 'A working branch of the docs site that splits keyword search from the AI assistant, so a typed question goes to the assistant instead of returning no results. Engineering shipped the approach in their merged change.',
+    },
+    {
+      role: 'Built',
+      text: 'Docs-site code: search analytics, a CI workflow that keeps a last-updated date on about 3,000 pages, and a fullscreen control for embedded video.',
+    },
+  ],
+  action: {label: 'See how the team works with AI', to: '/work/ask-ai#how-the-team-writes-with-ai-now'},
+};
 
 export const moreWork = [
-  {slug: 'docs-analytics', title: 'Deciding what to document next from the data', text: 'About half of 222 support tickets in a five-week sample were knowledge gaps. Also: search analytics and a screenshot audit.'},
-  {slug: 'roadmap', title: 'A roadmap leadership can read', text: 'A Jira-fed roadmap dashboard in plain English, used in the CEO\'s weekly update.'},
-  {slug: 'in-product-help', title: 'Help inside the product', text: 'Guided tours, beacons and tooltips, with limits on how often they appear.'},
-];
-
-export const quotes = [
   {
-    text: 'This is incredible. It addresses one of our top customer-success focus areas.',
-    who: 'Senior Director, Customer Success, on the Release Hub',
+    title: 'Moving four documentation spaces to docs-as-code',
+    proof: '14 people outside the writing team merged documentation changes in the five months after go-live.',
+    to: '/work/docs-as-code',
   },
   {
-    text: 'The first thing people noticed and subsequently loved was the Ask AI feature.',
-    who: 'Customer Success, on the assistant launch',
+    title: 'Prototypes',
+    proof: 'Six clickable prototypes for navigation, versioning, landing pages and search. Five shipped or were adopted.',
+    to: '/work/prototypes',
   },
   {
-    text: 'The release notes we publish showcase a great personality.',
-    who: 'Founder and CEO, in the company-wide channel',
-  },
-];
-
-export const samples = [
-  {
-    to: '/samples/scenarios',
-    kicker: 'User guide · real pages, masked',
-    title: 'Scenarios and permissions, with four working try-it demos',
-    text: 'Understanding permissions, syncing and committing, and a task page. Real pages with identifying details masked.',
+    title: 'Writing samples',
+    proof: 'A user guide with working demos, API docs from an OpenAPI spec, release communication, a method article and a design proposal.',
+    to: '/samples',
   },
   {
-    to: '/samples/forecast',
-    kicker: 'User guide · re-created',
-    title: 'Train your first forecast model',
-    text: 'A nine-step quick start, a retrain how-to, a settings reference, and using the in-product AI assistant.',
+    title: 'All work',
+    proof: 'Interactive docs, the Release Hub, measurement, roadmap communication, in-product help and videos.',
+    to: '/work',
   },
-  {
-    to: '/samples/release-comms',
-    kicker: 'Release communication · re-created',
-    title: 'A release note and the customer briefing behind it',
-    text: "The format I use for changes that move someone's workflow: release note, customer briefing, email, internal briefing, video brief.",
-  },
-  {
-    to: '/samples/api',
-    kicker: 'API docs · re-created, not runnable',
-    title: 'An API tutorial and the reference page it leads to',
-    text: 'From an OpenAPI 3.0 spec written for the sample: tutorial, how-to, reference, explanation.',
-  },
-  {
-    to: '/samples/method/retrieval-ready-docs',
-    kicker: 'Method',
-    title: 'Writing documentation an AI assistant can answer from',
-    text: 'What the assistant sees in a page, the seven checks, and how to triage a wrong answer.',
-  },
-  {
-    to: '/samples/design/per-note-doc-versioning-proposal',
-    kicker: 'Design proposal',
-    title: 'Per-note documentation versioning',
-    text: 'A proposal to engineering, with options, trade-offs and a pilot plan.',
-  },
-];
-
-export const videos = [
-  {id: 'b7rydgtgyf', title: 'October 2026 release highlights', length: '1:15', note: "A whole release in a minute, with links into the docs. Opens the site's What's New."},
-  {id: 'nh4bb7rchx', title: 'Development and production environments walkthrough', length: '3:38', note: 'The biggest change of 2026, presented by the product manager from the briefing I wrote.'},
-  {id: 'knohl2w7z5', title: 'Semantic model introduction', length: '1:58', note: 'Feature explainer with a synthetic presenter.'},
-  {id: 'prrybl0ws7', title: 'Unified application view', length: '1:54', note: 'Feature explainer.'},
-  {id: 'rfbmiks1bb', title: 'Adding notes inline', length: '1:43', note: 'A how-to in under two minutes.'},
-  {id: 'lwy45h61u4', title: 'Release podcast, first episode', length: '4:56', note: 'The two-host audio format I introduced in March 2025.'},
 ];

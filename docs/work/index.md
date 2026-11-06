@@ -23,6 +23,7 @@ Six projects from the last two years at Lyric, an AI supply chain planning platf
 - [Deciding what to document next from the data](./docs-analytics.md): a support-ticket analysis, search analytics and a screenshot audit. October 2026.
 - [A roadmap leadership can read](./roadmap.md): a Jira-fed roadmap dashboard in plain English. In use since September 2026.
 - [Help inside the product](./in-product-help.md): guided tours, beacons and tooltips. Running since June 2025.
+- [Videos](/videos): release walkthroughs, feature explainers and a release podcast.
 
 ## Leading the team
 
