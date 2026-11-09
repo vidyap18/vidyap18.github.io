@@ -2,9 +2,9 @@
 
 export const intro = {
   name: 'Vidya Patil',
-  title: 'Senior Manager, Documentation at Lyric',
+  title: 'Senior technical writer and documentation lead',
   facts: ['Prague', 'Authorized to work in the Czech Republic'],
-  line: 'A hands-on documentation leader. I write complex product guides, lead cross-functional release programs, and build prototypes and AI tools.',
+  line: 'I write complex product guides, lead cross-functional release programs, and build prototypes and AI tools.',
 };
 
 export type Tile = {

@@ -39,7 +39,7 @@ const config: Config = {
       tagName: 'link',
       attributes: {
         rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap',
+        href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..500&family=JetBrains+Mono:wght@400;500&display=swap',
       },
     },
   ],
@@ -56,6 +56,8 @@ const config: Config = {
         },
         blog: false,
         theme: {customCss: './src/css/custom.css'},
+        // Tailored CV versions are hidden: keep them out of the sitemap.
+        sitemap: {ignorePatterns: ['/cv/**']},
       } satisfies Preset.Options,
     ],
   ],
@@ -75,6 +77,7 @@ const config: Config = {
           items: [
             {label: 'User guides', to: '/writing/user-guides'},
             {label: 'Release notes', to: '/writing/release-notes'},
+            {label: 'API documentation', to: '/samples/api'},
           ],
         },
         {to: '/work', label: 'Case studies', position: 'left'},
@@ -87,9 +90,34 @@ const config: Config = {
       ],
     },
     footer: {
-      style: 'light',
-      links: [],
-      copyright: `Vidya Patil · Prague · ${new Date().getFullYear()} · <a href="/work">Case studies</a> · Built with Docusaurus, deployed from GitHub`,
+      style: 'dark',
+      links: [
+        {
+          title: 'Work',
+          items: [
+            {label: 'Case studies', to: '/work'},
+            {label: 'AI', to: '/ai'},
+            {label: 'Program management', to: '/program-management'},
+          ],
+        },
+        {
+          title: 'Writing',
+          items: [
+            {label: 'User guides', to: '/writing/user-guides'},
+            {label: 'Release notes', to: '/writing/release-notes'},
+            {label: 'API documentation', to: '/samples/api'},
+          ],
+        },
+        {
+          title: 'Contact',
+          items: [
+            {label: 'Email', href: 'mailto:vidyapatil123@gmail.com'},
+            {label: 'LinkedIn', href: 'https://www.linkedin.com/in/vidyapatil18'},
+            {label: 'CV', to: '/cv'},
+          ],
+        },
+      ],
+      copyright: `© ${new Date().getFullYear()} Vidya Patil · Prague · Product names and data in samples are masked or fictional.`,
     },
     prism: {theme: prismThemes.github, darkTheme: prismThemes.dracula, additionalLanguages: ['bash', 'json', 'yaml', 'python']},
     tableOfContents: {minHeadingLevel: 2, maxHeadingLevel: 4},

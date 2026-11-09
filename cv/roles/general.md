@@ -11,6 +11,7 @@ Senior technical writer and documentation lead · Prague · Authorized to work i
 
 vidyapatil123@gmail.com · +420 737 488 486 · [linkedin.com/in/vidyapatil18](https://www.linkedin.com/in/vidyapatil18)
 
+
 ## Summary
 
 Technical writer and documentation leader with thirteen years in enterprise software: user guides, API and SDK references, release communication and in-product guidance. I run documentation as code, write and ship pages myself, and design documentation that people and AI assistants can both use.
@@ -51,10 +52,11 @@ Data integration platform.
 ### Technical Writer · Siemens · Pune · February 2012 to April 2015
 
 - Wrote user manuals, system guides and context-sensitive help for industrial software with global engineering teams.
+- Wrote documentation for translation into German and other European languages, and managed the translation vendors.
 
 ## Skills
 
-- **Documentation:** user guides, API and SDK references, release notes, in-product guidance, UX writing, information architecture, content audits.
+- **Documentation:** user guides, API and SDK references, release notes, in-product guidance, UX writing, information architecture, content audits, localization (writing for translation, managing translation vendors).
 - **Docs as code:** Docusaurus, Markdown and MDX, Git and GitHub, pull-request review, CI workflows, Typesense search, PostHog analytics.
 - **APIs:** REST, OpenAPI and Swagger, Postman, JSON.
 - **AI:** retrieval-augmented assistants, answer evaluation, writing for retrieval, Claude Code tooling.
@@ -66,6 +68,6 @@ Bachelor of Engineering in Computer Science · Visvesvaraya Technological Univer
 
 ## Languages
 
-English, Hindi, Kannada: native · Marathi: advanced
+English, Hindi, Kannada: native · Marathi: advanced · Czech: none
 
 </div>

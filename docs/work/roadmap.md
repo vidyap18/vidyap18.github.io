@@ -15,7 +15,7 @@ Product needed to track what each team was building. Customers needed to see wha
 
 <RoadmapDemo />
 
-*A recreation of both views on one fictional dataset. Switch the view and filter by quarter. [See a screenshot of the internal view](/img/work/roadmap-dashboard.png).*
+*A recreation of the dashboard on one fictional dataset. Switch between the internal and customer views, pick a quarter, filter by area or status, and click a row for the full description.*
 
 ## The problem
 
