@@ -910,7 +910,7 @@ html:not([data-theme='dark']) .cv { --cv-accent: #1d3b8b; --cv-soft: #f2f5fb; }
 .cv h2#highlights + ul > li::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 0.38rem; height: 0.38rem; background: var(--cv-accent); border-radius: 1px; }
 .cv li strong { font-weight: 600; }
 /* One line per skill group ("Label: values"), so an ATS reads each label with its own values. */
-.cv-skills p { margin: 0 0 0.35rem; padding-left: 1.2rem; text-indent: -1.2rem; color: var(--cv-muted); }
+.cv-skills p { margin: 0 0 0.35rem; color: var(--cv-muted); }
 .cv-skills strong { font-weight: 600; color: var(--cv-ink); }
 .cv-download { position: absolute; top: 3.2rem; right: 3.6rem; margin: 0 !important; }
 .cv-download a { display: inline-flex; align-items: center; height: 2.4rem; padding: 0 1rem; border-radius: 8px; background: var(--cv-accent); color: #fff; font-weight: 600; font-size: 0.88rem; }
