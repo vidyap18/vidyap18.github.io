@@ -1,5 +1,6 @@
 import type {ReactNode} from 'react';
 import Layout from '@theme/Layout';
+import PageNav from '../components/PageNav';
 import {featured, groups} from '../data/media';
 
 const url = (id: string) => `https://lyric.wistia.com/medias/${id}`;
@@ -7,12 +8,13 @@ const url = (id: string) => `https://lyric.wistia.com/medias/${id}`;
 export default function Videos(): ReactNode {
   return (
     <Layout title="Videos & podcasts" description="Release walkthroughs, product explainers and a release podcast, all published to customers.">
+      <PageNav title="Videos & Podcasts">
       <main className="pg">
         <span className="pg-eyebrow">Videos & podcasts</span>
         <h1 className="pg-title">Videos & podcasts</h1>
         <p className="pg-lede">Release walkthroughs, product explainers and a release podcast, all published to customers on the documentation site. Each card opens the video on Wistia, the company's public video host, in a new tab.</p>
 
-        <section className="pg-section">
+        <section className="pg-section" data-nav="Featured">
           <div className="pg-split">
             <div className="pg-embed">
               <iframe
@@ -60,6 +62,7 @@ export default function Videos(): ReactNode {
           </section>
         ))}
       </main>
+      </PageNav>
     </Layout>
   );
 }

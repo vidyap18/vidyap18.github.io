@@ -12,6 +12,7 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'User guides',
       collapsed: false,
+      link: {type: 'doc', id: 'samples/user-guides'},
       items: [
         {type: 'doc', id: 'samples/scenarios/index', label: 'About the scenario guides'},
         'samples/scenarios/getting-started-with-scenarios',
@@ -25,7 +26,8 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Release notes',
       collapsed: false,
-      items: [{type: 'link', label: 'Interactive release notes', href: '/writing/release-notes'}],
+      link: {type: 'doc', id: 'samples/release-notes'},
+      items: [],
     },
     {
       type: 'category',

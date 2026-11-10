@@ -18,10 +18,11 @@ export const tiles: Tile[] = [
   {
     n: '01',
     title: 'Writing',
-    text: 'User guides for a complex supply chain planning platform, with demos readers can try, and release notes that range from plain to playful.',
+    text: 'User guides for a complex supply chain planning platform, with demos readers can try, release notes that range from plain to playful, and API documentation.',
     links: [
       {label: 'User guides', to: '/writing/user-guides'},
       {label: 'Release notes', to: '/writing/release-notes'},
+      {label: 'API documentation', to: '/samples/api'},
     ],
   },
   {
