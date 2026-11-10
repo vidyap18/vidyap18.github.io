@@ -68,6 +68,6 @@ Bachelor of Engineering in Computer Science · Visvesvaraya Technological Univer
 
 ## Languages
 
-English, Hindi, Kannada: native · Marathi: advanced · Czech: none
+English, Hindi, Kannada: native · Marathi: advanced
 
 </div>
