@@ -837,23 +837,140 @@ html.docs-wrapper, .main-wrapper { background: var(--vp-paper); }
 .footer--dark .container { max-width: 1160px; }
 [data-theme='dark'] .navbar__brand::before { background: var(--vp-accent); color: #0b1220; }
 
-.cv-download a { display: inline-flex; align-items: center; height: 2.5rem; padding: 0 1rem; border-radius: 8px; background: var(--vp-accent); color: #fff; font-weight: 600; font-size: 0.92rem; }
-.cv-download a:hover { color: #fff; text-decoration: none; filter: brightness(1.05); }
+/* CV: a document on screen, the same document as an A4 PDF. */
+/* The CV uses static Inter files (one per weight). The variable Inter from Google Fonts prints to PDF as
+   fragmented text, which applicant tracking systems read as broken words. Files: static/fonts/inter-cv (SIL OFL). */
+@font-face { font-family: 'Inter CV'; font-style: normal; font-weight: 400; font-display: block; src: url('/fonts/inter-cv/inter-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Inter CV'; font-style: normal; font-weight: 500; font-display: block; src: url('/fonts/inter-cv/inter-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Inter CV'; font-style: normal; font-weight: 600; font-display: block; src: url('/fonts/inter-cv/inter-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Inter CV'; font-style: normal; font-weight: 700; font-display: block; src: url('/fonts/inter-cv/inter-latin-700-normal.woff2') format('woff2'); }
+.cv, .cv * { font-family: 'Inter CV', Inter, Helvetica, Arial, sans-serif; }
+.cv {
+  --cv-ink: var(--vp-ink);
+  --cv-muted: var(--vp-ink-2);
+  --cv-accent: var(--vp-accent);
+  --cv-soft: var(--vp-accent-soft);
+  position: relative;
+  max-width: 860px;
+  margin: 2.5rem auto 4rem;
+  padding: 3.2rem 3.6rem 3rem;
+  background: var(--vp-card);
+  border: 1px solid var(--vp-rule);
+  border-radius: 10px;
+  box-shadow: var(--vp-shadow);
+  border-top: 4px solid var(--cv-accent);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--cv-ink);
+}
+html:not([data-theme='dark']) .cv { --cv-accent: #1d3b8b; --cv-soft: #f2f5fb; }
+.cv-head { padding-bottom: 1.2rem; border-bottom: 1px solid var(--vp-rule); }
+.cv h1 { font-size: 2.6rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; margin: 0 0 0.4rem; }
+.cv-headline { font-size: 1.1rem; font-weight: 500; color: var(--cv-accent); margin: 0 0 0.85rem; }
+.cv-contact { display: flex; flex-wrap: wrap; gap: 0.25rem 1.3rem; margin: 0; font-size: 0.88rem; color: var(--cv-muted); }
+.cv-contact > * { white-space: nowrap; }
+.cv-print-only { display: none !important; }
+.cv-where { margin: 0 0 0.35rem !important; font-size: 0.88rem; color: var(--cv-muted); }
+.cv-contact a { color: var(--cv-muted); }
+.cv-contact a:hover { color: var(--cv-accent); }
+/* LinkedIn and the portfolio read as links, on screen and in the PDF. */
+.cv-contact a[href^='http'] { color: var(--cv-accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.cv h2 {
+  display: flex; align-items: center; gap: 0.8rem;
+  margin: 2.3rem 0 0.9rem;
+  font-size: 0.76rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cv-accent);
+}
+.cv h2::after { content: ''; flex: 1; height: 1px; background: var(--vp-rule); }
+.cv p { margin: 0 0 0.6rem; }
+.cv-role { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin: 1.5rem 0 0.15rem; font-size: 1.04rem; font-weight: 650; }
+.cv h2 + .cv-role { margin-top: 0.4rem; }
+/* Each new job starts below a rule, so the eye finds where one job ends and the next begins. */
+.cv .cv-role:not(h2 + .cv-role) { margin-top: 1.4rem; padding-top: 1.2rem; border-top: 1px solid var(--vp-rule); }
+.cv-dates { flex: none; font-size: 0.85rem; font-weight: 500; color: var(--cv-muted); font-variant-numeric: tabular-nums; }
+.cv .cv-group {
+  display: flex; align-items: center; gap: 0.6rem;
+  margin: 1.1rem 0 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--cv-accent);
+}
+.cv .cv-group::before { content: ''; width: 0.9rem; height: 2px; background: var(--cv-accent); flex: none; }
+.cv .cv-group::after { content: ''; flex: 1; height: 0; border-top: 1px dashed var(--vp-rule); }
+.cv-role + p { font-size: 0.9rem; color: var(--cv-muted); margin-bottom: 0.55rem; }
+.cv-role + p strong { color: var(--cv-ink); font-weight: 600; }
+.cv ul { margin: 0 0 0.4rem; padding-left: 1.1rem; }
+.cv li { margin: 0 0 0.38rem; padding-left: 0.15rem; }
+.cv li::marker { color: var(--cv-accent); font-size: 0.85em; }
+/* Highlights: a tinted panel, the first thing a recruiter reads after the profile. */
+.cv h2#highlights + ul { list-style: none; margin: 0; padding: 0.85rem 1.1rem; background: var(--cv-soft); border-left: 3px solid var(--cv-accent); border-radius: 0 6px 6px 0; }
+.cv h2#highlights + ul > li { position: relative; padding-left: 1.05rem; margin-bottom: 0.3rem; }
+.cv h2#highlights + ul > li:last-child { margin-bottom: 0; }
+.cv h2#highlights + ul > li::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 0.38rem; height: 0.38rem; background: var(--cv-accent); border-radius: 1px; }
+.cv li strong { font-weight: 600; }
+/* One line per skill group ("Label: values"), so an ATS reads each label with its own values. */
+.cv-skills p { margin: 0 0 0.35rem; padding-left: 1.2rem; text-indent: -1.2rem; color: var(--cv-muted); }
+.cv-skills strong { font-weight: 600; color: var(--cv-ink); }
+.cv-download { position: absolute; top: 3.2rem; right: 3.6rem; margin: 0 !important; }
+.cv-download a { display: inline-flex; align-items: center; height: 2.4rem; padding: 0 1rem; border-radius: 8px; background: var(--cv-accent); color: #fff; font-weight: 600; font-size: 0.88rem; }
+.cv-download a:hover { color: var(--vp-accent-ink); text-decoration: none; filter: brightness(1.06); }
+@media screen and (max-width: 760px) {
+  .cv { margin: 0; padding: 1.8rem 16px 2.4rem; border: 0; border-radius: 0; box-shadow: none; }
+  .cv h1 { font-size: 2rem; }
+  .cv-download { position: static; margin: 1.2rem 0 0 !important; }
+  .cv-role { flex-direction: column; gap: 0.1rem; }
+}
 
 /* Print: the CV page becomes the PDF recruiters forward. */
 @media print {
-  @page { size: A4; margin: 14mm 15mm; }
+  @page {
+    size: A4;
+    margin: 13mm 15mm 13mm;
+    @bottom-right { content: 'Vidya Patil · CV · ' counter(page) ' / ' counter(pages); font: 7pt 'Inter CV', Helvetica, Arial, sans-serif; color: #8a94a6; }
+  }
   .navbar, .footer, .cv-download, .theme-back-to-top-button, .skipToContent_fXgn { display: none !important; }
   html, body, .main-wrapper { background: #fff !important; }
-  body { font-size: 10.5pt; color: #111; }
-  .vp-page { max-width: none !important; padding: 0 !important; margin: 0 !important; }
-  .vp-page h1 { font-size: 22pt; margin: 0 0 4pt; }
-  .vp-page h2 { font-size: 12pt; margin: 12pt 0 4pt; padding-bottom: 2pt; border-bottom: 1px solid #ccc; text-transform: uppercase; letter-spacing: 0.06em; color: #0f1b2d; }
-  .vp-page h3 { font-size: 10.5pt; margin: 8pt 0 2pt; }
-  .vp-page p, .vp-page li { margin: 0 0 3pt; line-height: 1.4; }
-  .vp-page a { color: #111; text-decoration: none; }
-  h2, h3 { break-after: avoid; }
-  li { break-inside: avoid; }
+  .cv {
+    --cv-ink: #0f1b2d; --cv-muted: #4a5568; --cv-accent: #1d3b8b; --cv-soft: #f2f5fb; --vp-rule: #d5dae2; --vp-ink-3: #8a94a6;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    /* Plain letter forms only: stylistic alternates and kerning split words into fragments when an ATS extracts the PDF text. */
+    font-feature-settings: normal; font-variant-ligatures: none; font-kerning: none; text-rendering: optimizeSpeed;
+    max-width: none; margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; background: #fff;
+    border-top: 0;
+    font-size: 9.6pt; line-height: 1.42;
+  }
+  .cv a { text-decoration: none; }
+  .cv .cv-contact a[href^='http'] { text-decoration: underline; text-decoration-thickness: 0.5pt; text-underline-offset: 1.5pt; }
+  .cv-head { padding-bottom: 8pt; border-bottom: 1.5pt solid var(--cv-accent); }
+  .cv h1 { font-size: 25pt; margin-bottom: 2pt; }
+  .cv-headline { font-size: 11.5pt; margin-bottom: 5pt; }
+  .cv-print-only { display: inline !important; }
+  .cv-contact, .cv-where { font-size: 8.8pt; }
+  /* On the one-line PDF header, dots separate the contact details; on screen they wrap, so a gap does. */
+  .cv-contact { gap: 0 0.55rem; }
+  .cv-contact > * + *::before { content: '·'; display: inline-block; text-decoration: none; margin-right: 0.55rem; color: var(--vp-ink-3); }
+  .cv-where { margin-bottom: 2pt !important; }
+  .cv h2 { font-size: 7.8pt; margin: 12pt 0 5pt; letter-spacing: 0.06em; }
+  .cv h2#highlights + ul { padding: 6pt 9pt; }
+  .cv h2#highlights + ul > li { margin-bottom: 1.8pt; }
+  .cv-role { font-size: 10.4pt; margin: 10pt 0 1pt; }
+  .cv .cv-role:not(h2 + .cv-role) { margin-top: 8pt; padding-top: 7pt; border-top: 0.75pt solid var(--vp-rule); }
+  /* The page wrapper adds a bottom margin that can spill onto an empty last page; cancel it. */
+  .cv > :last-child { margin-bottom: 0 !important; }
+  .cv { margin-bottom: -3rem !important; }
+  .cv-dates { font-size: 8.8pt; }
+  .cv-role + p { font-size: 9pt; margin-bottom: 4pt; }
+  .cv p { margin-bottom: 4pt; }
+  .cv li { margin-bottom: 2.6pt; }
+  .cv-skills p { margin-bottom: 2.5pt; }
+  h2, h3, .cv-role + p { break-after: avoid; page-break-after: avoid; }
+  .cv-role + p + ul > li:first-child { break-before: avoid; }
+  /* Chrome ignores break-after on headings, so each job heading reserves room for its first lines: with less than that left on the page, it moves to the next page. */
+  .cv-role { break-inside: avoid; padding-bottom: 6em; margin-bottom: -6em; }
+  /* Each group label keeps room for its first bullets, like the job headings. */
+  .cv .cv-group { letter-spacing: 0.04em; font-size: 7.2pt; margin-top: 7pt; break-inside: avoid; padding-bottom: 4em; margin-bottom: calc(1.5pt - 4em); }
+  li, .cv-skills p { break-inside: avoid; }
 }
 
 /* Section navigation on long single pages (AI, Program Management, Videos & Podcasts).

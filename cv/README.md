@@ -14,7 +14,7 @@ Tailored versions are hidden: they are not in the menu or the sitemap, and they 
 ## Add a version for a new application
 
 1. Copy the closest version, for example `cv/roles/general.md`, to `cv/roles/acme-docs-lead.md`.
-2. Edit it. It is plain Markdown: `##` for sections, `###` for each job, `-` for bullets. Reorder or cut bullets, rewrite the summary, adjust skills. Do not add a download link: one is added automatically.
+2. Edit it. It is Markdown: `##` for sections, `### Job title | Dates` for each job (the dates are aligned right), then a line with the company in bold, then `-` for bullets. The header and the skills list use a little HTML; copy it as it is. Reorder or cut bullets, rewrite the summary, adjust skills. Do not add a download link: one is added automatically.
 3. Build: `pnpm build`. This creates the page and its PDF.
 4. Check `http://localhost:3456/cv/acme-docs-lead`.
 5. Commit and push. Send the recruiter `https://vidyap18.github.io/cv/acme-docs-lead`.
