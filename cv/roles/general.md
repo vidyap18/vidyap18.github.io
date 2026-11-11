@@ -44,7 +44,7 @@ I lead the documentation team for an enterprise supply chain planning platform a
 <p className="cv-group">Writing</p>
 
 - **Wrote reference and conceptual docs for data scientists.** Explained complex AI and data-science features in plain language.
-- **Wrote task and setup guides.** For the planners who run the product every day and the administrators who set it up.
+- **Wrote task and setup guides.** For the planners who run the product every day and the administrators who set it up, with clickable walkthroughs built in Arcade.
 - **Wrote troubleshooting pages and FAQs from support questions.** Recurring questions now have an answer in the docs.
 - **Wrote the release notes for 40+ releases.** Set a plain, friendly voice, and used AI to turn each release into videos, a podcast and the company announcement.
 
@@ -102,11 +102,11 @@ I lead the documentation team for an enterprise supply chain planning platform a
 <div className="cv-skills">
 <p><strong>Domains:</strong> AI and data-science products, supply chain planning, data integration, industrial software</p>
 <p><strong>Writing:</strong> User guides, API and SDK references, release notes, UX writing, information architecture, content audits, writing for translation</p>
-<p><strong>Product:</strong> In-product help, guided tours, onboarding flows, UX review, feature adoption</p>
-<p><strong>AI:</strong> AI-assisted workflows, AI assistant evaluation, LLM-ready docs, AI prototyping · Claude, Claude Code, ElevenLabs, Synthesia</p>
+<p><strong>Product:</strong> In-product help, guided tours, interactive walkthroughs, onboarding flows, UX review, feature adoption</p>
+<p><strong>AI:</strong> AI-assisted workflows, AI assistant evaluation, LLM-ready docs, AI prototyping · Claude, Claude Code, ChatGPT, Gemini, Cursor, Wispr Flow, ElevenLabs, Synthesia</p>
 <p><strong>Docs as code:</strong> Docusaurus, Markdown and MDX, Git and GitHub, pull-request review, CI workflows</p>
 <p><strong>APIs:</strong> REST, OpenAPI and Swagger, Postman, JSON</p>
-<p><strong>Tools:</strong> Whatfix, Figma, Jira, Confluence, Document360, GitBook</p>
+<p><strong>Tools:</strong> Whatfix, Arcade, Figma, Jira, Confluence, Document360, GitBook</p>
 </div>
 
 ## Education and languages
