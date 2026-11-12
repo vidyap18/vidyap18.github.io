@@ -17,7 +17,7 @@ description: Vidya Patil, senior technical writer and documentation lead in Prag
 <a href="mailto:vidyapatil123@gmail.com">vidyapatil123@gmail.com</a>
 <a href="tel:+420778960717">+420 778 960 717</a>
 <a href="https://www.linkedin.com/in/vidyapatil18">linkedin.com/in/vidyapatil18</a>
-<span>Portfolio: <a href="https://vidyap18.github.io">vidyap18.github.io</a></span>
+<span>Portfolio: <a href="https://vidyap18.github.io/?ref=cv">vidyap18.github.io</a></span>
 </p>
 
 </header>

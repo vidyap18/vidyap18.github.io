@@ -26,6 +26,16 @@ const config: Config = {
 
   i18n: {defaultLocale: 'en', locales: ['en']},
 
+  // Visit counting with GoatCounter: no cookies, no personal data. See src/clientModules/goatcounter.ts.
+  scripts: [
+    {
+      src: 'https://gc.zgo.at/count.js',
+      async: true,
+      'data-goatcounter': 'https://vidyap18.goatcounter.com/count',
+    },
+  ],
+  clientModules: ['./src/clientModules/goatcounter.ts'],
+
   headTags: [
     {
       tagName: 'link',
